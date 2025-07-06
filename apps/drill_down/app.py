@@ -23,7 +23,15 @@ def home():
 
 @app.route("/players")
 def players():
-    player_list = players_df[['PersonNumber', 'FirstName', 'LastName']].to_dict(orient='records')
+    player_list = []
+    for _, row in players_df.iterrows():
+        player_list.append({
+            "player_id": row.get("PersonNumber"),
+            "display_name": f"{row.get('FirstName', '')} {row.get('LastName', '')}",
+            "date_joined": row.get("DateJoined", ""),  # Adjust if your CSV uses a different column
+            "status": "active",  # Or use a real field if available
+            "disambiguation_notes": row.get("Notes", "")  # Adjust if your CSV uses a different column
+        })
     return render_template("players.html", players=player_list)
 
 @app.route("/api/players")

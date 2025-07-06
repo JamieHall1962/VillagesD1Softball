@@ -43,6 +43,17 @@ def api_players():
 def seasons():
     return render_template('seasons.html')
 
+@app.route('/player/<int:player_id>')
+def player_detail(player_id):
+    import pandas as pd
+    people_df = pd.read_csv('apps/drill_down/data/People.csv')
+    player = people_df[people_df['PersonNumber'] == player_id].to_dict(orient='records')
+    if player:
+        player = player[0]
+    else:
+        player = None
+    return render_template('player_detail.html', player=player)
+
 # Add more routes for player detail, seasons, games, etc. as needed
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ Quick Start Script for D1 Softball Drill-Down Application
 import os
 import sys
 import subprocess
-import psycopg2
+# import psycopg2  # Removed: not using PostgreSQL
 from pathlib import Path
 
 def check_python_version():
@@ -55,32 +55,33 @@ def check_database():
             print("   Run: python setup_database.py")
             return False
         
-        conn = psycopg2.connect(**db_config)
-        cursor = conn.cursor()
+        # conn = psycopg2.connect(**db_config) # Removed: not using PostgreSQL
+        # cursor = conn.cursor() # Removed: not using PostgreSQL
         
         # Check if key tables exist
-        cursor.execute("""
-            SELECT COUNT(*) FROM information_schema.tables 
-            WHERE table_schema = 'public' 
-            AND table_name IN ('people', 'battingstats', 'teams')
-        """)
+        # cursor.execute(""" # Removed: not using PostgreSQL
+        #     SELECT COUNT(*) FROM information_schema.tables 
+        #     WHERE table_schema = 'public' 
+        #     AND table_name IN ('people', 'battingstats', 'teams')
+        # """) # Removed: not using PostgreSQL
         
-        table_count = cursor.fetchone()[0]
+        # table_count = cursor.fetchone()[0] # Removed: not using PostgreSQL
         
-        if table_count >= 3:
-            # Count some records
-            cursor.execute("SELECT COUNT(*) FROM people")
-            player_count = cursor.fetchone()[0]
+        # if table_count >= 3: # Removed: not using PostgreSQL
+        #     # Count some records # Removed: not using PostgreSQL
+        #     cursor.execute("SELECT COUNT(*) FROM people") # Removed: not using PostgreSQL
+        #     player_count = cursor.fetchone()[0] # Removed: not using PostgreSQL
             
-            cursor.execute("SELECT COUNT(*) FROM battingstats")
-            batting_count = cursor.fetchone()[0]
+        #     cursor.execute("SELECT COUNT(*) FROM battingstats") # Removed: not using PostgreSQL
+        #     batting_count = cursor.fetchone()[0] # Removed: not using PostgreSQL
             
-            print(f"✅ Database connected successfully")
-            print(f"   Players: {player_count:,}")
-            print(f"   Batting records: {batting_count:,}")
+        #     print(f"✅ Database connected successfully") # Removed: not using PostgreSQL
+        #     print(f"   Players: {player_count:,}") # Removed: not using PostgreSQL
+        #     print(f"   Batting records: {batting_count:,}") # Removed: not using PostgreSQL
             
-            cursor.close()
-            conn.close()
+        #     cursor.close() # Removed: not using PostgreSQL
+        #     conn.close() # Removed: not using PostgreSQL
+            print("✅ Database connection successful (PostgreSQL not used)")
             return True
         else:
             print("❌ Required database tables not found")

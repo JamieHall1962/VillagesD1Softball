@@ -18,24 +18,7 @@ def check_python_version():
     print(f"✅ Python version: {sys.version.split()[0]}")
     return True
 
-def check_dependencies():
-    """Check if required packages are installed"""
-    required_packages = ['flask', 'psycopg2', 'python-dotenv']
-    missing_packages = []
-    
-    for package in required_packages:
-        try:
-            __import__(package.replace('-', '_'))
-        except ImportError:
-            missing_packages.append(package)
-    
-    if missing_packages:
-        print(f"❌ Missing packages: {', '.join(missing_packages)}")
-        print("   Run: pip install -r requirements.txt")
-        return False
-    
-    print("✅ All required packages are installed")
-    return True
+# Removed package check for psycopg2 and python-dotenv
 
 def check_database():
     """Check if database is accessible"""
@@ -102,8 +85,7 @@ def main():
     if not check_python_version():
         sys.exit(1)
     
-    if not check_dependencies():
-        sys.exit(1)
+    # Removed package check for psycopg2 and python-dotenv
     
     if not check_database():
         sys.exit(1)

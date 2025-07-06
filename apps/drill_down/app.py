@@ -45,14 +45,25 @@ def seasons():
 
 @app.route('/player/<int:player_id>')
 def player_detail(player_id):
-    import pandas as pd
-    people_df = pd.read_csv('apps/drill_down/data/People.csv')
-    player = people_df[people_df['PersonNumber'] == player_id].to_dict(orient='records')
-    if player:
-        player = player[0]
+    # Get player info
+    player = players_df[players_df['PersonNumber'] == player_id]
+    if not player.empty:
+        player = player.iloc[0].to_dict()
     else:
         player = None
-    return render_template('player_detail.html', player=player)
+    # Get season-by-season stats
+    player_seasons = batting_df[batting_df['PersonNumber'] == player_id]
+    if not player_seasons.empty:
+        season_stats = player_seasons.groupby('Season').sum(numeric_only=True).reset_index()
+    else:
+        season_stats = None
+    return render_template('player_detail.html', player=player, season_stats=season_stats)
+
+@app.route('/player/<int:player_id>/games')
+def player_games(player_id):
+    # Get all games for the player
+    player_games = games_df[games_df['PersonNumber'] == player_id]
+    return render_template('player_games.html', games=player_games.to_dict(orient='records'))
 
 # Add more routes for player detail, seasons, games, etc. as needed
 

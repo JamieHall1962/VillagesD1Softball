@@ -5,12 +5,32 @@
 {% block content %}
 <div class="container mt-5">
     {% if player %}
-        <h1 class="mb-4">Player Detail: {{ player['Name'] if 'Name' in player else player['display_name'] if 'display_name' in player else 'Unknown' }}</h1>
-        <ul class="list-group">
-        {% for key, value in player.items() %}
-            <li class="list-group-item"><strong>{{ key }}:</strong> {{ value }}</li>
-        {% endfor %}
-        </ul>
+        <h1 class="mb-4">{{ player['FirstName'] }} {{ player['LastName'] }}</h1>
+        <p><strong>Player ID:</strong> {{ player['PersonNumber'] }}</p>
+        <a href="{{ url_for('player_games', player_id=player['PersonNumber']) }}" class="btn btn-primary mb-4">View Game Log</a>
+        <h3>Season-by-Season Stats</h3>
+        {% if season_stats is not none and season_stats.shape[0] > 0 %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    {% for col in season_stats.columns %}
+                        <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in season_stats.values.tolist() %}
+                <tr>
+                    {% for val in row %}
+                        <td>{{ val }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p>No season stats available.</p>
+        {% endif %}
     {% else %}
         <h2>Player not found.</h2>
     {% endif %}

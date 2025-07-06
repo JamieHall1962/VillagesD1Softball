@@ -27,7 +27,7 @@ def players():
     # Assume BattingStats.csv has columns: PersonNumber, Season, Gm, PA, AB, R, H, 1B, 2B, 3B, HR, RBI, BB, SF, OE, TB, BA, Slg, OBP
     # Group by PersonNumber and sum numeric columns
     agg_cols = ['Gm', 'PA', 'AB', 'R', 'H', '1B', '2B', '3B', 'HR', 'RBI', 'BB', 'SF', 'OE', 'TB']
-    sum_stats = batting_df.groupby('PersonNumber')[agg_cols].sum().reset_index()
+    sum_stats = batting_df.groupby('PlayerNumber')[agg_cols].sum().reset_index()
     # Calculate BA, Slg, OBP if not present
     if 'BA' not in sum_stats.columns:
         sum_stats['BA'] = (sum_stats['H'] / sum_stats['AB']).round(3)
@@ -36,7 +36,7 @@ def players():
     if 'OBP' not in sum_stats.columns:
         sum_stats['OBP'] = ((sum_stats['H'] + sum_stats['BB']) / sum_stats['PA']).round(3)
     # Merge with player names
-    merged = sum_stats.merge(players_df[['PersonNumber', 'FirstName', 'LastName']], left_on='PersonNumber', right_on='PersonNumber', how='left')
+    merged = sum_stats.merge(players_df[['PersonNumber', 'FirstName', 'LastName']], left_on='PlayerNumber', right_on='PersonNumber', how='left')
     merged['Name'] = merged['FirstName'].fillna('') + ' ' + merged['LastName'].fillna('')
     # Add Rank
     merged = merged.sort_values(by=['H', 'Gm'], ascending=[False, False]).reset_index(drop=True)

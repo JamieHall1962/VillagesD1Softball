@@ -1,3 +1,4 @@
 # Core dependencies for D1 Softball Drill-Down Application
 Flask==2.3.3
+pandas==2.0.3
 python-dotenv==1.0.0 

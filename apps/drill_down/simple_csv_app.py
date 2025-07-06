@@ -958,6 +958,4 @@ def player_games(player_id):
                          totals=career_totals)
 
 if __name__ == '__main__':
-    print("Starting D1 Softball Stats App...")
-    print("Visit http://localhost:5000 to view the site")
-    app.run(debug=True, host='0.0.0.0', port=5000) 
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False) 

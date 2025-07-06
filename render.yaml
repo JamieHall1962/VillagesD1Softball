@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: d1-softball-stats
+    env: python
+    plan: free
+    buildCommand: pip install -r apps/drill_down/requirements.txt
+    startCommand: cd apps/drill_down && python simple_csv_app.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0 

@@ -23,8 +23,7 @@ def check_python_version():
 def check_database():
     """Check if database is accessible"""
     try:
-        from dotenv import load_dotenv
-        load_dotenv()
+        # Removed dotenv import and .env loading (not needed)
         
         db_config = {
             'host': os.getenv('DB_HOST', 'localhost'),

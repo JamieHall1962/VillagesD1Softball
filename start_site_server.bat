@@ -1,9 +1,0 @@
-@echo off
-echo Starting D1 Softball Stats Server...
-echo Changing to site directory...
-cd /d "%~dp0apps\drill_down\site"
-echo Current directory: %CD%
-echo Starting HTTP server on port 8080...
-echo Visit http://localhost:8080
-python -m http.server 8080
-pause 

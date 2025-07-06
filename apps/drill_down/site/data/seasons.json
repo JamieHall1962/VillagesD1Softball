@@ -1,0 +1,287 @@
+[
+  {
+    "filter_number": 56,
+    "season_name": "Fall 2026",
+    "season_code": "F26"
+  },
+  {
+    "filter_number": 54,
+    "season_name": "Summer 2026",
+    "season_code": "S26"
+  },
+  {
+    "filter_number": 58,
+    "season_name": "Winter 2026",
+    "season_code": "W26"
+  },
+  {
+    "filter_number": 55,
+    "season_name": "Fall 2025",
+    "season_code": "F25"
+  },
+  {
+    "filter_number": 53,
+    "season_name": "Summer 2025",
+    "season_code": "S25"
+  },
+  {
+    "filter_number": 57,
+    "season_name": "Winter 2025",
+    "season_code": "W25"
+  },
+  {
+    "filter_number": 48,
+    "season_name": "Fall 2024",
+    "season_code": "F24"
+  },
+  {
+    "filter_number": 50,
+    "season_name": "Summer 2024",
+    "season_code": "S24"
+  },
+  {
+    "filter_number": 52,
+    "season_name": "Winter 2024",
+    "season_code": "W24"
+  },
+  {
+    "filter_number": 47,
+    "season_name": "Fall 2023",
+    "season_code": "F23"
+  },
+  {
+    "filter_number": 49,
+    "season_name": "Summer 2023",
+    "season_code": "S23"
+  },
+  {
+    "filter_number": 51,
+    "season_name": "Winter 2023",
+    "season_code": "W23"
+  },
+  {
+    "filter_number": 46,
+    "season_name": "Fall 2022",
+    "season_code": "F22"
+  },
+  {
+    "filter_number": 45,
+    "season_name": "Summer 2022",
+    "season_code": "S22"
+  },
+  {
+    "filter_number": 44,
+    "season_name": "Winter 2022",
+    "season_code": "W22"
+  },
+  {
+    "filter_number": 43,
+    "season_name": "Fall 2021",
+    "season_code": "F21"
+  },
+  {
+    "filter_number": 42,
+    "season_name": "Summer 2021",
+    "season_code": "S21"
+  },
+  {
+    "filter_number": 41,
+    "season_name": "Winter 2021",
+    "season_code": "W21"
+  },
+  {
+    "filter_number": 40,
+    "season_name": "Fall 2020",
+    "season_code": "F20"
+  },
+  {
+    "filter_number": 39,
+    "season_name": "Summer 2020",
+    "season_code": "S20"
+  },
+  {
+    "filter_number": 38,
+    "season_name": "Winter 2020",
+    "season_code": "W20"
+  },
+  {
+    "filter_number": 36,
+    "season_name": "Fall 2019",
+    "season_code": "F19"
+  },
+  {
+    "filter_number": 35,
+    "season_name": "Summer 2019",
+    "season_code": "S19"
+  },
+  {
+    "filter_number": 34,
+    "season_name": "Winter 2019",
+    "season_code": "W19"
+  },
+  {
+    "filter_number": 33,
+    "season_name": "Fall 2018",
+    "season_code": "F18"
+  },
+  {
+    "filter_number": 32,
+    "season_name": "Summer 2018",
+    "season_code": "S18"
+  },
+  {
+    "filter_number": 37,
+    "season_name": "Winter 2018",
+    "season_code": "W18"
+  },
+  {
+    "filter_number": 30,
+    "season_name": "Fall 2017",
+    "season_code": "F17"
+  },
+  {
+    "filter_number": 31,
+    "season_name": "Summer 2017",
+    "season_code": "S17"
+  },
+  {
+    "filter_number": 29,
+    "season_name": "Winter 2017",
+    "season_code": "W17"
+  },
+  {
+    "filter_number": 27,
+    "season_name": "Fall 2016",
+    "season_code": "F16"
+  },
+  {
+    "filter_number": 28,
+    "season_name": "Summer 2016",
+    "season_code": "S16"
+  },
+  {
+    "filter_number": 26,
+    "season_name": "Winter 2016",
+    "season_code": "W16"
+  },
+  {
+    "filter_number": 25,
+    "season_name": "Fall 2015",
+    "season_code": "F15"
+  },
+  {
+    "filter_number": 24,
+    "season_name": "Summer 2015",
+    "season_code": "S15"
+  },
+  {
+    "filter_number": 23,
+    "season_name": "Winter 2015",
+    "season_code": "W15"
+  },
+  {
+    "filter_number": 18,
+    "season_name": "Fall 2014",
+    "season_code": "F14"
+  },
+  {
+    "filter_number": 20,
+    "season_name": "Summer 2014",
+    "season_code": "S14"
+  },
+  {
+    "filter_number": 22,
+    "season_name": "Summer 2014",
+    "season_code": "S14"
+  },
+  {
+    "filter_number": 16,
+    "season_name": "Winter 2014",
+    "season_code": "W14"
+  },
+  {
+    "filter_number": 15,
+    "season_name": "Fall 2013",
+    "season_code": "F13"
+  },
+  {
+    "filter_number": 14,
+    "season_name": "Summer 2013",
+    "season_code": "S13"
+  },
+  {
+    "filter_number": 13,
+    "season_name": "Winter 2013",
+    "season_code": "W13"
+  },
+  {
+    "filter_number": 12,
+    "season_name": "Fall 2012",
+    "season_code": "F12"
+  },
+  {
+    "filter_number": 11,
+    "season_name": "Summer 2012",
+    "season_code": "S12"
+  },
+  {
+    "filter_number": 10,
+    "season_name": "Winter 2012",
+    "season_code": "W12"
+  },
+  {
+    "filter_number": 3,
+    "season_name": "Fall 2011",
+    "season_code": "F11"
+  },
+  {
+    "filter_number": 2,
+    "season_name": "Summer 2011",
+    "season_code": "S11"
+  },
+  {
+    "filter_number": 1,
+    "season_name": "Winter 2011",
+    "season_code": "W11"
+  },
+  {
+    "filter_number": 9,
+    "season_name": "Fall 2010",
+    "season_code": "F10"
+  },
+  {
+    "filter_number": 8,
+    "season_name": "Summer 2010",
+    "season_code": "S10"
+  },
+  {
+    "filter_number": 7,
+    "season_name": "Winter 2010",
+    "season_code": "W10"
+  },
+  {
+    "filter_number": 6,
+    "season_name": "Fall 2009",
+    "season_code": "F09"
+  },
+  {
+    "filter_number": 5,
+    "season_name": "Summer 2009",
+    "season_code": "S09"
+  },
+  {
+    "filter_number": 4,
+    "season_name": "Winter 2009",
+    "season_code": "W09"
+  },
+  {
+    "filter_number": 60,
+    "season_name": "Fall 2008",
+    "season_code": "F08"
+  },
+  {
+    "filter_number": 59,
+    "season_name": "Winter 2008",
+    "season_code": "W08"
+  }
+]

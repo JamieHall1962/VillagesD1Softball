@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Players - D1 Softball Stats</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .players-table { width: 100%; border-collapse: collapse; }
+        .players-table th, .players-table td { padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
+        .players-table th { background: #f1f5f9; font-weight: bold; cursor: pointer; user-select: none; position: sticky; top: 0; z-index: 10; }
+        .players-table th:hover { background: #e2e8f0; }
+        .players-table tr:hover { background: #f8fafc; }
+        .player-link { color: #1e3a8a; text-decoration: none; font-weight: bold; }
+        .player-link:hover { text-decoration: underline; }
+        .back-link { margin: 20px 0; }
+        .back-link a { color: #1e3a8a; text-decoration: none; }
+        .back-link a:hover { text-decoration: underline; }
+        .search-bar { margin-bottom: 16px; }
+        .search-input { padding: 8px; width: 250px; font-size: 15px; border: 1px solid #cbd5e1; border-radius: 4px; }
+        .sort-indicator { font-size: 11px; margin-left: 4px; color: #1e3a8a; }
+        .table-container { max-height: 70vh; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; }
+    </style>
+    <script>
+    function filterPlayers() {
+        var input = document.getElementById('playerSearch');
+        var filter = input.value.toLowerCase();
+        var table = document.getElementById('playersTable');
+        var trs = table.getElementsByTagName('tr');
+        for (var i = 1; i < trs.length; i++) {
+            var nameCell = trs[i].getElementsByTagName('td')[1];
+            if (nameCell) {
+                var name = nameCell.textContent || nameCell.innerText;
+                trs[i].style.display = name.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
+            }
+        }
+    }
+
+    // Simple table sorting
+    let currentSort = { column: -1, direction: 1 };
+    
+    function sortTable(columnIndex) {
+        var table = document.getElementById('playersTable');
+        var tbody = table.getElementsByTagName('tbody')[0];
+        var rows = Array.from(tbody.getElementsByTagName('tr'));
+        
+        // Toggle direction if same column
+        if (currentSort.column === columnIndex) {
+            currentSort.direction = -currentSort.direction;
+        } else {
+            currentSort.direction = 1;
+        }
+        currentSort.column = columnIndex;
+        
+        // Sort the rows
+        rows.sort(function(a, b) {
+            var aVal = a.cells[columnIndex].textContent.trim();
+            var bVal = b.cells[columnIndex].textContent.trim();
+            
+            // Try to parse as numbers
+            var aNum = parseFloat(aVal.replace(/[^0-9.-]/g, ''));
+            var bNum = parseFloat(bVal.replace(/[^0-9.-]/g, ''));
+            
+            if (!isNaN(aNum) && !isNaN(bNum)) {
+                return (aNum - bNum) * currentSort.direction;
+            } else {
+                return aVal.localeCompare(bVal) * currentSort.direction;
+            }
+        });
+        
+        // Reorder the rows
+        rows.forEach(function(row) {
+            tbody.appendChild(row);
+        });
+        
+        // Update rank numbers
+        updateRankNumbers();
+        
+        // Update indicators
+        updateSortIndicators(columnIndex, currentSort.direction);
+    }
+    
+    function updateRankNumbers() {
+        var tbody = document.getElementById('playersTable').getElementsByTagName('tbody')[0];
+        var rows = tbody.getElementsByTagName('tr');
+        for (var i = 0; i < rows.length; i++) {
+            var rankCell = rows[i].cells[0];
+            if (rankCell) {
+                rankCell.textContent = i + 1;
+            }
+        }
+    }
+    
+    function updateSortIndicators(column, direction) {
+        var headers = document.querySelectorAll('.players-table th');
+        headers.forEach(function(header, index) {
+            var indicator = header.querySelector('.sort-indicator');
+            if (!indicator) {
+                indicator = document.createElement('span');
+                indicator.className = 'sort-indicator';
+                header.appendChild(indicator);
+            }
+            
+            if (index === column) {
+                indicator.textContent = direction === 1 ? '▲' : '▼';
+            } else {
+                indicator.textContent = '';
+            }
+        });
+    }
+    
+    // Initialize on page load
+    window.onload = function() {
+        // Add sort indicators to all headers
+        var headers = document.querySelectorAll('.players-table th');
+        headers.forEach(function(header) {
+            var indicator = document.createElement('span');
+            indicator.className = 'sort-indicator';
+            header.appendChild(indicator);
+        });
+    };
+    </script>
+</head>
+<body>
+    <div class="back-link">
+        <a href="/">← Back to Home</a>
+    </div>
+
+    <div class="header">
+        <h1>D1 Softball Players</h1>
+        <p>Click any column header to sort</p>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="playerSearch" class="search-input" onkeyup="filterPlayers()" placeholder="Search players by name...">
+    </div>
+
+    <div class="table-container">
+        <table class="players-table" id="playersTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">Rank</th>
+                <th onclick="sortTable(1)">Name</th>
+                <th onclick="sortTable(2)">Gm</th>
+                <th onclick="sortTable(3)">PA</th>
+                <th onclick="sortTable(4)">AB</th>
+                <th onclick="sortTable(5)">R</th>
+                <th onclick="sortTable(6)">H</th>
+                <th onclick="sortTable(7)">1B</th>
+                <th onclick="sortTable(8)">2B</th>
+                <th onclick="sortTable(9)">3B</th>
+                <th onclick="sortTable(10)">HR</th>
+                <th onclick="sortTable(11)">RBI</th>
+                <th onclick="sortTable(12)">BB</th>
+                <th onclick="sortTable(13)">SF</th>
+                <th onclick="sortTable(14)">OE</th>
+                <th onclick="sortTable(15)">TB</th>
+                <th onclick="sortTable(16)">BA</th>
+                <th onclick="sortTable(17)">Slg</th>
+                <th onclick="sortTable(18)">OBP</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in players %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td><a href="/player/{{ player.id }}" class="player-link">{{ player.name }}</a></td>
+                <td>{{ player.games_played }}</td>
+                <td>{{ player.pa }}</td>
+                <td>{{ player.ab }}</td>
+                <td>{{ player.r }}</td>
+                <td>{{ player.h }}</td>
+                <td>{{ player['1b'] }}</td>
+                <td>{{ player['2b'] }}</td>
+                <td>{{ player['3b'] }}</td>
+                <td>{{ player.hr }}</td>
+                <td>{{ player.rbi }}</td>
+                <td>{{ player.bb }}</td>
+                <td>{{ player.sf }}</td>
+                <td>{{ player.oe }}</td>
+                <td>{{ player.tb }}</td>
+                <td>{{ player.avg|nostripleadingzero }}</td>
+                <td>{{ player.slg|nostripleadingzero }}</td>
+                <td>{{ player.obp|nostripleadingzero }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</body>
+</html> 

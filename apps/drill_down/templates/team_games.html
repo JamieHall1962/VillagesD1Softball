@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ team.LongTeamName }} - {{ season_name }} Games - D1 Softball Stats</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0; }
+        .stat-card { background: #f8fafc; padding: 12px; border-radius: 8px; border-left: 4px solid #1e3a8a; text-align: center; }
+        .stat-value { font-size: 20px; font-weight: bold; color: #1e3a8a; }
+        .stat-label { color: #64748b; font-size: 12px; margin-top: 5px; }
+        .games-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+        .games-table th, .games-table td { padding: 8px 6px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+        .games-table th { background: #f1f5f9; font-weight: bold; }
+        .games-table tr:hover { background: #f8fafc; }
+        .games-table td:nth-child(2) { text-align: left; } /* Date column */
+        .games-table td:nth-child(3) { text-align: left; } /* Opponent column */
+        .win { color: #059669; font-weight: bold; }
+        .loss { color: #dc2626; font-weight: bold; }
+        .tie { color: #f59e0b; font-weight: bold; }
+        .positive { color: #059669; }
+        .negative { color: #dc2626; }
+        .back-link { margin: 20px 0; }
+        .back-link a { color: #1e3a8a; text-decoration: none; }
+        .back-link a:hover { text-decoration: underline; }
+        .game-type { font-size: 12px; color: #64748b; }
+        .score { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="back-link">
+        <a href="/team/{{ team.TeamNumber }}/{{ filter_number }}">← Back to {{ team.LongTeamName }} Roster</a>
+        <span style="margin: 0 10px;">|</span>
+        <a href="/season/{{ filter_number }}">← Back to {{ season_name }} Standings</a>
+    </div>
+
+    <div class="header">
+        <h1>{{ team.LongTeamName }}</h1>
+        <p>{{ season_name }} - Game Results</p>
+    </div>
+
+    <!-- Season Summary -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ totals.total_games }}</div>
+            <div class="stat-label">Games</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ totals.wins }}-{{ totals.losses }}{% if totals.ties > 0 %}-{{ totals.ties }}{% endif %}</div>
+            <div class="stat-label">Record</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ totals.win_pct | nostripleadingzero }}</div>
+            <div class="stat-label">Win %</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ totals.runs_for }}</div>
+            <div class="stat-label">Runs For</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ totals.runs_against }}</div>
+            <div class="stat-label">Runs Against</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" class="{% if totals.run_diff > 0 %}positive{% elif totals.run_diff < 0 %}negative{% endif %}">{{ totals.run_diff }}</div>
+            <div class="stat-label">Run Diff</div>
+        </div>
+    </div>
+
+    <!-- Games Table -->
+    <h2>Game Results</h2>
+    <table class="games-table">
+        <thead>
+            <tr>
+                <th>Game</th>
+                <th>Date</th>
+                <th>Opponent</th>
+                <th>Type</th>
+                <th>Result</th>
+                <th>Score</th>
+                <th>Diff</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for game in games %}
+            <tr>
+                <td>{{ game.game_number }}</td>
+                <td>{{ game.date }}</td>
+                <td>{{ game.opponent }}</td>
+                <td><span class="game-type">{{ game.game_type }}</span></td>
+                <td class="{{ game.result_class }}">{{ game.result }}</td>
+                <td class="score">{{ game.runs_for }}-{{ game.runs_against }}</td>
+                <td class="{% if game.run_diff > 0 %}positive{% elif game.run_diff < 0 %}negative{% endif %}">
+                    {% if game.run_diff > 0 %}+{% endif %}{{ game.run_diff }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html> 

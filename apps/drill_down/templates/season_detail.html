@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ season_name }} - D1 Softball Stats</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 20px 0; }
+        .stat-card { background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #1e3a8a; }
+        .stat-value { font-size: 24px; font-weight: bold; color: #1e3a8a; }
+        .stat-label { color: #64748b; font-size: 14px; }
+        .players-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+        .players-table th, .players-table td { padding: 8px 6px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+        .players-table th { background: #f1f5f9; font-weight: bold; }
+        .players-table tr:hover { background: #f8fafc; }
+        .players-table td:first-child { text-align: center; font-weight: bold; } /* Rank column */
+        .players-table td:nth-child(2) { text-align: left; } /* Team name column */
+        .positive { color: #059669; font-weight: bold; }
+        .negative { color: #dc2626; font-weight: bold; }
+        .player-link { color: #1e3a8a; text-decoration: none; font-weight: bold; }
+        .player-link:hover { text-decoration: underline; }
+        .back-link { margin: 20px 0; }
+        .back-link a { color: #1e3a8a; text-decoration: none; }
+        .back-link a:hover { text-decoration: underline; }
+        .u2-note { background: #fef3c7; padding: 10px; border-radius: 5px; margin: 10px 0; font-size: 14px; }
+        .u2-warning { color: #dc2626; font-weight: bold; }
+        .data-note { background: #fef3c7; color: #92400e; padding: 15px; border-radius: 8px; margin: 15px 0; font-size: 14px; border-left: 4px solid #f59e0b; }
+    </style>
+</head>
+<body>
+    <div class="back-link">
+        <a href="/seasons">← Back to Seasons</a>
+    </div>
+
+    <div class="header">
+        <h1>{{ season_name }}</h1>
+        <p>Season Standings</p>
+        {% if filter_number in [24, 28, 31] %}
+        <div class="data-note">
+            <strong>Note:</strong> Limited data available for this season. Only D1 player stats were recorded; no game scores or full rosters are available.
+        </div>
+        {% endif %}
+    </div>
+
+    {% if divisions %}
+        <!-- Division Standings -->
+        {% for division_name, division_teams in divisions.items() %}
+        <h2>{{ division_name }} Division Standings</h2>
+        <table class="players-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Team</th>
+                    <th>W</th>
+                    <th>L</th>
+                    <th>PCT</th>
+                    <th>GB</th>
+                    <th>Runs For</th>
+                    <th>Runs Against</th>
+                    <th>Diff</th>
+                    <th>RPG</th>
+                    <th>RPG Allowed</th>
+                    <th>BA</th>
+                    <th>OBP</th>
+                    <th>SLG</th>
+                    <th>HR</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in division_teams %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><a href="/team/{{ team.team_number }}/{{ filter_number }}" class="player-link">{{ team.team_name }}</a></td>
+                    <td>{{ team.wins }}</td>
+                    <td>{{ team.losses }}</td>
+                    <td>{{ team.win_pct | nostripleadingzero }}</td>
+                    <td>{{ "%.1f"|format(team.games_back) }}</td>
+                    <td>{{ team.runs_for }}</td>
+                    <td>{{ team.runs_against }}</td>
+                    <td class="{% if team.run_diff > 0 %}positive{% elif team.run_diff < 0 %}negative{% endif %}">{{ team.run_diff }}</td>
+                    <td>{{ "%.1f"|format(team.rpg) }}</td>
+                    <td>{{ "%.1f"|format(team.rpg_allowed) }}</td>
+                    <td>{{ team.ba | nostripleadingzero }}</td>
+                    <td>{{ team.obp | nostripleadingzero }}</td>
+                    <td>{{ team.slg | nostripleadingzero }}</td>
+                    <td>{{ team.hr }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if not loop.last %}
+        <div style="margin: 30px 0;"></div>
+        {% endif %}
+        {% endfor %}
+    {% else %}
+        <!-- Single Division Standings -->
+        <h2>Standings</h2>
+        <table class="players-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Team</th>
+                    <th>W</th>
+                    <th>L</th>
+                    <th>PCT</th>
+                    <th>GB</th>
+                    <th>Runs For</th>
+                    <th>Runs Against</th>
+                    <th>Diff</th>
+                    <th>RPG</th>
+                    <th>RPG Allowed</th>
+                    <th>BA</th>
+                    <th>OBP</th>
+                    <th>SLG</th>
+                    <th>HR</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in teams %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><a href="/team/{{ team.team_number }}/{{ filter_number }}" class="player-link">{{ team.team_name }}</a></td>
+                    <td>{{ team.wins }}</td>
+                    <td>{{ team.losses }}</td>
+                    <td>{{ team.win_pct | nostripleadingzero }}</td>
+                    <td>{{ "%.1f"|format(team.games_back) }}</td>
+                    <td>{{ team.runs_for }}</td>
+                    <td>{{ team.runs_against }}</td>
+                    <td class="{% if team.run_diff > 0 %}positive{% elif team.run_diff < 0 %}negative{% endif %}">{{ team.run_diff }}</td>
+                    <td>{{ "%.1f"|format(team.rpg) }}</td>
+                    <td>{{ "%.1f"|format(team.rpg_allowed) }}</td>
+                    <td>{{ team.ba | nostripleadingzero }}</td>
+                    <td>{{ team.obp | nostripleadingzero }}</td>
+                    <td>{{ team.slg | nostripleadingzero }}</td>
+                    <td>{{ team.hr }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+
+</body>
+</html> 

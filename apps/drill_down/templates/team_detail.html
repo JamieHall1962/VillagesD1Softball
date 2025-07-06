@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ team.LongTeamName }} - {{ season_name }} - D1 Softball Stats</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 20px 0; }
+        .stat-card { background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #1e3a8a; }
+        .stat-value { font-size: 24px; font-weight: bold; color: #1e3a8a; }
+        .stat-label { color: #64748b; font-size: 14px; }
+        .players-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .players-table th, .players-table td { padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        .players-table th { background: #f1f5f9; font-weight: bold; }
+        .players-table tr:hover { background: #f8fafc; }
+        .player-link { color: #1e3a8a; text-decoration: none; font-weight: bold; }
+        .player-link:hover { text-decoration: underline; }
+        .back-link { margin: 20px 0; }
+        .back-link a { color: #1e3a8a; text-decoration: none; }
+        .back-link a:hover { text-decoration: underline; }
+        .u2-note { background: #fef3c7; padding: 10px; border-radius: 5px; margin: 10px 0; font-size: 14px; }
+        .u2-warning { color: #dc2626; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="back-link">
+        <a href="/season/{{ filter_number }}">← Back to {{ season_name }}</a>
+        <span style="margin: 0 10px;">|</span>
+        <a href="/team/{{ team.TeamNumber }}/{{ filter_number }}/games">View Game Results</a>
+    </div>
+
+    <div class="header">
+        <h1>{{ team.LongTeamName }}</h1>
+        <p>{{ season_name }} - Team #{{ team.TeamNumber }}</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ totals.total_games }}</div>
+            <div class="stat-label">Total Games</div>
+            {% if totals.u2_games > 0 %}
+            <div class="u2-note">
+                <strong>Note:</strong> {{ totals.u2_games }} games from U2 correction
+            </div>
+            {% endif %}
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ totals.pa }}</div>
+            <div class="stat-label">Plate Appearances</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ totals.h }}</div>
+            <div class="stat-label">Hits</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ totals.hr }}</div>
+            <div class="stat-label">Home Runs</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ totals.rbi }}</div>
+            <div class="stat-label">RBI</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ players|length }}</div>
+            <div class="stat-label">Players</div>
+        </div>
+    </div>
+
+    <h2>Player Stats</h2>
+    <table class="players-table" id="team-stats-table">
+        <thead>
+            <tr>
+                <th data-sort="rank">Rank</th>
+                <th data-sort="name">Player</th>
+                <th data-sort="games">G</th>
+                <th data-sort="pa">PA</th>
+                <th data-sort="ab">AB</th>
+                <th data-sort="runs">R</th>
+                <th data-sort="hits">H</th>
+                <th data-sort="singles">1B</th>
+                <th data-sort="doubles">2B</th>
+                <th data-sort="triples">3B</th>
+                <th data-sort="hr">HR</th>
+                <th data-sort="rbi">RBI</th>
+                <th data-sort="bb">BB</th>
+                <th data-sort="sf">SF</th>
+                <th data-sort="oe">OE</th>
+                <th data-sort="tb">TB</th>
+                <th data-sort="avg">AVG</th>
+                <th data-sort="obp" class="sort-active">OBP ↕</th>
+                <th data-sort="slg">SLG</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in players %}
+            <tr>
+                <td class="rank">{{ loop.index }}</td>
+                <td data-name="{{ player.name }}"><a href="/player/{{ player.player_number }}" class="player-link">{{ player.name }}</a></td>
+                <td data-games="{{ player.games_played }}">{{ player.games_played }}</td>
+                <td data-pa="{{ player.pa }}">{{ player.pa }}</td>
+                <td data-ab="{{ player.ab }}">{{ player.ab }}</td>
+                <td data-runs="{{ player.r }}">{{ player.r }}</td>
+                <td data-hits="{{ player.h }}">{{ player.h }}</td>
+                <td data-singles="{{ player['1b'] }}">{{ player['1b'] }}</td>
+                <td data-doubles="{{ player['2b'] }}">{{ player['2b'] }}</td>
+                <td data-triples="{{ player['3b'] }}">{{ player['3b'] }}</td>
+                <td data-hr="{{ player.hr }}">{{ player.hr }}</td>
+                <td data-rbi="{{ player.rbi }}">{{ player.rbi }}</td>
+                <td data-bb="{{ player.bb }}">{{ player.bb }}</td>
+                <td data-sf="{{ player.sf }}">{{ player.sf }}</td>
+                <td data-oe="{{ player.oe }}">{{ player.oe }}</td>
+                <td data-tb="{{ player.tb }}">{{ player.tb }}</td>
+                <td data-avg="{{ player.avg }}">{{ player.avg | nostripleadingzero }}</td>
+                <td data-obp="{{ player.obp }}">{{ player.obp | nostripleadingzero }}</td>
+                <td data-slg="{{ player.slg }}">{{ player.slg | nostripleadingzero }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const table = document.getElementById('team-stats-table');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const headers = table.querySelectorAll('th[data-sort]');
+            
+            // Sort by OBP by default (descending)
+            sortTable('obp', 'desc');
+            
+            headers.forEach(header => {
+                header.addEventListener('click', function() {
+                    const sortKey = this.getAttribute('data-sort');
+                    const currentDirection = this.classList.contains('sort-asc') ? 'asc' : 'desc';
+                    const newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+                    
+                    // Clear all sort indicators
+                    headers.forEach(h => {
+                        h.classList.remove('sort-asc', 'sort-desc', 'sort-active');
+                        h.textContent = h.textContent.replace(' ↑', '').replace(' ↓', '').replace(' ↕', '');
+                    });
+                    
+                    // Set new sort indicator
+                    this.classList.add(`sort-${newDirection}`, 'sort-active');
+                    this.textContent += newDirection === 'asc' ? ' ↑' : ' ↓';
+                    
+                    sortTable(sortKey, newDirection);
+                });
+            });
+            
+            function sortTable(sortKey, direction) {
+                const sortedRows = rows.sort((a, b) => {
+                    let aVal, bVal;
+                    
+                    if (sortKey === 'name') {
+                        aVal = a.querySelector(`[data-${sortKey}]`).getAttribute(`data-${sortKey}`);
+                        bVal = b.querySelector(`[data-${sortKey}]`).getAttribute(`data-${sortKey}`);
+                        return direction === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+                    } else if (sortKey === 'rank') {
+                        aVal = parseInt(a.querySelector('.rank').textContent);
+                        bVal = parseInt(b.querySelector('.rank').textContent);
+                    } else {
+                        aVal = parseFloat(a.querySelector(`[data-${sortKey}]`).getAttribute(`data-${sortKey}`)) || 0;
+                        bVal = parseFloat(b.querySelector(`[data-${sortKey}]`).getAttribute(`data-${sortKey}`)) || 0;
+                    }
+                    
+                    if (direction === 'asc') {
+                        return aVal - bVal;
+                    } else {
+                        return bVal - aVal;
+                    }
+                });
+                
+                // Reorder rows
+                sortedRows.forEach(row => tbody.appendChild(row));
+                
+                // Update rank numbers
+                const rankCells = tbody.querySelectorAll('.rank');
+                rankCells.forEach((cell, index) => {
+                    cell.textContent = index + 1;
+                });
+            }
+        });
+    </script>
+
+</body>
+</html> 

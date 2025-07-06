@@ -1,0 +1,88 @@
+TROUBLESHOOTING GUIDE
+====================
+
+COMMON ISSUES AND SOLUTIONS
+---------------------------
+
+1. "PostgreSQL not found" Error
+   Problem: Script cannot find PostgreSQL installation
+   Solution: 
+   - Ensure PostgreSQL is installed
+   - Edit the .bat files to update PGPATH with your PostgreSQL bin directory
+   - Add PostgreSQL bin to system PATH
+
+2. "Password authentication failed"
+   Problem: Incorrect PostgreSQL password
+   Solution:
+   - Use the password set during PostgreSQL installation
+   - Reset PostgreSQL password if forgotten
+   - Ensure using correct username (default: postgres)
+
+3. "Database already exists"
+   Problem: Previous migration attempt left database
+   Solution:
+   - The script will automatically drop and recreate
+   - If issues persist, manually drop: dropdb -U postgres apssb_db
+
+4. "Permission denied" Errors
+   Problem: Insufficient privileges
+   Solution:
+   - Run scripts as Administrator
+   - Ensure PostgreSQL user has create database privileges
+   - Check Windows file permissions on migration package
+
+5. "Cannot connect to database"
+   Problem: PostgreSQL service not running
+   Solution:
+   - Start PostgreSQL service from Windows Services
+   - Check if PostgreSQL is listening on port 5432
+   - Verify firewall settings
+
+6. Missing Data After Migration
+   Problem: Some tables appear empty
+   Solution:
+   - Check import logs in logs/ directory
+   - Some tables may be legitimately empty
+   - Re-run migration if needed
+
+7. Character Encoding Issues
+   Problem: Special characters not displaying correctly
+   Solution:
+   - Database uses UTF-8 encoding by default
+   - Ensure application uses UTF-8 connection
+   - Check client encoding settings
+
+8. Performance Issues
+   Problem: Queries running slowly
+   Solution:
+   - Run ANALYZE on database
+   - Create indexes on frequently queried columns
+   - Tune PostgreSQL configuration
+   - Check query execution plans
+
+LOG FILE LOCATIONS
+------------------
+- Migration logs: logs/migration_*.log
+- Import details: logs/import_details.log
+- Verification reports: logs/verification_report_*.txt
+
+GETTING HELP
+------------
+1. Check PostgreSQL documentation
+2. Review migration logs for specific errors
+3. Ensure all prerequisites are met
+4. Try running scripts individually
+
+ROLLBACK PROCEDURE
+------------------
+If migration fails:
+1. The original Access database is unchanged
+2. Drop the PostgreSQL database: dropdb -U postgres apssb_db
+3. Fix the issue based on error messages
+4. Re-run the migration
+
+CONTACT INFORMATION
+-------------------
+For database-specific issues, consult:
+- PostgreSQL Documentation: https://www.postgresql.org/docs/
+- PostgreSQL Community: https://www.postgresql.org/community/

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Seasons - D1 Softball Stats</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .seasons-table { width: 100%; border-collapse: collapse; }
+        .seasons-table th, .seasons-table td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        .seasons-table th { background: #f1f5f9; font-weight: bold; }
+        .seasons-table tr:hover { background: #f8fafc; }
+        .season-link { color: #1e3a8a; text-decoration: none; font-weight: bold; }
+        .season-link:hover { text-decoration: underline; }
+        .back-link { margin: 20px 0; }
+        .back-link a { color: #1e3a8a; text-decoration: none; }
+        .back-link a:hover { text-decoration: underline; }
+        .stats-note { background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        .u2-warning { color: #dc2626; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="back-link">
+        <a href="/">← Back to Home</a>
+    </div>
+
+    <div class="header">
+        <h1>D1 Softball Seasons</h1>
+        <p>All seasons sorted chronologically (newest first)</p>
+    </div>
+
+    <table class="seasons-table">
+        <thead>
+            <tr>
+                <th>Season</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for season in seasons %}
+            <tr>
+                <td>{{ season.season_name }}</td>
+                <td><a href="/season/{{ season.filter_number }}" class="season-link">View Standings</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html> 

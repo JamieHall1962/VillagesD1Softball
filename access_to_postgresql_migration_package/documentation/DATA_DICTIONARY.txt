@@ -1,0 +1,88 @@
+DATA DICTIONARY - ACCESS TO POSTGRESQL MIGRATION
+================================================
+
+DATABASE OVERVIEW
+-----------------
+Database Name: apssb_db
+Total Tables: 71
+Total Records: 106,238
+Primary Domain: Baseball Statistics Management
+
+MAIN STATISTICS TABLES
+----------------------
+
+1. BATTINGSTATS (79,104 rows)
+   Purpose: Stores batting statistics for players
+   Key Columns:
+   - teamnumber: Team identifier
+   - gamenumber: Game identifier
+   - playernumber: Player identifier
+   - Various batting statistics columns
+
+2. PITCHINGSTATS (7,763 rows)
+   Purpose: Stores pitching statistics for players
+   Key Columns:
+   - teamnumber: Team identifier
+   - gamenumber: Game identifier
+   - playernumber: Player identifier
+   - Various pitching statistics columns
+
+3. FIELDINGSTATS (3,223 rows)
+   Purpose: Stores fielding statistics for players
+   Key Columns:
+   - teamnumber: Team identifier
+   - gamenumber: Game identifier
+   - playernumber: Player identifier
+   - Various fielding statistics columns
+
+4. GAMESTATS (7,686 rows)
+   Purpose: Game-level statistics and information
+   Key Columns:
+   - teamnumber: Team identifier
+   - gamenumber: Unique game identifier
+   - gamedate: Date of the game
+   - location: Game location
+
+5. ROSTER (5,688 rows)
+   Purpose: Team roster information
+   Key Columns:
+   - teamnumber: Team identifier
+   - personnumber: Person/Player identifier
+   - uniformnumber: Jersey number
+
+6. PEOPLE (590 rows)
+   Purpose: Player and personnel information
+   Key Columns:
+   - personnumber: Unique identifier
+   - firstname: First name
+   - lastname: Last name
+   - Various contact information columns
+
+7. TEAMS (489 rows)
+   Purpose: Team information
+   Key Columns:
+   - teamnumber: Unique team identifier
+   - teamname: Full team name
+   - shortteamname: Abbreviated name
+
+REFERENCE TABLES
+----------------
+- GAMETYPES: Types of games (2 rows)
+- LEADERCATS: Statistical categories for leaders
+- FILTERS: Data filtering options
+- Various RPT* tables: Report templates
+
+CONFIGURATION TABLES
+--------------------
+- NUMBEROPTIONS: Numeric configuration settings
+- STRINGOPTIONS: Text configuration settings
+- MEMOOPTIONS: Large text configuration
+- INTERNETOPTIONS: Web-related settings
+
+NOTES
+-----
+- All table names are lowercase in PostgreSQL
+- Original Access database used mixed case
+- Foreign key constraints removed for compatibility
+- All NOT NULL constraints removed for data import
+- Dates stored in PostgreSQL TIMESTAMP format

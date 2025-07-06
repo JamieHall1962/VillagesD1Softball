@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Add Player - D1 Softball Stats{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-user-plus"></i> Add New Player</h3>
+                </div>
+                <div class="card-body">
+                    
+                    {% if similar_players %}
+                    <!-- Similar Players Warning -->
+                    <div class="alert alert-warning">
+                        <h5><i class="fas fa-exclamation-triangle"></i> Similar Players Found</h5>
+                        <p>We found players with similar names. Please check if this is a new player or an existing one:</p>
+                        
+                        <div class="list-group mb-3">
+                            {% for similar in similar_players %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ similar.existing_name }}</strong>
+                                        <br>
+                                        <small class="text-muted">ID: {{ similar.existing_player_id }}</small>
+                                    </div>
+                                    <a href="/players/{{ similar.existing_player_id }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <p><strong>If this is a new player, continue with the form below.</strong></p>
+                    </div>
+                    {% endif %}
+                    
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="first_name" class="form-label">First Name *</label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" 
+                                           value="{{ form_data.first_name if form_data else '' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="last_name" class="form-label">Last Name *</label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" 
+                                           value="{{ form_data.last_name if form_data else '' }}" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="display_name" class="form-label">Display Name</label>
+                            <input type="text" class="form-control" id="display_name" name="display_name" 
+                                   value="{{ form_data.display_name if form_data else '' }}"
+                                   placeholder="Leave blank to use 'First Last'">
+                            <div class="form-text">How the player's name should appear in reports</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="date_joined" class="form-label">Date Joined</label>
+                            <input type="date" class="form-control" id="date_joined" name="date_joined" 
+                                   value="{{ form_data.date_joined if form_data else '' }}">
+                            <div class="form-text">When the player first joined the league</div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('players') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Players
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Add Player
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const firstNameInput = document.getElementById('first_name');
+    const lastNameInput = document.getElementById('last_name');
+    const displayNameInput = document.getElementById('display_name');
+    
+    // Auto-generate display name if left blank
+    function updateDisplayName() {
+        const firstName = firstNameInput.value.trim();
+        const lastName = lastNameInput.value.trim();
+        
+        if (firstName && lastName && !displayNameInput.value.trim()) {
+            displayNameInput.value = `${firstName} ${lastName}`;
+        }
+    }
+    
+    firstNameInput.addEventListener('input', updateDisplayName);
+    lastNameInput.addEventListener('input', updateDisplayName);
+});
+</script>
+{% endblock %} 

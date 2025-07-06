@@ -1,0 +1,313 @@
+
+    <html><head>
+    <meta charset='utf-8'>
+    <title>Season F08 - D1 Softball League</title>
+    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'>
+    <style>
+        body{background:#f8f9fa; font-family: Arial, sans-serif; margin: 20px;}
+        .header { background: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .players-table { width: 100%; border-collapse: collapse; }
+        .players-table th, .players-table td { padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
+        .players-table th { background: #f1f5f9; font-weight: bold; cursor: pointer; user-select: none; position: sticky; top: 0; z-index: 10; }
+        .players-table th:hover { background: #e2e8f0; }
+        .players-table tr:hover { background: #f8fafc; }
+        .player-link { color: #1e3a8a; text-decoration: none; font-weight: bold; }
+        .player-link:hover { text-decoration: underline; }
+        .back-link { margin: 20px 0; }
+        .back-link a { color: #1e3a8a; text-decoration: none; }
+        .back-link a:hover { text-decoration: underline; }
+        .search-bar { margin-bottom: 16px; }
+        .search-input { padding: 8px; width: 250px; font-size: 15px; border: 1px solid #cbd5e1; border-radius: 4px; }
+        .sort-indicator { font-size: 11px; margin-left: 4px; color: #1e3a8a; }
+        .table-container { max-height: 70vh; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin: 20px 0; }
+        .stat-card { background: #f8fafc; padding: 10px; border-radius: 8px; border-left: 4px solid #1e3a8a; text-align: center; }
+        .stat-value { font-size: 18px; font-weight: bold; color: #1e3a8a; }
+        .stat-label { color: #64748b; font-size: 11px; margin-top: 3px; }
+        .games-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 12px; }
+        .games-table th, .games-table td { padding: 6px 4px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+        .games-table th { background: #f1f5f9; font-weight: bold; font-size: 11px; }
+        .games-table tr:hover { background: #f8fafc; }
+        .games-table td:nth-child(1) { text-align: left; }
+        .games-table td:nth-child(2) { text-align: left; }
+        .games-table td:nth-child(3) { text-align: left; }
+        .games-table td:nth-child(4) { text-align: left; }
+        .win { color: #059669; font-weight: bold; }
+        .loss { color: #dc2626; font-weight: bold; }
+        .tie { color: #f59e0b; font-weight: bold; }
+        .game-type { font-size: 10px; color: #64748b; }
+        .score { font-weight: bold; }
+        .highlight { background: #fef3c7; }
+        .fielding { font-size: 10px; color: #64748b; }
+        .starter { font-size: 10px; color: #059669; font-weight: bold; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .easter-egg-wl {
+            background: linear-gradient(135deg, #fef3c7, #fde68a) !important;
+            border-left-color: #f59e0b !important;
+        }
+        
+        .table-container {
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        
+        .games-table {
+            position: relative;
+        }
+        
+        .games-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #f1f5f9;
+        }
+        
+        .games-table thead th {
+            background: #f1f5f9;
+            border-bottom: 2px solid #e2e8f0;
+        }
+    </style>
+    
+    </head><body>
+    <div class='container my-4'>
+    <h1 class='mb-4'>D1 Softball League</h1>
+    <nav class='mb-4'>
+      <a href='../index.html'>Home</a> |
+      <a href='../players/index.html'>Players</a> |
+      <a href='../seasons/index.html'>Seasons</a>
+    </nav>
+    
+        <div class="back-link">
+            <a href="../index.html">Home</a>
+            <span style="margin: 0 10px;">|</span>
+            <a href="index.html">← Back to Seasons List</a>
+        </div>
+
+        <div class="header">
+            <h1>Season F08</h1>
+            <p>Fall 2008</p>
+        </div>
+        <h2>Standings</h2>
+            <div class="table-container">
+                <table class="players-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Team</th>
+                        <th>W</th>
+                        <th>L</th>
+                        <th>PCT</th>
+                        <th>GB</th>
+                        <th>R</th>
+                        <th>RA</th>
+                        <th>R/G</th>
+                        <th>RA/G</th>
+                        <th>BA</th>
+                        <th>OBP</th>
+                        <th>SLG</th>
+                        <th>HR</th>
+                    </tr>
+                </thead>
+                <tbody>
+            
+                    <tr>
+                        <td>1</td>
+                        <td><a href="../teams/444_60.html">Avalanche F08</a></td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>.000</td>
+                        <td>0.0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0.0</td>
+                        <td>0.0</td>
+                        <td>.525</td>
+                        <td>.534</td>
+                        <td>.881</td>
+                        <td>7</td>
+                    </tr>
+                
+                    <tr>
+                        <td>2</td>
+                        <td><a href="../teams/445_60.html">Buzzards F08</a></td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>.000</td>
+                        <td>0.0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0.0</td>
+                        <td>0.0</td>
+                        <td>.571</td>
+                        <td>.583</td>
+                        <td>.810</td>
+                        <td>2</td>
+                    </tr>
+                
+                    <tr>
+                        <td>3</td>
+                        <td><a href="../teams/446_60.html">Canucks F08</a></td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>.000</td>
+                        <td>0.0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0.0</td>
+                        <td>0.0</td>
+                        <td>.548</td>
+                        <td>.566</td>
+                        <td>.822</td>
+                        <td>1</td>
+                    </tr>
+                
+                    <tr>
+                        <td>4</td>
+                        <td><a href="../teams/460_60.html">Vipers F08</a></td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>.000</td>
+                        <td>0.0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0.0</td>
+                        <td>0.0</td>
+                        <td>.643</td>
+                        <td>.662</td>
+                        <td>1.071</td>
+                        <td>1</td>
+                    </tr>
+                
+                    <tr>
+                        <td>5</td>
+                        <td><a href="../teams/480_60.html">Flyers F08</a></td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>.000</td>
+                        <td>0.0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0.0</td>
+                        <td>0.0</td>
+                        <td>.600</td>
+                        <td>.656</td>
+                        <td>1.127</td>
+                        <td>2</td>
+                    </tr>
+                
+                    <tr>
+                        <td>6</td>
+                        <td><a href="../teams/520_60.html">Kings</a></td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>.000</td>
+                        <td>0.0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0.0</td>
+                        <td>0.0</td>
+                        <td>.000</td>
+                        <td>.000</td>
+                        <td>.000</td>
+                        <td>0</td>
+                    </tr>
+                
+                    <tr>
+                        <td>7</td>
+                        <td><a href="../teams/521_60.html">Norsemen</a></td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>.000</td>
+                        <td>0.0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0.0</td>
+                        <td>0.0</td>
+                        <td>.000</td>
+                        <td>.000</td>
+                        <td>.000</td>
+                        <td>0</td>
+                    </tr>
+                
+                    <tr>
+                        <td>8</td>
+                        <td><a href="../teams/522_60.html">Rebels</a></td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>.000</td>
+                        <td>0.0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0.0</td>
+                        <td>0.0</td>
+                        <td>.000</td>
+                        <td>.000</td>
+                        <td>.000</td>
+                        <td>0</td>
+                    </tr>
+                
+                    <tr>
+                        <td>9</td>
+                        <td><a href="../teams/523_60.html">Shorebirds</a></td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>.000</td>
+                        <td>0.0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0.0</td>
+                        <td>0.0</td>
+                        <td>.000</td>
+                        <td>.000</td>
+                        <td>.000</td>
+                        <td>0</td>
+                    </tr>
+                
+                    <tr>
+                        <td>10</td>
+                        <td><a href="../teams/524_60.html">Tortugas</a></td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>.000</td>
+                        <td>0.0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0.0</td>
+                        <td>0.0</td>
+                        <td>.000</td>
+                        <td>.000</td>
+                        <td>.000</td>
+                        <td>0</td>
+                    </tr>
+                
+                    <tr>
+                        <td>11</td>
+                        <td><a href="../teams/525_60.html">Xtreme</a></td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>.000</td>
+                        <td>0.0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0.0</td>
+                        <td>0.0</td>
+                        <td>.000</td>
+                        <td>.000</td>
+                        <td>.000</td>
+                        <td>0</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+            </div>
+            
+    <footer class='mt-5 text-muted'>D1 Softball Stats &copy; 2025</footer>
+    </div></body></html>
+    

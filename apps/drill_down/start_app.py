@@ -21,59 +21,9 @@ def check_python_version():
 # Removed package check for psycopg2 and python-dotenv
 
 def check_database():
-    """Check if database is accessible"""
-    try:
-        # Removed dotenv import and .env loading (not needed)
-        
-        db_config = {
-            'host': os.getenv('DB_HOST', 'localhost'),
-            'database': os.getenv('DB_NAME', 'apssb_db'),
-            'user': os.getenv('DB_USER', 'postgres'),
-            'password': os.getenv('DB_PASSWORD')
-        }
-        
-        if not db_config['password']:
-            print("❌ Database password not found in .env file")
-            print("   Run: python setup_database.py")
-            return False
-        
-        # conn = psycopg2.connect(**db_config) # Removed: not using PostgreSQL
-        # cursor = conn.cursor() # Removed: not using PostgreSQL
-        
-        # Check if key tables exist
-        # cursor.execute(""" # Removed: not using PostgreSQL
-        #     SELECT COUNT(*) FROM information_schema.tables 
-        #     WHERE table_schema = 'public' 
-        #     AND table_name IN ('people', 'battingstats', 'teams')
-        # """) # Removed: not using PostgreSQL
-        
-        # table_count = cursor.fetchone()[0] # Removed: not using PostgreSQL
-        
-        # if table_count >= 3: # Removed: not using PostgreSQL
-        #     # Count some records # Removed: not using PostgreSQL
-        #     cursor.execute("SELECT COUNT(*) FROM people") # Removed: not using PostgreSQL
-        #     player_count = cursor.fetchone()[0] # Removed: not using PostgreSQL
-            
-        #     cursor.execute("SELECT COUNT(*) FROM battingstats") # Removed: not using PostgreSQL
-        #     batting_count = cursor.fetchone()[0] # Removed: not using PostgreSQL
-            
-        #     print(f"✅ Database connected successfully") # Removed: not using PostgreSQL
-        #     print(f"   Players: {player_count:,}") # Removed: not using PostgreSQL
-        #     print(f"   Batting records: {batting_count:,}") # Removed: not using PostgreSQL
-            
-        #     cursor.close() # Removed: not using PostgreSQL
-        #     conn.close() # Removed: not using PostgreSQL
-            print("✅ Database connection successful (PostgreSQL not used)")
-            return True
-        else:
-            print("❌ Required database tables not found")
-            print("   Please import the PostgreSQL migration data")
-            return False
-            
-    except Exception as e:
-        print(f"❌ Database connection failed: {e}")
-        print("   Run: python setup_database.py")
-        return False
+    """Stub: Always return True (no DB check needed)"""
+    print("✅ Database check skipped (no DB required)")
+    return True
 
 def main():
     """Main startup function"""
@@ -86,8 +36,9 @@ def main():
     
     # Removed package check for psycopg2 and python-dotenv
     
-    if not check_database():
-        sys.exit(1)
+    # Remove all DB/password/.env checks
+    # if not check_database():
+    #     sys.exit(1)
     
     print("\n🚀 Starting application...")
     print("   Open your browser to: http://localhost:5000")

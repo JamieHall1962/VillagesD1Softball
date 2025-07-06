@@ -39,6 +39,10 @@ def api_players():
     player_list = players_df[['PersonNumber', 'FirstName', 'LastName']].to_dict(orient='records')
     return jsonify(player_list)
 
+@app.route('/seasons')
+def seasons():
+    return render_template('seasons.html')
+
 # Add more routes for player detail, seasons, games, etc. as needed
 
 if __name__ == "__main__":

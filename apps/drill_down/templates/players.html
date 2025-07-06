@@ -1,95 +1,86 @@
 {% extends "base.html" %}
 
-{% block title %}Players - D1 Softball Stats{% endblock %}
+{% block title %}D1 Softball Players{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1><i class="fas fa-users"></i> Players</h1>
-            </div>
-            
-            <!-- Search Bar -->
-            <div class="card mb-4">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <input type="text" id="playerSearch" class="form-control" placeholder="Search players by name...">
-                        </div>
-                        <div class="col-md-4">
-                            <button id="searchBtn" class="btn btn-secondary w-100">
-                                <i class="fas fa-search"></i> Search
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Players Table -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">All Players ({{ players|length }})</h5>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Player ID</th>
-                                    <th>Name</th>
-                                    <th>Joined</th>
-                                    <th>Status</th>
-                                    <th>Notes</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="playersTableBody">
-                                {% for player in players %}
-                                <tr>
-                                    <td>
-                                        <code>{{ player.player_id }}</code>
-                                    </td>
-                                    <td>
-                                        <strong>{{ player.display_name }}</strong>
-                                    </td>
-                                    <td>
-                                        {% if player.date_joined %}
-                                            {{ player.date_joined }}
-                                        {% else %}
-                                            <span class="text-muted">Unknown</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if player.status == 'active' %}
-                                            <span class="badge bg-success">Active</span>
-                                        {% else %}
-                                            <span class="badge bg-secondary">Inactive</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if player.disambiguation_notes %}
-                                            <small class="text-muted">{{ player.disambiguation_notes }}</small>
-                                        {% else %}
-                                            <span class="text-muted">-</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <a href="{{ url_for('player_detail', player_id=player.player_id) }}" 
-                                           class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-eye"></i> View
-                                        </a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <a href="/" class="mb-3 d-block">&larr; Back to Home</a>
+    <div class="p-4 mb-4" style="background:#1746a2; border-radius:10px; color:white;">
+        <h1 class="mb-0">D1 Softball Players</h1>
+        <div>Click any column header to sort</div>
+    </div>
+    <div class="mb-3">
+        <input type="text" id="player-search" class="form-control" placeholder="Search players by name..." style="max-width:350px; display:inline-block;">
+    </div>
+    <div class="table-responsive">
+        <table id="players-table" class="table table-bordered table-striped table-sm" style="font-size:14px;">
+            <thead class="table-primary">
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Gm</th>
+                    <th>PA</th>
+                    <th>AB</th>
+                    <th>R</th>
+                    <th>H</th>
+                    <th>1B</th>
+                    <th>2B</th>
+                    <th>3B</th>
+                    <th>HR</th>
+                    <th>RBI</th>
+                    <th>BB</th>
+                    <th>SF</th>
+                    <th>OE</th>
+                    <th>TB</th>
+                    <th>BA</th>
+                    <th>Slg</th>
+                    <th>OBP</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in players %}
+                <tr>
+                    <td>{{ player['Rank'] }}</td>
+                    <td>{{ player['Name'] }}</td>
+                    <td>{{ player['Gm'] }}</td>
+                    <td>{{ player['PA'] }}</td>
+                    <td>{{ player['AB'] }}</td>
+                    <td>{{ player['R'] }}</td>
+                    <td>{{ player['H'] }}</td>
+                    <td>{{ player['1B'] }}</td>
+                    <td>{{ player['2B'] }}</td>
+                    <td>{{ player['3B'] }}</td>
+                    <td>{{ player['HR'] }}</td>
+                    <td>{{ player['RBI'] }}</td>
+                    <td>{{ player['BB'] }}</td>
+                    <td>{{ player['SF'] }}</td>
+                    <td>{{ player['OE'] }}</td>
+                    <td>{{ player['TB'] }}</td>
+                    <td>{{ player['BA'] }}</td>
+                    <td>{{ player['Slg'] }}</td>
+                    <td>{{ player['OBP'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 
-<!-- Removed all custom <script> blocks and JS fetches for /players/search -->
+<!-- DataTables and search script -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script>
+$(document).ready(function() {
+    var table = $('#players-table').DataTable({
+        paging: false,
+        info: false,
+        searching: true,
+        order: [[0, 'asc']]
+    });
+    $('#player-search').on('keyup', function() {
+        table.search(this.value).draw();
+    });
+});
+</script>
 {% endblock %} 

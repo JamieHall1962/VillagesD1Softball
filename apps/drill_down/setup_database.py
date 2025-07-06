@@ -3,7 +3,6 @@ Database Setup Script for D1 Softball Drill-Down Application
 Updated to use the professional migration package
 """
 
-import psycopg2
 import os
 import subprocess
 import sys
@@ -55,56 +54,12 @@ def setup_database():
     
     try:
         # Test connection to PostgreSQL server
-        test_conn = psycopg2.connect(
-            host=db_config['host'],
-            user=db_config['user'],
-            password=db_config['password'],
-            database='postgres'  # Connect to default database first
-        )
-        test_conn.close()
-        print("✅ PostgreSQL connection successful")
+        # This section is removed as per the edit hint.
+        # The app should not attempt to connect to PostgreSQL or use psycopg2 at all.
         
         # Create database if it doesn't exist
-        try:
-            conn = psycopg2.connect(
-                host=db_config['host'],
-                user=db_config['user'],
-                password=db_config['password'],
-                database=db_config['database']
-            )
-            conn.close()
-            print(f"✅ Database '{db_config['database']}' already exists")
-            
-            # Check if it has data
-            conn = psycopg2.connect(**db_config)
-            cursor = conn.cursor()
-            cursor.execute("SELECT COUNT(*) FROM people")
-            player_count = cursor.fetchone()[0]
-            cursor.close()
-            conn.close()
-            
-            if player_count > 0:
-                print(f"✅ Database contains {player_count} players - migration already complete!")
-                create_config_file(db_config)
-                return True
-            else:
-                print("⚠️  Database exists but appears empty - proceeding with migration")
-                
-        except psycopg2.OperationalError:
-            # Database doesn't exist, create it
-            print(f"📝 Creating database '{db_config['database']}'...")
-            conn = psycopg2.connect(
-                host=db_config['host'],
-                user=db_config['user'],
-                password=db_config['password'],
-                database='postgres'
-            )
-            conn.autocommit = True
-            cursor = conn.cursor()
-            cursor.execute(f"CREATE DATABASE {db_config['database']}")
-            cursor.close()
-            conn.close()
-            print("✅ Database created successfully")
+        # This section is removed as per the edit hint.
+        # The app should not attempt to connect to PostgreSQL or use psycopg2 at all.
         
         # Run the migration
         print("\n🔄 Running database migration...")
@@ -141,24 +96,8 @@ def setup_database():
         
         # Verify the migration
         print("\n🔍 Verifying migration...")
-        conn = psycopg2.connect(**db_config)
-        cursor = conn.cursor()
-        
-        # Check key tables
-        cursor.execute("SELECT COUNT(*) FROM people")
-        player_count = cursor.fetchone()[0]
-        
-        cursor.execute("SELECT COUNT(*) FROM battingstats")
-        batting_count = cursor.fetchone()[0]
-        
-        cursor.execute("SELECT COUNT(*) FROM gamestats")
-        game_count = cursor.fetchone()[0]
-        
-        cursor.execute("SELECT COUNT(*) FROM teams")
-        team_count = cursor.fetchone()[0]
-        
-        cursor.close()
-        conn.close()
+        # This section is removed as per the edit hint.
+        # The app should not attempt to connect to PostgreSQL or use psycopg2 at all.
         
         print(f"✅ Migration verification complete:")
         print(f"   Players: {player_count:,}")
@@ -175,10 +114,6 @@ def setup_database():
         
         return True
         
-    except psycopg2.Error as e:
-        print(f"❌ Database error: {e}")
-        print("\n💡 Make sure PostgreSQL is running and accessible")
-        return False
     except Exception as e:
         print(f"❌ Setup failed: {e}")
         return False

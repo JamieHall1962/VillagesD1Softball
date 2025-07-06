@@ -1,11 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>D1 Softball Statistics</title>
-</head>
-<body>
-    <h1>It works! Flask is serving this template.</h1>
-    <p>If you see this, you are running the real Flask app, not a static site.</p>
-</body>
-</html> 
+{% extends "base.html" %}
+
+{% block title %}D1 Softball Statistics{% endblock %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <h1 class="display-4 text-primary">
+        <i class="fas fa-baseball-ball me-3"></i>
+        D1 Softball Statistics
+    </h1>
+    <p class="lead text-muted">Drill-down navigation through 18 years of game data</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card section-card mb-4">
+            <div class="section-header">
+                <h2><i class="fas fa-users me-2"></i>Players</h2>
+                <p class="mb-0">Browse all players with career statistics</p>
+            </div>
+            <div class="section-content text-center">
+                <a href="/players" class="btn btn-lg btn-primary mt-2">
+                    <i class="fas fa-users"></i> View Players
+                </a>
+            </div>
+        </div>
+        <div class="card section-card">
+            <div class="section-header">
+                <h2><i class="fas fa-calendar-alt me-2"></i>Seasons</h2>
+                <p class="mb-0">Browse seasons and team standings</p>
+            </div>
+            <div class="section-content text-center">
+                <a href="/seasons" class="btn btn-lg btn-secondary mt-2">
+                    <i class="fas fa-calendar-alt"></i> View Seasons
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

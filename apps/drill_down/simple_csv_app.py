@@ -650,7 +650,7 @@ def player_games(player_id):
             opponent = game_info['Opponent']
             team_score = safe_get(game_info, 'TeamScore')
             opponent_score = safe_get(game_info, 'OpponentScore')
-            is_home = game_info['HomeAway'] == 'H'
+            is_home = safe_get(game_info, 'HomeAway', '') == 'H' if game_info else False
             
             if team_score > opponent_score:
                 result = 'W'

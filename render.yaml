@@ -7,4 +7,4 @@ services:
     startCommand: cd apps/drill_down && python simple_csv_app.py
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0 
+        value: 3.11.0  # Force Python 3.11 to avoid pandas build errors 

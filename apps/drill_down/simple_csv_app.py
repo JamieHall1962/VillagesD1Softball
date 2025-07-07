@@ -47,36 +47,39 @@ def safe_float(value, default=0.0):
     except (ValueError, TypeError):
         return default
 
+def safe_get(row, key, default=0):
+    return safe_int(row[key]) if key in row.keys() and row[key] not in (None, '', 'NULL') else default
+
 def calculate_player_stats(player_number, batting):
     """Calculate comprehensive stats for a player including U2 correction for games played"""
     player_batting = [row for row in batting if safe_int(row['PlayerNumber']) == player_number]
     if not player_batting:
         return None
 
-    total_pa = sum(safe_int(row['PA']) for row in player_batting)
-    total_r = sum(safe_int(row['R']) for row in player_batting)
-    total_h = sum(safe_int(row['H']) for row in player_batting)
-    total_2b = sum(safe_int(row['D']) for row in player_batting)
-    total_3b = sum(safe_int(row['T']) for row in player_batting)
-    total_hr = sum(safe_int(row['HR']) for row in player_batting)
-    total_bb = sum(safe_int(row['BB']) for row in player_batting)
-    total_sf = sum(safe_int(row['SF']) for row in player_batting)
-    total_oe = sum(safe_int(row['OE']) for row in player_batting)
-    total_rbi = sum(safe_int(row['RBI']) for row in player_batting)
-    total_so = sum(safe_int(row['SO']) for row in player_batting)
-    total_tb = sum(safe_int(row['TB']) for row in player_batting)
+    total_pa = sum(safe_get(row, 'PA') for row in player_batting)
+    total_r = sum(safe_get(row, 'R') for row in player_batting)
+    total_h = sum(safe_get(row, 'H') for row in player_batting)
+    total_2b = sum(safe_get(row, 'D') for row in player_batting)
+    total_3b = sum(safe_get(row, 'T') for row in player_batting)
+    total_hr = sum(safe_get(row, 'HR') for row in player_batting)
+    total_bb = sum(safe_get(row, 'BB') for row in player_batting)
+    total_sf = sum(safe_get(row, 'SF') for row in player_batting)
+    total_oe = sum(safe_get(row, 'OE') for row in player_batting)
+    total_rbi = sum(safe_get(row, 'RBI') for row in player_batting)
+    total_so = sum(safe_get(row, 'SO') for row in player_batting)
+    total_tb = sum(safe_get(row, 'TB') for row in player_batting)
     if total_tb == 0:
         total_tb = total_h + total_2b + 2*total_3b + 3*total_hr
-    total_hp = sum(safe_int(row['HP']) for row in player_batting)
-    total_sh = sum(safe_int(row['SH']) for row in player_batting)
+    total_hp = sum(safe_get(row, 'HP') for row in player_batting)
+    total_sh = sum(safe_get(row, 'SH') for row in player_batting)
     total_1b = total_h - total_2b - total_3b - total_hr
 
     # Calculate at-bats (PA - BB - HP - SH - SF)
     total_ab = total_pa - total_bb - total_hp - total_sh - total_sf
 
     # Games played with U2 correction
-    unique_games = len(set((safe_int(row['TeamNumber']), safe_int(row['GameNumber'])) for row in player_batting))
-    total_u2 = sum(safe_int(row['U2']) for row in player_batting)
+    unique_games = len(set((safe_get(row, 'TeamNumber'), safe_get(row, 'GameNumber')) for row in player_batting))
+    total_u2 = sum(safe_get(row, 'U2') for row in player_batting)
     games_played = unique_games + total_u2
 
     # Averages
@@ -218,11 +221,11 @@ def player_detail(player_id):
                 break
         
         # Calculate team stats
-        team_pa = sum(safe_int(row['PA']) for row in team_batting)
-        team_h = sum(safe_int(row['H']) for row in team_batting)
-        team_ab = sum(safe_int(row['PA']) - safe_int(row['BB']) - safe_int(row['HP']) - safe_int(row['SH']) - safe_int(row['SF']) for row in team_batting)
-        team_bb = sum(safe_int(row['BB']) for row in team_batting)
-        team_hp = sum(safe_int(row['HP']) for row in team_batting)
+        team_pa = sum(safe_get(row, 'PA') for row in team_batting)
+        team_h = sum(safe_get(row, 'H') for row in team_batting)
+        team_ab = sum(safe_get(row, 'PA') - safe_get(row, 'BB') - safe_get(row, 'HP') - safe_get(row, 'SH') - safe_get(row, 'SF') for row in team_batting)
+        team_bb = sum(safe_get(row, 'BB') for row in team_batting)
+        team_hp = sum(safe_get(row, 'HP') for row in team_batting)
         
         team_avg = team_h / team_ab if team_ab > 0 else 0
         team_obp = (team_h + team_bb + team_hp) / team_pa if team_pa > 0 else 0
@@ -357,8 +360,8 @@ def season_detail(filter_number):
         runs_against = 0
         
         for game in team_games:
-            team_score = safe_int(game['TeamScore'])
-            opponent_score = safe_int(game['OpponentScore'])
+            team_score = safe_get(game, 'TeamScore')
+            opponent_score = safe_get(game, 'OpponentScore')
             
             runs_for += team_score
             runs_against += opponent_score
@@ -371,15 +374,15 @@ def season_detail(filter_number):
         # Calculate team batting stats
         team_batting = db.execute('SELECT * FROM BattingStats WHERE TeamNumber = ?', (team_num,)).fetchall()
         
-        total_pa = sum(safe_int(row['PA']) for row in team_batting)
-        total_h = sum(safe_int(row['H']) for row in team_batting)
-        total_bb = sum(safe_int(row['BB']) for row in team_batting)
-        total_hp = sum(safe_int(row['HP']) for row in team_batting)
-        total_ab = sum(safe_int(row['PA']) - safe_int(row['BB']) - safe_int(row['HP']) - safe_int(row['SH']) - safe_int(row['SF']) for row in team_batting)
-        total_2b = sum(safe_int(row['D']) for row in team_batting)
-        total_3b = sum(safe_int(row['T']) for row in team_batting)
-        total_hr = sum(safe_int(row['HR']) for row in team_batting)
-        total_tb = sum(safe_int(row['TB']) for row in team_batting)
+        total_pa = sum(safe_get(row, 'PA') for row in team_batting)
+        total_h = sum(safe_get(row, 'H') for row in team_batting)
+        total_bb = sum(safe_get(row, 'BB') for row in team_batting)
+        total_hp = sum(safe_get(row, 'HP') for row in team_batting)
+        total_ab = sum(safe_get(row, 'PA') - safe_get(row, 'BB') - safe_get(row, 'HP') - safe_get(row, 'SH') - safe_get(row, 'SF') for row in team_batting)
+        total_2b = sum(safe_get(row, 'D') for row in team_batting)
+        total_3b = sum(safe_get(row, 'T') for row in team_batting)
+        total_hr = sum(safe_get(row, 'HR') for row in team_batting)
+        total_tb = sum(safe_get(row, 'TB') for row in team_batting)
         if total_tb == 0:
             total_tb = total_h + total_2b + 2*total_3b + 3*total_hr
         
@@ -480,21 +483,21 @@ def team_detail(team_number, filter_number):
     
     for row in team_batting:
         player_num = safe_int(row['PlayerNumber'])
-        player_stats[player_num]['pa'] += safe_int(row['PA'])
-        player_stats[player_num]['r'] += safe_int(row['R'])
-        player_stats[player_num]['h'] += safe_int(row['H'])
-        player_stats[player_num]['2b'] += safe_int(row['D'])
-        player_stats[player_num]['3b'] += safe_int(row['T'])
-        player_stats[player_num]['hr'] += safe_int(row['HR'])
-        player_stats[player_num]['rbi'] += safe_int(row['RBI'])
-        player_stats[player_num]['bb'] += safe_int(row['BB'])
-        player_stats[player_num]['sf'] += safe_int(row['SF'])
-        player_stats[player_num]['oe'] += safe_int(row['OE'])
-        player_stats[player_num]['so'] += safe_int(row['SO'])
-        player_stats[player_num]['tb'] += safe_int(row['TB'])
+        player_stats[player_num]['pa'] += safe_get(row, 'PA')
+        player_stats[player_num]['r'] += safe_get(row, 'R')
+        player_stats[player_num]['h'] += safe_get(row, 'H')
+        player_stats[player_num]['2b'] += safe_get(row, 'D')
+        player_stats[player_num]['3b'] += safe_get(row, 'T')
+        player_stats[player_num]['hr'] += safe_get(row, 'HR')
+        player_stats[player_num]['rbi'] += safe_get(row, 'RBI')
+        player_stats[player_num]['bb'] += safe_get(row, 'BB')
+        player_stats[player_num]['sf'] += safe_get(row, 'SF')
+        player_stats[player_num]['oe'] += safe_get(row, 'OE')
+        player_stats[player_num]['so'] += safe_get(row, 'SO')
+        player_stats[player_num]['tb'] += safe_get(row, 'TB')
         
         # Track unique games
-        game_key = (safe_int(row['TeamNumber']), safe_int(row['GameNumber']))
+        game_key = (safe_get(row, 'TeamNumber'), safe_get(row, 'GameNumber'))
         player_stats[player_num]['games'].add(game_key)
     
     # Calculate final stats for each player
@@ -577,8 +580,8 @@ def team_games(team_number, filter_number):
     for game in team_games:
         game_date = game['GameDate']
         opponent = game['Opponent']
-        team_score = safe_int(game['TeamScore'])
-        opponent_score = safe_int(game['OpponentScore'])
+        team_score = safe_get(game, 'TeamScore')
+        opponent_score = safe_get(game, 'OpponentScore')
         is_home = game['HomeAway'] == 'H'
         
         if team_score > opponent_score:
@@ -646,8 +649,8 @@ def player_games(player_id):
         if game_info:
             game_date = game_info['GameDate']
             opponent = game_info['Opponent']
-            team_score = safe_int(game_info['TeamScore'])
-            opponent_score = safe_int(game_info['OpponentScore'])
+            team_score = safe_get(game_info, 'TeamScore')
+            opponent_score = safe_get(game_info, 'OpponentScore')
             is_home = game_info['HomeAway'] == 'H'
             
             if team_score > opponent_score:
@@ -665,13 +668,13 @@ def player_games(player_id):
             result = ''
         
         # Calculate game stats
-        pa = safe_int(row['PA'])
-        ab = pa - safe_int(row['BB']) - 0 - 0 - safe_int(row['SF'])  # No HP in softball
-        h = safe_int(row['H'])
-        r = safe_int(row['R'])
-        rbi = safe_int(row['RBI'])
-        bb = safe_int(row['BB'])
-        so = safe_int(row['SO'])
+        pa = safe_get(row, 'PA')
+        ab = pa - safe_get(row, 'BB') - 0 - 0 - safe_get(row, 'SF')  # No HP in softball
+        h = safe_get(row, 'H')
+        r = safe_get(row, 'R')
+        rbi = safe_get(row, 'RBI')
+        bb = safe_get(row, 'BB')
+        so = safe_get(row, 'SO')
         
         avg = h / ab if ab > 0 else 0
         obp = (h + bb) / pa if pa > 0 else 0

@@ -670,13 +670,20 @@ def player_games(player_id):
         pa = safe_get(row, 'PA')
         ab = pa - safe_get(row, 'BB') - 0 - 0 - safe_get(row, 'SF')  # No HP in softball
         h = safe_get(row, 'H')
+        d = safe_get(row, 'D')  # 2B
+        t = safe_get(row, 'T')  # 3B
+        hr = safe_get(row, 'HR')
         r = safe_get(row, 'R')
         rbi = safe_get(row, 'RBI')
         bb = safe_get(row, 'BB')
+        sf = safe_get(row, 'SF')
+        oe = safe_get(row, 'OE')
+        tb = safe_get(row, 'TB')
         so = safe_get(row, 'SO')
-        
+        singles = h - d - t - hr
         avg = h / ab if ab > 0 else 0
         obp = (h + bb) / pa if pa > 0 else 0
+        slg = tb / ab if ab > 0 else 0
         
         games_list.append({
             'date': game_date,
@@ -686,12 +693,20 @@ def player_games(player_id):
             'pa': pa,
             'ab': ab,
             'h': h,
+            '1b': singles,
+            '2b': d,
+            '3b': t,
+            'hr': hr,
             'r': r,
             'rbi': rbi,
             'bb': bb,
+            'sf': sf,
+            'oe': oe,
+            'tb': tb,
             'so': so,
             'avg': avg,
             'obp': obp,
+            'slg': slg,
             'team_score': team_score,
             'opponent_score': opponent_score,
             'is_home': is_home

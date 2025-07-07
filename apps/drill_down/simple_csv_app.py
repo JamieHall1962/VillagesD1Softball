@@ -359,8 +359,8 @@ def season_detail(filter_number):
         runs_against = 0
         
         for game in team_games:
-            team_score = safe_get(game, 'TeamScore')
-            opponent_score = safe_get(game, 'OpponentScore')
+            team_score = safe_get(game, 'Runs')
+            opponent_score = safe_get(game, 'OppRuns')
             
             runs_for += team_score
             runs_against += opponent_score
@@ -579,8 +579,8 @@ def team_games(team_number, filter_number):
     for game in team_games:
         game_date = game['GameDate']
         opponent = game['Opponent']
-        team_score = safe_get(game, 'TeamScore')
-        opponent_score = safe_get(game, 'OpponentScore')
+        team_score = safe_get(game, 'Runs')
+        opponent_score = safe_get(game, 'OppRuns')
         is_home = game['HomeAway'] == 'H'
         
         if team_score > opponent_score:
@@ -648,8 +648,8 @@ def player_games(player_id):
         if game_info:
             game_date = game_info['GameDate']
             opponent = game_info['Opponent']
-            team_score = safe_get(game_info, 'TeamScore')
-            opponent_score = safe_get(game_info, 'OpponentScore')
+            team_score = safe_get(game_info, 'Runs')
+            opponent_score = safe_get(game_info, 'OppRuns')
             is_home = safe_get(game_info, 'HomeAway', '') == 'H' if game_info else False
             
             if team_score > opponent_score:

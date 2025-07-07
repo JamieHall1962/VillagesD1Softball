@@ -79,7 +79,7 @@
                     <td>{{ team.runs_against }}</td>
                     <td class="{% if team.run_diff > 0 %}positive{% elif team.run_diff < 0 %}negative{% endif %}">{{ team.run_diff }}</td>
                     <td>{{ "%.1f"|format(team.rpg) }}</td>
-                    <td>{{ "%.1f"|format(team.rpg_allowed) }}</td>
+                    <td>{{ "%.1f"|format(team.rpg_against) }}</td>
                     <td>{{ team.ba | nostripleadingzero }}</td>
                     <td>{{ team.obp | nostripleadingzero }}</td>
                     <td>{{ team.slg | nostripleadingzero }}</td>
@@ -128,7 +128,7 @@
                     <td>{{ team.runs_against }}</td>
                     <td class="{% if team.run_diff > 0 %}positive{% elif team.run_diff < 0 %}negative{% endif %}">{{ team.run_diff }}</td>
                     <td>{{ "%.1f"|format(team.rpg) }}</td>
-                    <td>{{ "%.1f"|format(team.rpg_allowed) }}</td>
+                    <td>{{ "%.1f"|format(team.rpg_against) }}</td>
                     <td>{{ team.ba | nostripleadingzero }}</td>
                     <td>{{ team.obp | nostripleadingzero }}</td>
                     <td>{{ team.slg | nostripleadingzero }}</td>

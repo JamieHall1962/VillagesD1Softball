@@ -175,7 +175,6 @@ def player_detail(player_id):
     
     batting = db.execute('SELECT * FROM BattingStats WHERE PlayerNumber = ?', (player_id,)).fetchall()
     pitching = db.execute('SELECT * FROM PitchingStats WHERE PlayerNumber = ?', (player_id,)).fetchall()
-    games = db.execute('SELECT * FROM GameStats WHERE PlayerNumber = ?', (player_id,)).fetchall()
     teams = db.execute('SELECT * FROM Teams').fetchall()
     filters = db.execute('SELECT * FROM Filters').fetchall()
     

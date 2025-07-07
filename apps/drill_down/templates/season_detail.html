@@ -74,7 +74,7 @@
                     <td>{{ team.wins }}</td>
                     <td>{{ team.losses }}</td>
                     <td>{{ team.win_pct | nostripleadingzero }}</td>
-                    <td>{{ "%.1f"|format(team.games_back) }}</td>
+                    <td>{{ "%.1f"|format(team.gb) }}</td>
                     <td>{{ team.runs_for }}</td>
                     <td>{{ team.runs_against }}</td>
                     <td class="{% if team.run_diff > 0 %}positive{% elif team.run_diff < 0 %}negative{% endif %}">{{ team.run_diff }}</td>
@@ -123,7 +123,7 @@
                     <td>{{ team.wins }}</td>
                     <td>{{ team.losses }}</td>
                     <td>{{ team.win_pct | nostripleadingzero }}</td>
-                    <td>{{ "%.1f"|format(team.games_back) }}</td>
+                    <td>{{ "%.1f"|format(team.gb) }}</td>
                     <td>{{ team.runs_for }}</td>
                     <td>{{ team.runs_against }}</td>
                     <td class="{% if team.run_diff > 0 %}positive{% elif team.run_diff < 0 %}negative{% endif %}">{{ team.run_diff }}</td>

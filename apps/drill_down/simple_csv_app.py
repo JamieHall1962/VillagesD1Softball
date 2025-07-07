@@ -707,13 +707,19 @@ def player_games(player_id):
     total_games = wins + losses + ties
     win_pct = wins / total_games if total_games > 0 else 0
     
+    # Add a dummy totals dict to the context
+    # Example:
+    # totals = {'total_games': len(games_list), 'total_pa': 0, 'total_ab': 0, 'total_r': 0, 'total_h': 0, 'total_hr': 0, 'total_rbi': 0, 'total_bb': 0, 'total_tb': 0, 'career_avg': 0, 'career_obp': 0, 'career_slg': 0, 'wl_record': ''}
+    # return render_template(..., totals=totals)
+    totals = {'total_games': len(games_list), 'total_pa': 0, 'total_ab': 0, 'total_r': 0, 'total_h': 0, 'total_hr': 0, 'total_rbi': 0, 'total_bb': 0, 'total_tb': 0, 'career_avg': 0, 'career_obp': 0, 'career_slg': 0, 'wl_record': ''}
     return render_template('player_games.html', 
                          player=player, 
                          games=games_list, 
                          wins=wins, 
                          losses=losses, 
                          ties=ties, 
-                         win_pct=win_pct)
+                         win_pct=win_pct,
+                         totals=totals)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False) 

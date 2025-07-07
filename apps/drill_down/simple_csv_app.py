@@ -3,13 +3,27 @@ Simple CSV-based D1 Softball Stats App
 Reads directly from CSV files for easy development
 """
 
-from flask import Flask, render_template, request, jsonify
-import csv
+import sqlite3
+from flask import Flask, render_template, request, jsonify, g
 from pathlib import Path
 import os
 from collections import defaultdict
 
 app = Flask(__name__)
+
+DB_PATH = Path(__file__).parent / 'd1softball.sqlite3'
+
+def get_db():
+    if 'db' not in g:
+        g.db = sqlite3.connect(DB_PATH)
+        g.db.row_factory = sqlite3.Row
+    return g.db
+
+@app.teardown_appcontext
+def close_db(error):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
 
 @app.template_filter('nostripleadingzero')
 def nostripleadingzero(value):
@@ -18,30 +32,6 @@ def nostripleadingzero(value):
         return ('%.3f' % value).lstrip('0')
     except Exception:
         return value
-
-# Data paths
-DATA_DIR = Path(__file__).parent / 'data'
-SITE_DIR = Path(__file__).parent / 'site'
-
-def load_csv_data(filename):
-    """Load CSV data and return as list of dictionaries"""
-    filepath = DATA_DIR / filename
-    data = []
-    with open(filepath, 'r', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            data.append(row)
-    return data
-
-# Load CSV data
-print("Loading CSV data...")
-players_data = load_csv_data('People.csv')
-batting_data = load_csv_data('BattingStats.csv')
-pitching_data = load_csv_data('PitchingStats.csv')
-games_data = load_csv_data('GameStats.csv')
-teams_data = load_csv_data('Teams.csv')
-filters_data = load_csv_data('Filters.csv')
-print("Data loaded successfully!")
 
 def safe_int(value, default=0):
     """Safely convert value to int"""
@@ -57,36 +47,36 @@ def safe_float(value, default=0.0):
     except (ValueError, TypeError):
         return default
 
-def calculate_player_stats(player_number, batting_data):
+def calculate_player_stats(player_number, batting):
     """Calculate comprehensive stats for a player including U2 correction for games played"""
-    player_batting = [row for row in batting_data if safe_int(row.get('PlayerNumber')) == player_number]
+    player_batting = [row for row in batting if safe_int(row['PlayerNumber']) == player_number]
     if not player_batting:
         return None
 
-    total_pa = sum(safe_int(row.get('PA', 0)) for row in player_batting)
-    total_r = sum(safe_int(row.get('R', 0)) for row in player_batting)
-    total_h = sum(safe_int(row.get('H', 0)) for row in player_batting)
-    total_2b = sum(safe_int(row.get('D', 0)) for row in player_batting)
-    total_3b = sum(safe_int(row.get('T', 0)) for row in player_batting)
-    total_hr = sum(safe_int(row.get('HR', 0)) for row in player_batting)
-    total_bb = sum(safe_int(row.get('BB', 0)) for row in player_batting)
-    total_sf = sum(safe_int(row.get('SF', 0)) for row in player_batting)
-    total_oe = sum(safe_int(row.get('OE', 0)) for row in player_batting)
-    total_rbi = sum(safe_int(row.get('RBI', 0)) for row in player_batting)
-    total_so = sum(safe_int(row.get('SO', 0)) for row in player_batting)
-    total_tb = sum(safe_int(row.get('TB', 0)) for row in player_batting)
+    total_pa = sum(safe_int(row['PA']) for row in player_batting)
+    total_r = sum(safe_int(row['R']) for row in player_batting)
+    total_h = sum(safe_int(row['H']) for row in player_batting)
+    total_2b = sum(safe_int(row['D']) for row in player_batting)
+    total_3b = sum(safe_int(row['T']) for row in player_batting)
+    total_hr = sum(safe_int(row['HR']) for row in player_batting)
+    total_bb = sum(safe_int(row['BB']) for row in player_batting)
+    total_sf = sum(safe_int(row['SF']) for row in player_batting)
+    total_oe = sum(safe_int(row['OE']) for row in player_batting)
+    total_rbi = sum(safe_int(row['RBI']) for row in player_batting)
+    total_so = sum(safe_int(row['SO']) for row in player_batting)
+    total_tb = sum(safe_int(row['TB']) for row in player_batting)
     if total_tb == 0:
         total_tb = total_h + total_2b + 2*total_3b + 3*total_hr
-    total_hp = sum(safe_int(row.get('HP', 0)) for row in player_batting)
-    total_sh = sum(safe_int(row.get('SH', 0)) for row in player_batting)
+    total_hp = sum(safe_int(row['HP']) for row in player_batting)
+    total_sh = sum(safe_int(row['SH']) for row in player_batting)
     total_1b = total_h - total_2b - total_3b - total_hr
 
     # Calculate at-bats (PA - BB - HP - SH - SF)
     total_ab = total_pa - total_bb - total_hp - total_sh - total_sf
 
     # Games played with U2 correction
-    unique_games = len(set((safe_int(row.get('TeamNumber')), safe_int(row.get('GameNumber'))) for row in player_batting))
-    total_u2 = sum(safe_int(row.get('U2', 0)) for row in player_batting)
+    unique_games = len(set((safe_int(row['TeamNumber']), safe_int(row['GameNumber'])) for row in player_batting))
+    total_u2 = sum(safe_int(row['U2']) for row in player_batting)
     games_played = unique_games + total_u2
 
     # Averages
@@ -125,20 +115,23 @@ def index():
 @app.route('/players')
 def players():
     """Players list page"""
+    db = get_db()
+    people = db.execute('SELECT * FROM People').fetchall()
+    batting = db.execute('SELECT * FROM BattingStats').fetchall()
     players_data_list = []
-    for player in players_data:
-        if safe_int(player.get('PersonNumber')) == -7 or not player.get('PersonNumber'):
+    for player in people:
+        if safe_int(player['PersonNumber']) == -7 or not player['PersonNumber']:
             continue
         
         # Skip players whose names end with "Subs" (team substitutes)
-        player_name = f"{player.get('FirstName', '')} {player.get('LastName', '')}"
+        player_name = f"{player['FirstName']} {player['LastName']}"
         if player_name.endswith('Subs'):
             continue
             
-        stats = calculate_player_stats(safe_int(player.get('PersonNumber')), batting_data)
+        stats = calculate_player_stats(safe_int(player['PersonNumber']), batting)
         if stats:
             players_data_list.append({
-                'id': safe_int(player.get('PersonNumber')),
+                'id': safe_int(player['PersonNumber']),
                 'name': player_name,
                 'games_played': stats['games_played'],
                 'pa': stats['pa'],
@@ -166,34 +159,35 @@ def player_detail(player_id):
     """Individual player detail page"""
     
     # Find the player
-    player = None
-    for p in players_data:
-        if safe_int(p.get('PersonNumber')) == player_id:
-            player = p
-            break
+    db = get_db()
+    player = db.execute('SELECT * FROM People WHERE PersonNumber = ?', (player_id,)).fetchone()
     
     if not player:
         return "Player not found", 404
     
     # Skip players whose names end with "Subs" (team substitutes)
-    player_name = f"{player.get('FirstName', '')} {player.get('LastName', '')}"
+    player_name = f"{player['FirstName']} {player['LastName']}"
     if player_name.endswith('Subs'):
         return "Player not found", 404
     
-    stats = calculate_player_stats(player_id, batting_data)
+    batting = db.execute('SELECT * FROM BattingStats WHERE PlayerNumber = ?', (player_id,)).fetchall()
+    pitching = db.execute('SELECT * FROM PitchingStats WHERE PlayerNumber = ?', (player_id,)).fetchall()
+    games = db.execute('SELECT * FROM GameStats WHERE PlayerNumber = ?', (player_id,)).fetchall()
+    teams = db.execute('SELECT * FROM Teams').fetchall()
+    filters = db.execute('SELECT * FROM Filters').fetchall()
     
-    if not stats:
+    if not batting:
         return "No stats found for player", 404
     
     # Get team breakdown
-    player_batting = [row for row in batting_data if safe_int(row.get('PlayerNumber')) == player_id]
+    player_batting = [row for row in batting]
     team_stats = []
     
     # Create season mapping
     season_to_filter = {}
-    for row in filters_data:
-        filter_num = safe_int(row.get('FilterNumber'))
-        season_name_full = row.get('FilterName', '')
+    for row in filters:
+        filter_num = safe_int(row['FilterNumber'])
+        season_name_full = row['FilterName']
         
         # Convert "Winter 2011" to "W11"
         parts = season_name_full.split()
@@ -212,23 +206,23 @@ def player_detail(player_id):
     # Group by team
     team_groups = defaultdict(list)
     for row in player_batting:
-        team_num = safe_int(row.get('TeamNumber'))
+        team_num = safe_int(row['TeamNumber'])
         team_groups[team_num].append(row)
     
     for team_num, team_batting in team_groups.items():
         # Find team name
         team_name = f"Team {team_num}"
-        for team in teams_data:
-            if safe_int(team.get('TeamNumber')) == team_num:
-                team_name = team.get('LongTeamName', f"Team {team_num}")
+        for team in teams:
+            if safe_int(team['TeamNumber']) == team_num:
+                team_name = team['LongTeamName'] if team['LongTeamName'] else f"Team {team_num}"
                 break
         
         # Calculate team stats
-        team_pa = sum(safe_int(row.get('PA', 0)) for row in team_batting)
-        team_h = sum(safe_int(row.get('H', 0)) for row in team_batting)
-        team_ab = sum(safe_int(row.get('PA', 0)) - safe_int(row.get('BB', 0)) - safe_int(row.get('HP', 0)) - safe_int(row.get('SH', 0)) - safe_int(row.get('SF', 0)) for row in team_batting)
-        team_bb = sum(safe_int(row.get('BB', 0)) for row in team_batting)
-        team_hp = sum(safe_int(row.get('HP', 0)) for row in team_batting)
+        team_pa = sum(safe_int(row['PA']) for row in team_batting)
+        team_h = sum(safe_int(row['H']) for row in team_batting)
+        team_ab = sum(safe_int(row['PA']) - safe_int(row['BB']) - safe_int(row['HP']) - safe_int(row['SH']) - safe_int(row['SF']) for row in team_batting)
+        team_bb = sum(safe_int(row['BB']) for row in team_batting)
+        team_hp = sum(safe_int(row['HP']) for row in team_batting)
         
         team_avg = team_h / team_ab if team_ab > 0 else 0
         team_obp = (team_h + team_bb + team_hp) / team_pa if team_pa > 0 else 0
@@ -266,16 +260,18 @@ def player_detail(player_id):
     
     return render_template('player_detail.html', 
                          player=player, 
-                         stats=stats, 
+                         stats=calculate_player_stats(player_id, batting), 
                          team_stats=team_stats)
 
 @app.route('/seasons')
 def seasons():
     """Seasons list page"""
+    db = get_db()
+    filters = db.execute('SELECT * FROM Filters').fetchall()
     seasons_list = []
-    for row in filters_data:
-        filter_num = safe_int(row.get('FilterNumber'))
-        season_name = row.get('FilterName', '')
+    for row in filters:
+        filter_num = safe_int(row['FilterNumber'])
+        season_name = row['FilterName']
         
         # Convert "Winter 2011" to "W11"
         parts = season_name.split()
@@ -310,17 +306,13 @@ def seasons():
 @app.route('/season/<int:filter_number>')
 def season_detail(filter_number):
     """Season detail page with standings"""
-    # Find the season
-    season_info = None
-    for row in filters_data:
-        if safe_int(row.get('FilterNumber')) == filter_number:
-            season_info = row
-            break
+    db = get_db()
+    season_info = db.execute('SELECT * FROM Filters WHERE FilterNumber = ?', (filter_number,)).fetchone()
     
     if not season_info:
         return "Season not found", 404
     
-    season_name = season_info.get('FilterName', '')
+    season_name = season_info['FilterName']
     
     # Convert "Winter 2011" to "W11"
     parts = season_name.split()
@@ -341,20 +333,22 @@ def season_detail(filter_number):
     
     # Get teams for this season
     season_teams = []
-    for team in teams_data:
-        team_name = team.get('LongTeamName', '')
+    teams = db.execute('SELECT * FROM Teams').fetchall()
+    for team in teams:
+        team_name = team['LongTeamName'] if team['LongTeamName'] else f"Team {team['TeamNumber']}"
         # Check if team name contains the season code
         if season_code and season_code in team_name:
             season_teams.append(team)
     
     # Calculate standings for each team
     standings = []
+    games = db.execute('SELECT * FROM GameStats').fetchall()
     for team in season_teams:
-        team_num = safe_int(team.get('TeamNumber'))
-        team_name = team.get('LongTeamName', f"Team {team_num}")
+        team_num = safe_int(team['TeamNumber'])
+        team_name = team['LongTeamName'] if team['LongTeamName'] else f"Team {team['TeamNumber']}"
         
         # Get team games
-        team_games = [row for row in games_data if safe_int(row.get('TeamNumber')) == team_num]
+        team_games = [row for row in games if safe_int(row['TeamNumber']) == team_num]
         
         # Calculate wins, losses, runs
         wins = 0
@@ -363,8 +357,8 @@ def season_detail(filter_number):
         runs_against = 0
         
         for game in team_games:
-            team_score = safe_int(game.get('TeamScore', 0))
-            opponent_score = safe_int(game.get('OpponentScore', 0))
+            team_score = safe_int(game['TeamScore'])
+            opponent_score = safe_int(game['OpponentScore'])
             
             runs_for += team_score
             runs_against += opponent_score
@@ -375,17 +369,17 @@ def season_detail(filter_number):
                 losses += 1
         
         # Calculate team batting stats
-        team_batting = [row for row in batting_data if safe_int(row.get('TeamNumber')) == team_num]
+        team_batting = db.execute('SELECT * FROM BattingStats WHERE TeamNumber = ?', (team_num,)).fetchall()
         
-        total_pa = sum(safe_int(row.get('PA', 0)) for row in team_batting)
-        total_h = sum(safe_int(row.get('H', 0)) for row in team_batting)
-        total_bb = sum(safe_int(row.get('BB', 0)) for row in team_batting)
-        total_hp = sum(safe_int(row.get('HP', 0)) for row in team_batting)
-        total_ab = sum(safe_int(row.get('PA', 0)) - safe_int(row.get('BB', 0)) - safe_int(row.get('HP', 0)) - safe_int(row.get('SH', 0)) - safe_int(row.get('SF', 0)) for row in team_batting)
-        total_2b = sum(safe_int(row.get('D', 0)) for row in team_batting)
-        total_3b = sum(safe_int(row.get('T', 0)) for row in team_batting)
-        total_hr = sum(safe_int(row.get('HR', 0)) for row in team_batting)
-        total_tb = sum(safe_int(row.get('TB', 0)) for row in team_batting)
+        total_pa = sum(safe_int(row['PA']) for row in team_batting)
+        total_h = sum(safe_int(row['H']) for row in team_batting)
+        total_bb = sum(safe_int(row['BB']) for row in team_batting)
+        total_hp = sum(safe_int(row['HP']) for row in team_batting)
+        total_ab = sum(safe_int(row['PA']) - safe_int(row['BB']) - safe_int(row['HP']) - safe_int(row['SH']) - safe_int(row['SF']) for row in team_batting)
+        total_2b = sum(safe_int(row['D']) for row in team_batting)
+        total_3b = sum(safe_int(row['T']) for row in team_batting)
+        total_hr = sum(safe_int(row['HR']) for row in team_batting)
+        total_tb = sum(safe_int(row['TB']) for row in team_batting)
         if total_tb == 0:
             total_tb = total_h + total_2b + 2*total_3b + 3*total_hr
         
@@ -467,20 +461,16 @@ def season_detail(filter_number):
 @app.route('/team/<int:team_number>/<int:filter_number>')
 def team_detail(team_number, filter_number):
     """Team detail page with roster and stats"""
-    # Find the team
-    team = None
-    for t in teams_data:
-        if safe_int(t.get('TeamNumber')) == team_number:
-            team = t
-            break
+    db = get_db()
+    team = db.execute('SELECT * FROM Teams WHERE TeamNumber = ?', (team_number,)).fetchone()
     
     if not team:
         return "Team not found", 404
     
-    team_name = team.get('LongTeamName', f"Team {team_number}")
+    team_name = team['LongTeamName'] if team['LongTeamName'] else f"Team {team_number}"
     
     # Get team batting stats
-    team_batting = [row for row in batting_data if safe_int(row.get('TeamNumber')) == team_number]
+    team_batting = db.execute('SELECT * FROM BattingStats WHERE TeamNumber = ?', (team_number,)).fetchall()
     
     # Group by player
     player_stats = defaultdict(lambda: {
@@ -489,32 +479,33 @@ def team_detail(team_number, filter_number):
     })
     
     for row in team_batting:
-        player_num = safe_int(row.get('PlayerNumber'))
-        player_stats[player_num]['pa'] += safe_int(row.get('PA', 0))
-        player_stats[player_num]['r'] += safe_int(row.get('R', 0))
-        player_stats[player_num]['h'] += safe_int(row.get('H', 0))
-        player_stats[player_num]['2b'] += safe_int(row.get('D', 0))
-        player_stats[player_num]['3b'] += safe_int(row.get('T', 0))
-        player_stats[player_num]['hr'] += safe_int(row.get('HR', 0))
-        player_stats[player_num]['rbi'] += safe_int(row.get('RBI', 0))
-        player_stats[player_num]['bb'] += safe_int(row.get('BB', 0))
-        player_stats[player_num]['sf'] += safe_int(row.get('SF', 0))
-        player_stats[player_num]['oe'] += safe_int(row.get('OE', 0))
-        player_stats[player_num]['so'] += safe_int(row.get('SO', 0))
-        player_stats[player_num]['tb'] += safe_int(row.get('TB', 0))
+        player_num = safe_int(row['PlayerNumber'])
+        player_stats[player_num]['pa'] += safe_int(row['PA'])
+        player_stats[player_num]['r'] += safe_int(row['R'])
+        player_stats[player_num]['h'] += safe_int(row['H'])
+        player_stats[player_num]['2b'] += safe_int(row['D'])
+        player_stats[player_num]['3b'] += safe_int(row['T'])
+        player_stats[player_num]['hr'] += safe_int(row['HR'])
+        player_stats[player_num]['rbi'] += safe_int(row['RBI'])
+        player_stats[player_num]['bb'] += safe_int(row['BB'])
+        player_stats[player_num]['sf'] += safe_int(row['SF'])
+        player_stats[player_num]['oe'] += safe_int(row['OE'])
+        player_stats[player_num]['so'] += safe_int(row['SO'])
+        player_stats[player_num]['tb'] += safe_int(row['TB'])
         
         # Track unique games
-        game_key = (safe_int(row.get('TeamNumber')), safe_int(row.get('GameNumber')))
+        game_key = (safe_int(row['TeamNumber']), safe_int(row['GameNumber']))
         player_stats[player_num]['games'].add(game_key)
     
     # Calculate final stats for each player
     roster = []
+    people = db.execute('SELECT * FROM People').fetchall()
     for player_num, stats in player_stats.items():
         # Find player name
         player_name = f"Player {player_num}"
-        for player in players_data:
-            if safe_int(player.get('PersonNumber')) == player_num:
-                player_name = f"{player.get('FirstName', '')} {player.get('LastName', '')}"
+        for player in people:
+            if safe_int(player['PersonNumber']) == player_num:
+                player_name = f"{player['FirstName']} {player['LastName']}"
                 break
         
         # Skip players whose names end with "Subs"
@@ -567,20 +558,16 @@ def team_detail(team_number, filter_number):
 @app.route('/team/<int:team_number>/<int:filter_number>/games')
 def team_games(team_number, filter_number):
     """Team game results page"""
-    # Find the team
-    team = None
-    for t in teams_data:
-        if safe_int(t.get('TeamNumber')) == team_number:
-            team = t
-            break
+    db = get_db()
+    team = db.execute('SELECT * FROM Teams WHERE TeamNumber = ?', (team_number,)).fetchone()
     
     if not team:
         return "Team not found", 404
     
-    team_name = team.get('LongTeamName', f"Team {team_number}")
+    team_name = team['LongTeamName'] if team['LongTeamName'] else f"Team {team_number}"
     
     # Get team games
-    team_games = [row for row in games_data if safe_int(row.get('TeamNumber')) == team_number]
+    team_games = db.execute('SELECT * FROM GameStats WHERE TeamNumber = ?', (team_number,)).fetchall()
     
     # Process games
     games_list = []
@@ -588,11 +575,11 @@ def team_games(team_number, filter_number):
     losses = 0
     
     for game in team_games:
-        game_date = game.get('GameDate', '')
-        opponent = game.get('Opponent', '')
-        team_score = safe_int(game.get('TeamScore', 0))
-        opponent_score = safe_int(game.get('OpponentScore', 0))
-        is_home = game.get('HomeAway', '') == 'H'
+        game_date = game['GameDate']
+        opponent = game['Opponent']
+        team_score = safe_int(game['TeamScore'])
+        opponent_score = safe_int(game['OpponentScore'])
+        is_home = game['HomeAway'] == 'H'
         
         if team_score > opponent_score:
             result = 'W'
@@ -628,47 +615,40 @@ def team_games(team_number, filter_number):
 @app.route('/player/<int:player_id>/games')
 def player_games(player_id):
     """Player game log page"""
-    # Find the player
-    player = None
-    for p in players_data:
-        if safe_int(p.get('PersonNumber')) == player_id:
-            player = p
-            break
+    db = get_db()
+    player = db.execute('SELECT * FROM People WHERE PersonNumber = ?', (player_id,)).fetchone()
     
     if not player:
         return "Player not found", 404
     
-    player_name = f"{player.get('FirstName', '')} {player.get('LastName', '')}"
+    player_name = f"{player['FirstName']} {player['LastName']}"
     
     # Get player batting stats
-    player_batting = [row for row in batting_data if safe_int(row.get('PlayerNumber')) == player_id]
+    player_batting = db.execute('SELECT * FROM BattingStats WHERE PlayerNumber = ?', (player_id,)).fetchall()
     
     # Get team info for each game
     games_list = []
     for row in player_batting:
-        team_num = safe_int(row.get('TeamNumber'))
-        game_num = safe_int(row.get('GameNumber'))
+        team_num = safe_int(row['TeamNumber'])
+        game_num = safe_int(row['GameNumber'])
         
         # Find team name
         team_name = f"Team {team_num}"
-        for team in teams_data:
-            if safe_int(team.get('TeamNumber')) == team_num:
-                team_name = team.get('LongTeamName', f"Team {team_num}")
+        teams = db.execute('SELECT * FROM Teams').fetchall()
+        for team in teams:
+            if safe_int(team['TeamNumber']) == team_num:
+                team_name = team['LongTeamName'] if team['LongTeamName'] else f"Team {team_num}"
                 break
         
         # Find game info
-        game_info = None
-        for game in games_data:
-            if safe_int(game.get('TeamNumber')) == team_num and safe_int(game.get('GameNumber')) == game_num:
-                game_info = game
-                break
+        game_info = db.execute('SELECT * FROM GameStats WHERE TeamNumber = ? AND GameNumber = ?', (team_num, game_num)).fetchone()
         
         if game_info:
-            game_date = game_info.get('GameDate', '')
-            opponent = game_info.get('Opponent', '')
-            team_score = safe_int(game_info.get('TeamScore', 0))
-            opponent_score = safe_int(game_info.get('OpponentScore', 0))
-            is_home = game_info.get('HomeAway', '') == 'H'
+            game_date = game_info['GameDate']
+            opponent = game_info['Opponent']
+            team_score = safe_int(game_info['TeamScore'])
+            opponent_score = safe_int(game_info['OpponentScore'])
+            is_home = game_info['HomeAway'] == 'H'
             
             if team_score > opponent_score:
                 result = 'W'
@@ -685,13 +665,13 @@ def player_games(player_id):
             result = ''
         
         # Calculate game stats
-        pa = safe_int(row.get('PA', 0))
-        ab = pa - safe_int(row.get('BB', 0)) - 0 - 0 - safe_int(row.get('SF', 0))  # No HP in softball
-        h = safe_int(row.get('H', 0))
-        r = safe_int(row.get('R', 0))
-        rbi = safe_int(row.get('RBI', 0))
-        bb = safe_int(row.get('BB', 0))
-        so = safe_int(row.get('SO', 0))
+        pa = safe_int(row['PA'])
+        ab = pa - safe_int(row['BB']) - 0 - 0 - safe_int(row['SF'])  # No HP in softball
+        h = safe_int(row['H'])
+        r = safe_int(row['R'])
+        rbi = safe_int(row['RBI'])
+        bb = safe_int(row['BB'])
+        so = safe_int(row['SO'])
         
         avg = h / ab if ab > 0 else 0
         obp = (h + bb) / pa if pa > 0 else 0

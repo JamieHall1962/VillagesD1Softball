@@ -1,0 +1,33 @@
+<!-- templates/index.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="header">
+    <div class="logo"></div>
+    <h1>D1 Softball Statistics</h1>
+    <p>Comprehensive D1 Softball stats and results</p>
+</div>
+
+<div class="nav-cards">
+    <div class="nav-card">
+        <h2><span class="icon">👥</span>Players</h2>
+        <p>Browse all players with career statistics.</p>
+        <div class="depth-hint">List → Profile → Season Teams + Game Logs</div>
+        <a href="/players" class="btn">Browse Players</a>
+    </div>
+    
+    <div class="nav-card">
+        <h2><span class="icon">📅</span>Seasons</h2>
+        <p>View season standings, team rosters, player stats, results and boxscores.</p>
+        <div class="depth-hint">List → Standings + Leaders → Teams/Players → Games → Boxscores</div>
+        <a href="/seasons" class="btn">Browse Seasons</a>
+    </div>
+    
+    <div class="nav-card">
+        <h2><span class="icon">⚾</span>Pitching</h2>
+        <p>Browse pitching stats and leaders.</p>
+        <div class="depth-hint">List → Pitcher Profile → Season Teams</div>
+        <a href="/pitching" class="btn">Browse Pitching</a>
+    </div>
+</div>
+{% endblock %}

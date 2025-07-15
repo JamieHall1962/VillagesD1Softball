@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Players - D1 Softball Statistics{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Players</h1>
+    <p>Career statistics for all players</p>
+</div>
+
+<div class="content">
+    <div class="nav-breadcrumb">
+        <a href="/">Home</a>
+        <span> > </span>
+        <span>Players</span>
+    </div>
+    
+    <div class="search-container">
+        <input type="text" id="playerSearch" placeholder="Search players..." />
+    </div>
+    
+    <div class="table-container">
+        <table id="playersTable">
+            <thead>
+                <tr>
+                    <th data-sort="name">Player <span class="sort-arrow">↕</span></th>
+                    <th data-sort="games">GP <span class="sort-arrow">↕</span></th>
+                    <th data-sort="pa">PA <span class="sort-arrow">↕</span></th>
+                    <th data-sort="ab">AB <span class="sort-arrow">↕</span></th>
+                    <th data-sort="r">R <span class="sort-arrow">↕</span></th>
+                    <th data-sort="h">H <span class="sort-arrow">↕</span></th>
+                    <th data-sort="doubles">2B <span class="sort-arrow">↕</span></th>
+                    <th data-sort="triples">3B <span class="sort-arrow">↕</span></th>
+                    <th data-sort="hr">HR <span class="sort-arrow">↕</span></th>
+                    <th data-sort="rbi">RBI <span class="sort-arrow">↕</span></th>
+                    <th data-sort="bb">BB <span class="sort-arrow">↕</span></th>
+                    <th data-sort="oe">OE <span class="sort-arrow">↕</span></th>
+                    <th data-sort="avg">AVG <span class="sort-arrow">↕</span></th>
+                    <th data-sort="obp">OBP <span class="sort-arrow">↕</span></th>
+                    <th data-sort="slg">SLG <span class="sort-arrow">↕</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in players %}
+                <tr class="player-row" data-name="{{ player.FirstName }} {{ player.LastName }}">
+                    <td><a href="/player/{{ player.PersonNumber }}" class="player-link">{{ player.FirstName }} {{ player.LastName }}</a></td>
+                    <td data-value="{{ player.Games or 0 }}">{{ player.Games or 0 }}</td>
+                    <td data-value="{{ player.PA or 0 }}">{{ player.PA or 0 }}</td>
+                    <td data-value="{{ player.AB or 0 }}">{{ player.AB or 0 }}</td>
+                    <td data-value="{{ player.R or 0 }}">{{ player.R or 0 }}</td>
+                    <td data-value="{{ player.H or 0 }}">{{ player.H or 0 }}</td>
+                    <td data-value="{{ player.Doubles or 0 }}">{{ player.Doubles or 0 }}</td>
+                    <td data-value="{{ player.Triples or 0 }}">{{ player.Triples or 0 }}</td>
+                    <td data-value="{{ player.HR or 0 }}">{{ player.HR or 0 }}</td>
+                    <td data-value="{{ player.RBI or 0 }}">{{ player.RBI or 0 }}</td>
+                    <td data-value="{{ player.BB or 0 }}">{{ player.BB or 0 }}</td>
+                    <td data-value="{{ player.OE or 0 }}">{{ player.OE or 0 }}</td>
+                    <td data-value="{{ player.AVG }}">{{ format_percentage(player.AVG) }}</td>
+                    <td data-value="{{ player.OBP }}">{{ format_percentage(player.OBP) }}</td>
+                    <td data-value="{{ player.SLG }}">{{ format_percentage(player.SLG) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+.nav-breadcrumb {
+    margin-bottom: 20px;
+}
+
+.search-container {
+    margin-bottom: 20px;
+}
+
+#playerSearch {
+    width: 300px;
+    padding: 10px;
+    border: 2px solid #667eea;
+    border-radius: 20px;
+    font-size: 16px;
+    outline: none;
+}
+
+#playerSearch:focus {
+    border-color: #5a67d8;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+}
+
+.table-container {
+    max-height: 600px;
+    overflow-y: auto;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.table-container table {
+    margin: 0;
+}
+
+.table-container thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    cursor: pointer;
+    user-select: none;
+    background: #667eea !important;
+}
+
+.table-container thead th:hover {
+    background: #5a67d8 !important;
+}
+
+.sort-arrow {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-left: 5px;
+}
+
+.player-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.player-link:hover {
+    color: #5a67d8;
+    text-decoration: underline;
+}
+
+.player-row.hidden {
+    display: none;
+}
+</style>
+
+<script>
+// Search functionality
+document.getElementById('playerSearch').addEventListener('keyup', function() {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('.player-row');
+    
+    rows.forEach(row => {
+        const playerName = row.getAttribute('data-name').toLowerCase();
+        if (playerName.includes(searchTerm)) {
+            row.classList.remove('hidden');
+        } else {
+            row.classList.add('hidden');
+        }
+    });
+});
+
+// Sorting functionality
+let currentSort = {column: null, direction: 'asc'};
+
+document.querySelectorAll('th[data-sort]').forEach(header => {
+    header.addEventListener('click', function() {
+        const column = this.getAttribute('data-sort');
+        const direction = (currentSort.column === column && currentSort.direction === 'asc') ? 'desc' : 'asc';
+        
+        sortTable(column, direction);
+        updateSortArrows(this, direction);
+        
+        currentSort = {column, direction};
+    });
+});
+
+function sortTable(column, direction) {
+    const tbody = document.querySelector('#playersTable tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    
+    rows.sort((a, b) => {
+        let aVal, bVal;
+        
+        if (column === 'name') {
+            aVal = a.getAttribute('data-name').toLowerCase();
+            bVal = b.getAttribute('data-name').toLowerCase();
+        } else {
+            const aCell = a.querySelector(`td[data-value]`);
+            const bCell = b.querySelector(`td[data-value]`);
+            const columnIndex = Array.from(a.querySelectorAll('td')).findIndex(td => 
+                td.getAttribute('data-value') !== null && 
+                a.querySelectorAll('th')[Array.from(a.parentNode.parentNode.querySelectorAll('th')).findIndex(th => th.getAttribute('data-sort') === column)]
+            );
+            
+            // Get the correct cell for this column
+            const aCells = a.querySelectorAll('td[data-value]');
+            const bCells = b.querySelectorAll('td[data-value]');
+            const headers = Array.from(document.querySelectorAll('th[data-sort]'));
+            const headerIndex = headers.findIndex(h => h.getAttribute('data-sort') === column);
+            
+            aVal = parseFloat(aCells[headerIndex].getAttribute('data-value')) || 0;
+            bVal = parseFloat(bCells[headerIndex].getAttribute('data-value')) || 0;
+        }
+        
+        if (direction === 'asc') {
+            return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+        } else {
+            return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
+        }
+    });
+    
+    // Clear and re-append sorted rows
+    tbody.innerHTML = '';
+    rows.forEach(row => tbody.appendChild(row));
+}
+
+function updateSortArrows(clickedHeader, direction) {
+    // Reset all arrows
+    document.querySelectorAll('.sort-arrow').forEach(arrow => {
+        arrow.textContent = '↕';
+    });
+    
+    // Update clicked header arrow
+    const arrow = clickedHeader.querySelector('.sort-arrow');
+    arrow.textContent = direction === 'asc' ? '↑' : '↓';
+}
+</script>
+{% endblock %}

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ home_team_name }} vs {{ opponent_team_name }} - Box Score</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .breadcrumb {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        
+        .breadcrumb a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .breadcrumb span {
+            opacity: 0.7;
+            margin: 0 8px;
+        }
+        
+        .game-header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .game-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .game-info {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+        
+        .final-score {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2d5a27;
+        }
+        
+        .line-score {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .line-score-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .line-score-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        
+        .line-score-table th,
+        .line-score-table td {
+            padding: 8px 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+            font-weight: bold;
+        }
+        
+        .line-score-table th {
+            background: #667eea;
+            color: white;
+        }
+        
+        .line-score-table .team-name {
+            text-align: left;
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .batting-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .section-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .batting-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        
+        .batting-table th,
+        .batting-table td {
+            padding: 6px 8px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .batting-table th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+        
+        .batting-table tr:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+        }
+        
+        .player-name {
+            text-align: left !important;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 120px;
+        }
+        
+        .avg-highlight {
+            font-weight: bold;
+            color: #2d5a27;
+        }
+        
+        .team-totals {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .pitching-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .pitching-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .pitching-table th,
+        .pitching-table td {
+            padding: 8px 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .pitching-table th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .pitching-table tr:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+        }
+        
+        .decision-w {
+            color: #2d5a27;
+            font-weight: bold;
+        }
+        
+        .decision-l {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .batting-table th:nth-child(n+8),
+            .batting-table td:nth-child(n+8) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <div class="breadcrumb">
+            <a href="/">Home</a>
+            <span>></span>
+            <a href="/seasons">Seasons</a>
+            <span>></span>
+            {% if season_filter_number %}
+                <a href="/season/{{ season_filter_number }}">Season</a>
+                <span>></span>
+                <a href="/team/{{ home_team.TeamNumber }}">{{ home_team_name }}</a>
+                <span>></span>
+            {% endif %}
+            <span>Box Score</span>
+        </div>
+        
+        <!-- Game Header -->
+        <div class="game-header">
+            <div class="game-title">{{ opponent_team_name }} at {{ home_team_name }}</div>
+            <div class="game-info">{{ game.Date.split()[0] if game.Date else 'Date N/A' }}</div>
+            <div class="final-score">Final Score: {{ home_team_name }} {{ game.Runs }}, {{ opponent_team_name }} {{ game.OppRuns }}</div>
+        </div>
+        
+        <!-- Line Score -->
+        <div class="line-score">
+            <div class="line-score-title">Line Score</div>
+            <table class="line-score-table">
+                <thead>
+                    <tr>
+                        <th>Team</th>
+                        <th>1</th>
+                        <th>2</th>
+                        <th>3</th>
+                        <th>4</th>
+                        <th>5</th>
+                        <th>6</th>
+                        <th>7</th>
+                        <th>R</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="team-name">{{ opponent_team_name }}</td>
+                        <td>{{ game.OppRunsInning1 or 0 }}</td>
+                        <td>{{ game.OppRunsInning2 or 0 }}</td>
+                        <td>{{ game.OppRunsInning3 or 0 }}</td>
+                        <td>{{ game.OppRunsInning4 or 0 }}</td>
+                        <td>{{ game.OppRunsInning5 or 0 }}</td>
+                        <td>{{ game.OppRunsInning6 or 0 }}</td>
+                        <td>{{ game.OppRunsInning7 or 0 }}</td>
+                        <td style="background: #f0f0f0; font-weight: bold;">{{ game.OppRuns }}</td>
+                    </tr>
+                    <tr>
+                        <td class="team-name">{{ home_team_name }}</td>
+                        <td>{{ game.RunsInning1 or 0 }}</td>
+                        <td>{{ game.RunsInning2 or 0 }}</td>
+                        <td>{{ game.RunsInning3 or 0 }}</td>
+                        <td>{{ game.RunsInning4 or 0 }}</td>
+                        <td>{{ game.RunsInning5 or 0 }}</td>
+                        <td>{{ game.RunsInning6 or 0 }}</td>
+                        <td>{{ game.RunsInning7 or 0 }}</td>
+                        <td style="background: #f0f0f0; font-weight: bold;">{{ game.Runs }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+ 
+        <!-- Home Team Batting -->
+        <div class="batting-section">
+            <div class="section-title">{{ home_team_name }} Batting</div>
+            <table class="batting-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>PA</th>
+                        <th>AB</th>
+                        <th>R</th>
+                        <th>H</th>
+                        <th>2B</th>
+                        <th>3B</th>
+                        <th>HR</th>
+                        <th>RBI</th>
+                        <th>BB</th>
+                        <th>SF</th>
+                        <th>OE</th>
+                        <th>AVG</th>
+                        <th>OBP</th>
+                        <th>SLG</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in home_batting_stats %}
+                    <tr>
+                        <td class="player-name">
+                            {% if player.IsSub %}
+                                <!-- Non-clickable for Subs -->
+                                {{ player.FirstName }} {{ player.LastName }}
+                            {% else %}
+                                <!-- Clickable for regular players -->
+                                <a href="/player/{{ player.PersonNumber }}" style="text-decoration: none; color: inherit;">
+                                    {{ player.FirstName }} {{ player.LastName }}
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td>{{ player.PA or 0 }}</td>
+                        <td>{{ player.AB or 0 }}</td>
+                        <td>{{ player.R or 0 }}</td>
+                        <td>{{ player.H or 0 }}</td>
+                        <td>{{ player.Doubles or 0 }}</td>
+                        <td>{{ player.Triples or 0 }}</td>
+                        <td>{{ player.HR or 0 }}</td>
+                        <td>{{ player.RBI or 0 }}</td>
+                        <td>{{ player.BB or 0 }}</td>
+                        <td>{{ player.SF or 0 }}</td>
+                        <td>{{ player.OE or 0 }}</td>
+                        <td class="avg-highlight">{{ format_percentage(player.AVG) }}</td>
+                        <td>{{ format_percentage(player.OBP) }}</td>
+                        <td>{{ format_percentage(player.SLG) }}</td>
+                    </tr>
+                    {% endfor %}
+                    <!-- Team Totals Row -->
+                    <tr class="team-totals">
+                        <td class="player-name"><strong>TOTALS</strong></td>
+                        <td><strong>{{ home_team_totals.PA or 0 }}</strong></td>
+                        <td><strong>{{ home_team_totals.AB or 0 }}</strong></td>
+                        <td><strong>{{ home_team_totals.R or 0 }}</strong></td>
+                        <td><strong>{{ home_team_totals.H or 0 }}</strong></td>
+                        <td><strong>{{ home_team_totals.Doubles or 0 }}</strong></td>
+                        <td><strong>{{ home_team_totals.Triples or 0 }}</strong></td>
+                        <td><strong>{{ home_team_totals.HR or 0 }}</strong></td>
+                        <td><strong>{{ home_team_totals.RBI or 0 }}</strong></td>
+                        <td><strong>{{ home_team_totals.BB or 0 }}</strong></td>
+                        <td><strong>{{ home_team_totals.SF or 0 }}</strong></td>
+                        <td><strong>{{ home_team_totals.OE or 0 }}</strong></td>
+                        <td class="avg-highlight"><strong>{{ format_percentage(home_team_totals.AVG) }}</strong></td>
+                        <td><strong>{{ format_percentage(home_team_totals.OBP) }}</strong></td>
+                        <td><strong>{{ format_percentage(home_team_totals.SLG) }}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Opponent Team Batting (if available) -->
+        {% if opponent_batting_stats %}
+        <div class="batting-section">
+            <div class="section-title">{{ opponent_team_name }} Batting</div>
+            <table class="batting-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>PA</th>
+                        <th>AB</th>
+                        <th>R</th>
+                        <th>H</th>
+                        <th>2B</th>
+                        <th>3B</th>
+                        <th>HR</th>
+                        <th>RBI</th>
+                        <th>BB</th>
+                        <th>SF</th>
+                        <th>OE</th>
+                        <th>AVG</th>
+                        <th>OBP</th>
+                        <th>SLG</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in opponent_batting_stats %}
+                    <tr>
+                        <td class="player-name">
+                            {% if player.IsSub %}
+                                <!-- Non-clickable for Subs -->
+                                {{ player.FirstName }} {{ player.LastName }}
+                            {% else %}
+                                <!-- Clickable for regular players -->
+                                <a href="/player/{{ player.PersonNumber }}" style="text-decoration: none; color: inherit;">
+                                    {{ player.FirstName }} {{ player.LastName }}
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td>{{ player.PA or 0 }}</td>
+                        <td>{{ player.AB or 0 }}</td>
+                        <td>{{ player.R or 0 }}</td>
+                        <td>{{ player.H or 0 }}</td>
+                        <td>{{ player.Doubles or 0 }}</td>
+                        <td>{{ player.Triples or 0 }}</td>
+                        <td>{{ player.HR or 0 }}</td>
+                        <td>{{ player.RBI or 0 }}</td>
+                        <td>{{ player.BB or 0 }}</td>
+                        <td>{{ player.SF or 0 }}</td>
+                        <td>{{ player.OE or 0 }}</td>
+                        <td class="avg-highlight">{{ format_percentage(player.AVG) }}</td>
+                        <td>{{ format_percentage(player.OBP) }}</td>
+                        <td>{{ format_percentage(player.SLG) }}</td>
+                    </tr>
+                    {% endfor %}
+                    <!-- Team Totals Row -->
+                    <tr class="team-totals">
+                        <td class="player-name"><strong>TOTALS</strong></td>
+                        <td><strong>{{ opponent_team_totals.PA or 0 }}</strong></td>
+                        <td><strong>{{ opponent_team_totals.AB or 0 }}</strong></td>
+                        <td><strong>{{ opponent_team_totals.R or 0 }}</strong></td>
+                        <td><strong>{{ opponent_team_totals.H or 0 }}</strong></td>
+                        <td><strong>{{ opponent_team_totals.Doubles or 0 }}</strong></td>
+                        <td><strong>{{ opponent_team_totals.Triples or 0 }}</strong></td>
+                        <td><strong>{{ opponent_team_totals.HR or 0 }}</strong></td>
+                        <td><strong>{{ opponent_team_totals.RBI or 0 }}</strong></td>
+                        <td><strong>{{ opponent_team_totals.BB or 0 }}</strong></td>
+                        <td><strong>{{ opponent_team_totals.SF or 0 }}</strong></td>
+                        <td><strong>{{ opponent_team_totals.OE or 0 }}</strong></td>
+                        <td class="avg-highlight"><strong>{{ format_percentage(opponent_team_totals.AVG) }}</strong></td>
+                        <td><strong>{{ format_percentage(opponent_team_totals.OBP) }}</strong></td>
+                        <td><strong>{{ format_percentage(opponent_team_totals.SLG) }}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+
+        <!-- Pitching Stats -->
+        {% if home_pitching or opponent_pitching %}
+        <div class="pitching-section">
+            <div class="section-title">Pitching</div>
+            <table class="pitching-table">
+                <thead>
+                    <tr>
+                        <th>Team</th>
+                        <th style="text-align: left;">Pitcher</th>
+                        <th>IP</th>
+                        <th>BB</th>
+                        <th>IBB</th>
+                        <th>Decision</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pitcher in home_pitching %}
+                    <tr>
+                        <td>{{ home_team_name }}</td>
+                        <td class="player-name">
+                            {% if pitcher.IsSub %}
+                                <!-- Non-clickable for Subs -->
+                                {{ pitcher.FirstName }} {{ pitcher.LastName }}
+                            {% else %}
+                                <!-- This would need a pitcher detail route, for now just show name -->
+                                {{ pitcher.FirstName }} {{ pitcher.LastName }}
+                            {% endif %}
+                        </td>
+                        <td>{{ pitcher.IP or 0 }}</td>
+                        <td>{{ pitcher.BB or 0 }}</td>
+                        <td>{{ pitcher.IBB or 0 }}</td>
+                        <td>
+                            {% if pitcher.W > 0 %}
+                                <span class="decision-w">W</span>
+                            {% elif pitcher.L > 0 %}
+                                <span class="decision-l">L</span>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% for pitcher in opponent_pitching %}
+                    <tr>
+                        <td>{{ opponent_team_name }}</td>
+                        <td class="player-name">
+                            {% if pitcher.IsSub %}
+                                <!-- Non-clickable for Subs -->
+                                {{ pitcher.FirstName }} {{ pitcher.LastName }}
+                            {% else %}
+                                <!-- This would need a pitcher detail route, for now just show name -->
+                                {{ pitcher.FirstName }} {{ pitcher.LastName }}
+                            {% endif %}
+                        </td>
+                        <td>{{ pitcher.IP or 0 }}</td>
+                        <td>{{ pitcher.BB or 0 }}</td>
+                        <td>{{ pitcher.IBB or 0 }}</td>
+                        <td>
+                            {% if pitcher.W > 0 %}
+                                <span class="decision-w">W</span>
+                            {% elif pitcher.L > 0 %}
+                                <span class="decision-l">L</span>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+                     
+    </div>
+</body>
+</html>

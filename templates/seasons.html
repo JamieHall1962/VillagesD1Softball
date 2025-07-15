@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seasons - D1 Softball Statistics</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .breadcrumb {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        
+        .breadcrumb a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .breadcrumb span {
+            opacity: 0.7;
+            margin: 0 8px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .seasons-grid {
+            margin-top: 30px;
+        }
+        
+        .year-section {
+            margin-bottom: 30px;
+        }
+        
+        .year-header {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .seasons-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .season-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            padding: 12px;
+            color: #333;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .season-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .season-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .champion-teams-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.85em;
+        }
+        
+        .teams-info {
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .champion-info {
+            color: #2d5a27;
+            font-weight: bold;
+        }
+        
+        .view-season-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+        
+        .view-season-btn:hover {
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .seasons-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <div class="breadcrumb">
+            <a href="/">Home</a>
+            <span>></span>
+            <span>Seasons</span>
+        </div>
+        
+        <div class="header">
+            <h1>D1 Softball Seasons</h1>
+            <p>Complete history of D1 Softball league seasons</p>
+        </div>
+        
+        <!-- Overall Statistics (removed Games Played) -->
+        <div class="stats-summary">
+            <div class="stat-card">
+                <div class="stat-number">{{ overall_stats.total_seasons or 0 }}</div>
+                <div class="stat-label">Total Seasons</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ overall_stats.total_teams or 0 }}</div>
+                <div class="stat-label">Teams All-Time</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ overall_stats.total_players or 0 }}</div>
+                <div class="stat-label">Players All-Time</div>
+            </div>
+        </div>
+        
+        <!-- Seasons Grid -->
+        <div class="seasons-grid">
+            {% set seasons_by_year = {} %}
+            {% for season in seasons %}
+                {% set year = season.season_name.split()[-1] %}
+                {% if year not in seasons_by_year %}
+                    {% set _ = seasons_by_year.update({year: []}) %}
+                {% endif %}
+                {% set _ = seasons_by_year[year].append(season) %}
+            {% endfor %}
+            
+            {% for year in seasons_by_year.keys() | sort(reverse=True) %}
+                <div class="year-section">
+                    <div class="year-header">{{ year }}</div>
+                    <div class="seasons-row">
+                        {% for season in seasons_by_year[year] %}
+                            <div class="season-card" onclick="location.href='/season/{{ season.FilterNumber }}'">
+                                <div class="season-title">{{ season.season_name }}</div>
+                                
+                                <div class="champion-teams-line">
+                                    <div class="teams-info">{{ season.num_teams or 0 }} Teams</div>
+                                    <div class="champion-info">Champion: {{ season.Champion or 'TBD' }}</div>
+                                </div>
+                                
+                                <button class="view-season-btn">View Details</button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

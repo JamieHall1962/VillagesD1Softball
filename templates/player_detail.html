@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ player.FirstName }} {{ player.LastName }} - D1 Softball Statistics</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .player-name {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .breadcrumb {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .breadcrumb a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            opacity: 0.7;
+            margin: 0 8px;
+        }
+                
+        .career-stats {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .career-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 10px;
+            text-align: center;
+        }
+        
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 4px;
+            border-radius: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .stat-label {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+        
+        .seasons-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .team-stats-table {
+            overflow-x: auto;
+        }
+        
+        .team-stats-table table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+        
+        .team-stats-table th,
+        .team-stats-table td {
+            padding: 8px 6px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9em;
+        }
+        
+        .team-stats-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+        
+        .team-stats-table tr:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+        }
+        
+        .team-name {
+            text-align: left !important;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 120px;
+        }
+        
+        .avg-highlight {
+            font-weight: bold;
+            color: #2d5a27;
+        }
+        
+        .pitching-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .pitching-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            text-align: center;
+        }
+        
+        .pitching-stat {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .pitching-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .pitching-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(6, 1fr);
+                gap: 8px;
+            }
+            
+            .stat-value {
+                font-size: 1em;
+            }
+            
+            .stat-label {
+                font-size: 0.7em;
+            }
+            
+            .team-stats-table th:nth-child(n+8),
+            .team-stats-table td:nth-child(n+8) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <div class="breadcrumb">
+            <a href="/">Home</a>
+            <span>></span>
+            <a href="/players">Players</a>
+            <span>></span>
+            <span>{{ player.FirstName }} {{ player.LastName }}</span>
+        </div>
+        
+        <div class="header">
+            <h1 class="player-name">{{ player.FirstName }} {{ player.LastName }}</h1>
+        </div>
+        
+        <!-- Career Statistics -->
+        <div class="career-stats">
+            <div class="career-title">Career Statistics ({{ total_seasons }} seasons)</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">{{ career_stats.Games or 0 }}</div>
+                    <div class="stat-label">Games</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ career_stats.PA or 0 }}</div>
+                    <div class="stat-label">PA</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ career_stats.AB or 0 }}</div>
+                    <div class="stat-label">AB</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ career_stats.H or 0 }}</div>
+                    <div class="stat-label">Hits</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ format_percentage(career_stats.AVG) }}</div>
+                    <div class="stat-label">AVG</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ format_percentage(career_stats.OBP) }}</div>
+                    <div class="stat-label">OBP</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ format_percentage(career_stats.SLG) }}</div>
+                    <div class="stat-label">SLG</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ career_stats.HR or 0 }}</div>
+                    <div class="stat-label">HR</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ career_stats.RBI or 0 }}</div>
+                    <div class="stat-label">RBI</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ career_stats.R or 0 }}</div>
+                    <div class="stat-label">Runs</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ career_stats.BB or 0 }}</div>
+                    <div class="stat-label">BB</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ career_stats.SF or 0 }}</div>
+                    <div class="stat-label">SF</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Create a button to View Game Logs -->
+        <div style="text-align: center; margin: 20px 0;">
+            <a href="/player/{{ player.PersonNumber }}/games" 
+            style="background: linear-gradient(45deg, #667eea, #764ba2); 
+                    color: white; 
+                    padding: 12px 24px; 
+                    border-radius: 5px; 
+                    text-decoration: none; 
+                    font-weight: bold;">
+                View Game Logs
+            </a>
+        </div>
+        
+        <!-- Season by Season Stats -->
+        <div class="seasons-section">
+            <div class="section-title">Season by Season Statistics</div>
+            <div class="team-stats-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Season</th>
+                            <th>G</th>
+                            <th>PA</th>
+                            <th>AB</th>
+                            <th>H</th>
+                            <th>2B</th>
+                            <th>3B</th>
+                            <th>HR</th>
+                            <th>RBI</th>
+                            <th>R</th>
+                            <th>BB</th>
+                            <th>SF</th>
+                            <th>AVG</th>
+                            <th>OBP</th>
+                            <th>SLG</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for team in team_list %}
+                        <tr>
+                            <td class="team-name">
+                                {% if team.season_filter_number %}
+                                    <a href="/season/{{ team.season_filter_number }}" style="text-decoration: none; color: inherit;">
+                                        {{ team.team_name }}
+                                    </a>
+                                {% else %}
+                                    {{ team.team_name }}
+                                {% endif %}
+                            </td>
+                            <td>{{ team.Games or 0 }}</td>
+                            <td>{{ team.PA or 0 }}</td>
+                            <td>{{ team.AB or 0 }}</td>
+                            <td>{{ team.H or 0 }}</td>
+                            <td>{{ team.Doubles or 0 }}</td>
+                            <td>{{ team.Triples or 0 }}</td>
+                            <td>{{ team.HR or 0 }}</td>
+                            <td>{{ team.RBI or 0 }}</td>
+                            <td>{{ team.R or 0 }}</td>
+                            <td>{{ team.BB or 0 }}</td>
+                            <td>{{ team.SF or 0 }}</td>
+                            <td class="avg-highlight">{{ format_percentage(team.AVG) }}</td>
+                            <td>{{ format_percentage(team.OBP) }}</td>
+                            <td>{{ format_percentage(team.SLG) }}</td>
+                        </tr>
+                        {% endfor %}
+                        
+                        {% for team in aggregated_teams %}
+                        <tr style="background-color: #f0f0f0;">
+                            <td class="team-name">
+                                {% if team.season_filter_number %}
+                                    <a href="/season/{{ team.season_filter_number }}" style="text-decoration: none; color: inherit;">
+                                        {{ team.team_name }} *
+                                    </a>
+                                {% else %}
+                                    {{ team.team_name }} *
+                                {% endif %}
+                            </td>
+                            <td>{{ team.Games or 0 }}</td>
+                            <td>{{ team.PA or 0 }}</td>
+                            <td>{{ team.AB or 0 }}</td>
+                            <td>{{ team.H or 0 }}</td>
+                            <td>{{ team.Doubles or 0 }}</td>
+                            <td>{{ team.Triples or 0 }}</td>
+                            <td>{{ team.HR or 0 }}</td>
+                            <td>{{ team.RBI or 0 }}</td>
+                            <td>{{ team.R or 0 }}</td>
+                            <td>{{ team.BB or 0 }}</td>
+                            <td>{{ team.SF or 0 }}</td>
+                            <td class="avg-highlight">{{ format_percentage(team.AVG) }}</td>
+                            <td>{{ format_percentage(team.OBP) }}</td>
+                            <td>{{ format_percentage(team.SLG) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% if aggregated_teams %}
+                <p style="font-size: 0.8em; color: #666; margin-top: 10px;">
+                    * Pre-aggregated season totals (may include additional games not shown individually)
+                </p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Pitching Statistics (if applicable) -->
+        {% if pitching_stats and pitching_stats.Games > 0 %}
+        <div class="pitching-section">
+            <div class="section-title">Pitching Statistics</div>
+            <div class="pitching-stats">
+                <div class="pitching-stat">
+                    <div class="pitching-value">{{ pitching_stats.Games or 0 }}</div>
+                    <div class="pitching-label">Games</div>
+                </div>
+                <div class="pitching-stat">
+                    <div class="pitching-value">{{ pitching_stats.IP or 0 }}</div>
+                    <div class="pitching-label">Innings</div>
+                </div>
+                <div class="pitching-stat">
+                    <div class="pitching-value">{{ pitching_stats.W or 0 }}</div>
+                    <div class="pitching-label">Wins</div>
+                </div>
+                <div class="pitching-stat">
+                    <div class="pitching-value">{{ pitching_stats.L or 0 }}</div>
+                    <div class="pitching-label">Losses</div>
+                </div>
+                <div class="pitching-stat">
+                    <div class="pitching-value">{{ pitching_stats.BB or 0 }}</div>
+                    <div class="pitching-label">Walks</div>
+                </div>
+                <div class="pitching-stat">
+                    <div class="pitching-value">{{ pitching_stats.IBB or 0 }}</div>
+                    <div class="pitching-label">IBB</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

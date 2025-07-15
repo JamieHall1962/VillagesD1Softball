@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pitching Leaders - D1 Softball Statistics</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .breadcrumb {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        
+        .breadcrumb a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .breadcrumb span {
+            opacity: 0.7;
+            margin: 0 8px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .search-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .search-input::placeholder {
+            color: #666;
+            opacity: 0.8;
+        }
+        
+        .stats-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            overflow-x: auto;
+        }
+        
+        .table-container {
+            max-height: 70vh;
+            overflow-y: auto;
+            border-radius: 8px;
+        }
+        
+        .pitchers-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        
+        .pitchers-table th,
+        .pitchers-table td {
+            padding: 8px 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .pitchers-table th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s ease;
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+        }
+        
+        .pitchers-table th:hover {
+            background: #5a6fd8;
+        }
+        
+        .pitchers-table th.sortable::after {
+            content: " ↕";
+            opacity: 0.5;
+            font-size: 0.8em;
+        }
+        
+        .pitchers-table th.sort-asc::after {
+            content: " ↑";
+            opacity: 1;
+            color: #fff;
+        }
+        
+        .pitchers-table th.sort-desc::after {
+            content: " ↓";
+            opacity: 1;
+            color: #fff;
+        }
+        
+        .pitchers-table tr:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+        }
+        
+        .pitcher-name {
+            text-align: left !important;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .pitcher-name a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .pitcher-name a:hover {
+            text-decoration: underline;
+        }
+        
+        .stat-highlight {
+            font-weight: bold;
+            color: #2d5a27;
+        }
+        
+        @media (max-width: 768px) {
+            .pitchers-table th:nth-child(n+7),
+            .pitchers-table td:nth-child(n+7) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <div class="breadcrumb">
+            <a href="/">Home</a>
+            <span>></span>
+            <span>Pitching Leaders</span>
+        </div>
+        
+        <div class="header">
+            <h1 class="page-title">Pitching Leaders</h1>
+            <div class="subtitle">Career pitching statistics</div>
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search pitchers...">
+            </div>
+        </div>
+        
+        <!-- Pitchers Table -->
+        <div class="stats-section">
+            <div class="table-container">
+                <table class="pitchers-table" id="pitchersTable">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-sort="name">Pitcher</th>
+                        <th class="sortable" data-sort="games">G</th>
+                        <th class="sortable" data-sort="ip">IP</th>
+                        <th class="sortable" data-sort="w">W</th>
+                        <th class="sortable" data-sort="l">L</th>
+                        <th class="sortable" data-sort="bb">BB</th>
+                        <th class="sortable" data-sort="ibb">IBB</th>
+                        <th class="sortable" data-sort="bb_per_ip">BB/IP*</th>
+                        <th class="sortable" data-sort="win_pct">Win %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pitcher in pitchers %}
+                    <tr>
+                        <td class="pitcher-name">
+                            <a href="/pitcher/{{ pitcher.PersonNumber }}">
+                                {{ pitcher.FirstName }} {{ pitcher.LastName }}
+                            </a>
+                        </td>
+                        <td>{{ pitcher.Games or 0 }}</td>
+                        <td>{{ "%.1f"|format(pitcher.IP or 0) }}</td>
+                        <td class="stat-highlight">{{ pitcher.W or 0 }}</td>
+                        <td>{{ pitcher.L or 0 }}</td>
+                        <td>{{ pitcher.BB or 0 }}</td>
+                        <td>{{ pitcher.IBB or 0 }}</td>
+                        <td>{{ "%.2f"|format(pitcher.BB_per_IP or 0) }}</td>
+                        <td class="stat-highlight">{{ "%.3f"|format(pitcher.Win_Pct or 0) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+            <div style="margin-top: 15px; font-size: 0.9em; color: #666; text-align: center;">
+                *BB/IP excludes Intentional Walks (IBB)
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Table sorting functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const table = document.getElementById('pitchersTable');
+            const headers = table.querySelectorAll('th.sortable');
+            const searchInput = document.getElementById('searchInput');
+            let currentSort = {column: null, direction: 'asc'};
+            
+            // Search functionality
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                const tbody = table.querySelector('tbody');
+                const rows = tbody.querySelectorAll('tr');
+                
+                rows.forEach(row => {
+                    const pitcherName = row.cells[0].textContent.toLowerCase();
+                    if (pitcherName.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Sorting functionality
+            headers.forEach(header => {
+                header.addEventListener('click', () => {
+                    const sortType = header.dataset.sort;
+                    
+                    // Toggle direction if same column, otherwise default to desc for most stats
+                    if (currentSort.column === sortType) {
+                        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentSort.direction = sortType === 'name' ? 'asc' : 'desc';
+                    }
+                    
+                    currentSort.column = sortType;
+                    
+                    // Update header classes
+                    headers.forEach(h => {
+                        h.classList.remove('sort-asc', 'sort-desc');
+                    });
+                    header.classList.add(`sort-${currentSort.direction}`);
+                    
+                    sortTable(sortType, currentSort.direction);
+                });
+            });
+            
+            function sortTable(column, direction) {
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                
+                rows.sort((a, b) => {
+                    let aVal, bVal;
+                    
+                    switch(column) {
+                        case 'name':
+                            aVal = a.cells[0].textContent.trim();
+                            bVal = b.cells[0].textContent.trim();
+                            break;
+                        case 'games':
+                            aVal = parseInt(a.cells[1].textContent) || 0;
+                            bVal = parseInt(b.cells[1].textContent) || 0;
+                            break;
+                        case 'ip':
+                            aVal = parseFloat(a.cells[2].textContent) || 0;
+                            bVal = parseFloat(b.cells[2].textContent) || 0;
+                            break;
+                        case 'w':
+                            aVal = parseInt(a.cells[3].textContent) || 0;
+                            bVal = parseInt(b.cells[3].textContent) || 0;
+                            break;
+                        case 'l':
+                            aVal = parseInt(a.cells[4].textContent) || 0;
+                            bVal = parseInt(b.cells[4].textContent) || 0;
+                            break;
+                        case 'bb':
+                            aVal = parseInt(a.cells[5].textContent) || 0;
+                            bVal = parseInt(b.cells[5].textContent) || 0;
+                            break;
+                        case 'ibb':
+                            aVal = parseInt(a.cells[6].textContent) || 0;
+                            bVal = parseInt(b.cells[6].textContent) || 0;
+                            break;
+                        case 'bb_per_ip':
+                            aVal = parseFloat(a.cells[7].textContent) || 0;
+                            bVal = parseFloat(b.cells[7].textContent) || 0;
+                            break;
+                        case 'win_pct':
+                            aVal = parseFloat(a.cells[8].textContent) || 0;
+                            bVal = parseFloat(b.cells[8].textContent) || 0;
+                            break;
+                    }
+                    
+                    if (typeof aVal === 'string') {
+                        return direction === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+                    } else {
+                        return direction === 'asc' ? aVal - bVal : bVal - aVal;
+                    }
+                });
+                
+                // Re-append sorted rows
+                rows.forEach(row => tbody.appendChild(row));
+            }
+        });
+    </script>
+</body>
+</html>

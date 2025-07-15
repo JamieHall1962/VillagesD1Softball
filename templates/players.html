@@ -165,9 +165,32 @@ document.querySelectorAll('th[data-sort]').forEach(header => {
     });
 });
 
+/* Replace the sortTable function in your JavaScript section with this simplified version: */
+
 function sortTable(column, direction) {
     const tbody = document.querySelector('#playersTable tbody');
     const rows = Array.from(tbody.querySelectorAll('tr'));
+    
+    // Simple column index mapping
+    const columnMap = {
+        'name': 0,
+        'games': 1, 
+        'pa': 2,
+        'ab': 3,
+        'r': 4,
+        'h': 5,
+        'doubles': 6,
+        'triples': 7,
+        'hr': 8,
+        'rbi': 9,
+        'bb': 10,
+        'oe': 11,
+        'avg': 12,
+        'obp': 13,
+        'slg': 14
+    };
+    
+    const columnIndex = columnMap[column];
     
     rows.sort((a, b) => {
         let aVal, bVal;
@@ -176,27 +199,28 @@ function sortTable(column, direction) {
             aVal = a.getAttribute('data-name').toLowerCase();
             bVal = b.getAttribute('data-name').toLowerCase();
         } else {
-            const aCell = a.querySelector(`td[data-value]`);
-            const bCell = b.querySelector(`td[data-value]`);
-            const columnIndex = Array.from(a.querySelectorAll('td')).findIndex(td => 
-                td.getAttribute('data-value') !== null && 
-                a.querySelectorAll('th')[Array.from(a.parentNode.parentNode.querySelectorAll('th')).findIndex(th => th.getAttribute('data-sort') === column)]
-            );
+            // Get the cell by index and extract data-value
+            const aCell = a.cells[columnIndex];
+            const bCell = b.cells[columnIndex];
             
-            // Get the correct cell for this column
-            const aCells = a.querySelectorAll('td[data-value]');
-            const bCells = b.querySelectorAll('td[data-value]');
-            const headers = Array.from(document.querySelectorAll('th[data-sort]'));
-            const headerIndex = headers.findIndex(h => h.getAttribute('data-sort') === column);
-            
-            aVal = parseFloat(aCells[headerIndex].getAttribute('data-value')) || 0;
-            bVal = parseFloat(bCells[headerIndex].getAttribute('data-value')) || 0;
+            aVal = parseFloat(aCell.getAttribute('data-value')) || 0;
+            bVal = parseFloat(bCell.getAttribute('data-value')) || 0;
         }
         
-        if (direction === 'asc') {
-            return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+        if (column === 'name') {
+            // String comparison for names
+            if (direction === 'asc') {
+                return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+            } else {
+                return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
+            }
         } else {
-            return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
+            // Numeric comparison for stats
+            if (direction === 'asc') {
+                return aVal - bVal;
+            } else {
+                return bVal - aVal;
+            }
         }
     });
     

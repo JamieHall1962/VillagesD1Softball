@@ -19,6 +19,16 @@
         <input type="text" id="playerSearch" placeholder="Search players..." />
     </div>
     
+    <div class="filters-container">
+        <div class="filter-label">Minimum Plate Appearances:</div>
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-pa="0">All Players</button>
+            <button class="filter-btn" data-pa="100">100+ PA</button>
+            <button class="filter-btn" data-pa="250">250+ PA</button>
+            <button class="filter-btn" data-pa="400">400+ PA</button>
+        </div>
+    </div>
+    
     <div class="table-container">
         <table id="playersTable">
             <thead>
@@ -88,6 +98,51 @@
     box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
 }
 
+.filters-container {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-label {
+    font-weight: bold;
+    color: #667eea;
+    font-size: 1rem;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: 2px solid #667eea;
+    background: transparent;
+    color: #667eea;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.filter-btn.active {
+    background: #667eea;
+    color: white;
+}
+
+.filter-btn.active:hover {
+    background: #5a67d8;
+}
+
 .table-container {
     max-height: 600px;
     overflow-y: auto;
@@ -150,6 +205,30 @@ document.getElementById('playerSearch').addEventListener('keyup', function() {
     });
 });
 
+// PA Filter functionality
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const minPA = parseInt(this.getAttribute('data-pa'));
+        
+        // Update active state
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Filter rows
+        const rows = document.querySelectorAll('.player-row');
+        rows.forEach(row => {
+            const paCell = row.cells[2]; // PA is the 3rd column (index 2)
+            const playerPA = parseInt(paCell.getAttribute('data-value')) || 0;
+            
+            if (playerPA >= minPA) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+});
+
 // Sorting functionality
 let currentSort = {column: null, direction: 'asc'};
 
@@ -164,8 +243,6 @@ document.querySelectorAll('th[data-sort]').forEach(header => {
         currentSort = {column, direction};
     });
 });
-
-/* Replace the sortTable function in your JavaScript section with this simplified version: */
 
 function sortTable(column, direction) {
     const tbody = document.querySelector('#playersTable tbody');

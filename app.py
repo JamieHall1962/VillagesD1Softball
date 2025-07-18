@@ -498,7 +498,7 @@ def player_games(player_id):
     seasons_data = conn.execute('SELECT FilterNumber, season_name, short_name FROM Seasons').fetchall()
     seasons_dict = {row['FilterNumber']: {'season_name': row['season_name'], 'short_name': row['short_name']} for row in seasons_data}
     
-    # Get game logs with opposing pitcher info (FIXED JOIN)
+    # Get game logs with opposing pitcher info
     games_query = '''
         SELECT 
             g.Date,
@@ -522,20 +522,18 @@ def player_games(player_id):
             b.RBI,
             b.SF,
             b.OE,
-            -- Get opposing pitcher who got the decision (including PlayerNumber)
+            -- Get opposing pitcher who got the decision
             opp_pitcher.FirstName as OppPitcherFirst,
             opp_pitcher.LastName as OppPitcherLast,
             opp_pitcher.PlayerNumber as OppPitcherNumber
         FROM batting_stats b
         JOIN game_stats g ON b.TeamNumber = g.TeamNumber AND b.GameNumber = g.GameNumber
         LEFT JOIN (
-            -- Subquery to find opposing pitcher with decision - FIXED
+            -- Find opposing pitcher
             SELECT 
                 ps.TeamNumber,
                 ps.PlayerNumber,
-                ps.GameNumber,
                 opp_game.Date,
-                opp_game.OpponentTeamNumber,
                 p.FirstName,
                 p.LastName
             FROM pitching_stats ps
@@ -543,9 +541,7 @@ def player_games(player_id):
             JOIN game_stats opp_game ON ps.TeamNumber = opp_game.TeamNumber AND ps.GameNumber = opp_game.GameNumber
             WHERE (ps.W > 0 OR ps.L > 0)
         ) opp_pitcher ON g.OpponentTeamNumber = opp_pitcher.TeamNumber 
-                      AND g.Date = opp_pitcher.Date 
-                      AND g.TeamNumber = opp_pitcher.OpponentTeamNumber
-                      AND g.GameNumber = opp_pitcher.GameNumber
+                      AND g.Date = opp_pitcher.Date
         WHERE b.PlayerNumber = ? AND b.G = 1
         ORDER BY 
             CASE 
@@ -556,7 +552,7 @@ def player_games(player_id):
             substr(g.Date, 4, 2) DESC
     '''
     
-    raw_games = conn.execute(games_query, (player_id,)).fetchone()
+    raw_games = conn.execute(games_query, (player_id,)).fetchall()
     
     # Calculate stats for each game
     games = []
@@ -571,9 +567,11 @@ def player_games(player_id):
         
         if game['OppPitcherFirst'] and game['OppPitcherLast']:
             game_stats['OppPitcher'] = f"{game['OppPitcherFirst']} {game['OppPitcherLast']}"
-            game_stats['OppPitcherNumber'] = game['OppPitcherNumber']  # Add this for easter egg
+            game_stats['OppPitcherNumber'] = game['OppPitcherNumber']
         else:
-            game_stats['OppPitcher'] = "Unknown"
+            # Use team name + Subs for games without recorded pitcher
+            clean_opponent = re.sub(r'\s+[A-Z]\d{2}$', '', game['Opponent'])
+            game_stats['OppPitcher'] = f"{clean_opponent} Subs"
             game_stats['OppPitcherNumber'] = None
             
         # Format date to remove time
@@ -587,8 +585,6 @@ def player_games(player_id):
                          player=player,
                          games=games,
                          career_stats=career_stats)
-
-
 # Seasons Route
 @app.route('/seasons')
 def seasons():

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Players - D1 Softball Statistics{% endblock %}
+{% block title %}{{ season.season_name }} - Batting Statistics{% endblock %}
 
 {% block content %}
 <div class="header">
@@ -9,10 +9,14 @@
         <span> > </span>
         <a href="/">Home</a>
         <span> > </span>
-        <span>Players</span>
+        <a href="/seasons">Seasons</a>
+        <span> > </span>
+        <a href="/season/{{ season_filter_number }}">{{ season.season_name }}</a>
+        <span> > </span>
+        <span>Batting</span>
     </div>
-    <h1>Players</h1>
-    <p>Career statistics for all players</p>
+    <h1>{{ season.season_name }} - Batting Statistics</h1>
+    <p>Complete batting statistics for all players in this season</p>
 </div>
 
 <div class="content">
@@ -21,12 +25,10 @@
     </div>
     
     <div class="filters-container">
-        <div class="filter-label">Minimum Plate Appearances:</div>
+        <div class="filter-label">Player Filter:</div>
         <div class="filter-buttons">
-            <button class="filter-btn active" data-pa="0">All Players</button>
-            <button class="filter-btn" data-pa="100">100+ PA</button>
-            <button class="filter-btn" data-pa="250">250+ PA</button>
-            <button class="filter-btn" data-pa="400">400+ PA</button>
+            <button class="filter-btn active" data-qualified="false">All Players</button>
+            <button class="filter-btn" data-qualified="true">Qualified ({{ qualified_pa_threshold }}+ PA)</button>
         </div>
     </div>
     
@@ -47,14 +49,14 @@
                     <th data-sort="bb">BB <span class="sort-arrow">↕</span></th>
                     <th data-sort="oe">OE <span class="sort-arrow">↕</span></th>
                     <th data-sort="avg">AVG <span class="sort-arrow">↕</span></th>
-                    <th data-sort="obp">OBP <span class="sort-arrow">↕</span></th>
+                    <th data-sort="obp" class="obp-highlight">OBP <span class="sort-arrow">↕</span></th>
                     <th data-sort="slg">SLG <span class="sort-arrow">↕</span></th>
                     <th data-sort="ops">OPS <span class="sort-arrow">↕</span></th>
                 </tr>
             </thead>
             <tbody>
                 {% for player in players %}
-                <tr class="player-row" data-name="{{ player.FirstName }} {{ player.LastName }}">
+                <tr class="player-row" data-name="{{ player.FirstName }} {{ player.LastName }}" data-pa="{{ player.PA or 0 }}">
                     <td><a href="/player/{{ player.PersonNumber }}" class="player-link">{{ player.FirstName }} {{ player.LastName }}</a></td>
                     <td data-value="{{ player.Games or 0 }}">{{ player.Games or 0 }}</td>
                     <td data-value="{{ player.PA or 0 }}">{{ player.PA or 0 }}</td>
@@ -68,7 +70,7 @@
                     <td data-value="{{ player.BB or 0 }}">{{ player.BB or 0 }}</td>
                     <td data-value="{{ player.OE or 0 }}">{{ player.OE or 0 }}</td>
                     <td data-value="{{ player.AVG }}">{{ format_percentage(player.AVG) }}</td>
-                    <td data-value="{{ player.OBP }}">{{ format_percentage(player.OBP) }}</td>
+                    <td data-value="{{ player.OBP }}" class="obp-highlight">{{ format_percentage(player.OBP) }}</td>
                     <td data-value="{{ player.SLG }}">{{ format_percentage(player.SLG) }}</td>
                     <td data-value="{{ player.OPS }}">{{ format_percentage(player.OPS) }}</td>
                 </tr>
@@ -79,33 +81,6 @@
 </div>
 
 <style>
-/* Integrated Navigation Styles */
-.nav-breadcrumb {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.nav-breadcrumb a {
-    color: rgba(255, 255, 255, 0.9);
-    text-decoration: none;
-    transition: all 0.2s ease;
-    padding: 4px 8px;
-    border-radius: 6px;
-}
-
-.nav-breadcrumb a:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.1);
-    text-decoration: none;
-}
-
-.nav-breadcrumb span {
-    color: rgba(255, 255, 255, 0.7);
-}
-
 .search-container {
     margin-bottom: 20px;
 }
@@ -213,6 +188,12 @@
 .player-row.hidden {
     display: none;
 }
+
+.obp-highlight {
+    font-weight: bold;
+    color: #2d5a27;
+    background-color: rgba(45, 90, 39, 0.1);
+}
 </style>
 
 <script>
@@ -231,10 +212,11 @@ document.getElementById('playerSearch').addEventListener('keyup', function() {
     });
 });
 
-// PA Filter functionality
+// Qualified Filter functionality
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
-        const minPA = parseInt(this.getAttribute('data-pa'));
+        const qualified = this.getAttribute('data-qualified') === 'true';
+        const qualifiedThreshold = {{ qualified_pa_threshold }};
         
         // Update active state
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -243,10 +225,9 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
         // Filter rows
         const rows = document.querySelectorAll('.player-row');
         rows.forEach(row => {
-            const paCell = row.cells[2]; // PA is the 3rd column (index 2)
-            const playerPA = parseInt(paCell.getAttribute('data-value')) || 0;
+            const playerPA = parseInt(row.getAttribute('data-pa')) || 0;
             
-            if (playerPA >= minPA) {
+            if (!qualified || playerPA >= qualifiedThreshold) {
                 row.style.display = '';
             } else {
                 row.style.display = 'none';

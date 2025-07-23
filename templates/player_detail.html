@@ -32,20 +32,28 @@
         .breadcrumb {
             margin-bottom: 20px;
             font-size: 1.1em;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
         }
 
         .breadcrumb a {
-            color: white;
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
+            transition: all 0.2s ease;
+            padding: 4px 8px;
+            border-radius: 6px;
         }
 
         .breadcrumb a:hover {
-            text-decoration: underline;
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
         }
 
         .breadcrumb span {
-            opacity: 0.7;
-            margin: 0 8px;
+            color: rgba(255, 255, 255, 0.7);
         }
                 
         .career-stats {
@@ -127,6 +135,33 @@
             font-weight: bold;
             position: sticky;
             top: 0;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s ease;
+            position: relative;
+        }
+        
+        .team-stats-table th:hover {
+            background: #e9ecef;
+        }
+        
+        .team-stats-table th.sortable::after {
+            content: '↕';
+            margin-left: 5px;
+            opacity: 0.5;
+            font-size: 0.8em;
+        }
+        
+        .team-stats-table th.sort-asc::after {
+            content: '↑';
+            opacity: 1;
+            color: #667eea;
+        }
+        
+        .team-stats-table th.sort-desc::after {
+            content: '↓';
+            opacity: 1;
+            color: #667eea;
         }
         
         .team-stats-table tr:hover {
@@ -177,6 +212,38 @@
             color: #666;
             margin-top: 5px;
         }
+
+        .sort-info {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .reset-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: background-color 0.2s ease;
+        }
+        
+        .reset-button:hover {
+            background: #5a67d8;
+        }
+        
+        .original-order {
+            font-weight: bold;
+            color: #667eea;
+        }
         
         @media (max-width: 768px) {
             .stats-grid {
@@ -196,13 +263,33 @@
             .team-stats-table td:nth-child(n+8) {
                 display: none;
             }
+            
+            /* Show essential columns on mobile: Season, G, PA, H, AVG, OBP, OPS */
+            .team-stats-table th:nth-child(1),
+            .team-stats-table td:nth-child(1),
+            .team-stats-table th:nth-child(2),
+            .team-stats-table td:nth-child(2),
+            .team-stats-table th:nth-child(3),
+            .team-stats-table td:nth-child(3),
+            .team-stats-table th:nth-child(5),
+            .team-stats-table td:nth-child(5),
+            .team-stats-table th:nth-child(13),
+            .team-stats-table td:nth-child(13),
+            .team-stats-table th:nth-child(14),
+            .team-stats-table td:nth-child(14),
+            .team-stats-table th:nth-child(16),
+            .team-stats-table td:nth-child(16) {
+                display: table-cell;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Breadcrumb Navigation -->
+        <!-- Integrated Navigation -->
         <div class="breadcrumb">
+            <a href="#" onclick="history.back(); return false;">← Back</a>
+            <span>></span>
             <a href="/">Home</a>
             <span>></span>
             <a href="/players">Players</a>
@@ -247,6 +334,10 @@
                     <div class="stat-label">SLG</div>
                 </div>
                 <div class="stat-item">
+                    <div class="stat-value">{{ format_percentage(career_stats.OPS) }}</div>
+                    <div class="stat-label">OPS</div>
+                </div>
+                <div class="stat-item">
                     <div class="stat-value">{{ career_stats.HR or 0 }}</div>
                     <div class="stat-label">HR</div>
                 </div>
@@ -261,10 +352,6 @@
                 <div class="stat-item">
                     <div class="stat-value">{{ career_stats.BB or 0 }}</div>
                     <div class="stat-label">BB</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">{{ career_stats.SF or 0 }}</div>
-                    <div class="stat-label">SF</div>
                 </div>
             </div>
         </div>
@@ -285,31 +372,37 @@
         <!-- Season by Season Stats -->
         <div class="seasons-section">
             <div class="section-title">Season by Season Statistics</div>
+            <div class="sort-info">
+                <span>Click column headers to sort</span>
+                <button class="reset-button" id="resetSort">Reset to Original Order</button>
+                <span class="original-order" id="originalIndicator" style="display: none;">★ Original Order</span>
+            </div>
             <div class="team-stats-table">
-                <table>
+                <table id="statsTable">
                     <thead>
                         <tr>
-                            <th>Season</th>
-                            <th>G</th>
-                            <th>PA</th>
-                            <th>AB</th>
-                            <th>H</th>
-                            <th>2B</th>
-                            <th>3B</th>
-                            <th>HR</th>
-                            <th>RBI</th>
-                            <th>R</th>
-                            <th>BB</th>
-                            <th>SF</th>
-                            <th>AVG</th>
-                            <th>OBP</th>
-                            <th>SLG</th>
+                            <th class="sortable" data-column="0" data-type="text">Season</th>
+                            <th class="sortable" data-column="1" data-type="number">G</th>
+                            <th class="sortable" data-column="2" data-type="number">PA</th>
+                            <th class="sortable" data-column="3" data-type="number">AB</th>
+                            <th class="sortable" data-column="4" data-type="number">H</th>
+                            <th class="sortable" data-column="5" data-type="number">2B</th>
+                            <th class="sortable" data-column="6" data-type="number">3B</th>
+                            <th class="sortable" data-column="7" data-type="number">HR</th>
+                            <th class="sortable" data-column="8" data-type="number">RBI</th>
+                            <th class="sortable" data-column="9" data-type="number">R</th>
+                            <th class="sortable" data-column="10" data-type="number">BB</th>
+                            <th class="sortable" data-column="11" data-type="number">SF</th>
+                            <th class="sortable" data-column="12" data-type="number">AVG</th>
+                            <th class="sortable" data-column="13" data-type="number">OBP</th>
+                            <th class="sortable" data-column="14" data-type="number">SLG</th>
+                            <th class="sortable" data-column="15" data-type="number">OPS</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for team in team_list %}
                         <tr>
-                            <td class="team-name">
+                            <td class="team-name" data-value="{{ team.team_name }}">
                                 {% if team.season_filter_number %}
                                     <a href="/season/{{ team.season_filter_number }}" style="text-decoration: none; color: inherit;">
                                         {{ team.team_name }}
@@ -318,26 +411,27 @@
                                     {{ team.team_name }}
                                 {% endif %}
                             </td>
-                            <td>{{ team.Games or 0 }}</td>
-                            <td>{{ team.PA or 0 }}</td>
-                            <td>{{ team.AB or 0 }}</td>
-                            <td>{{ team.H or 0 }}</td>
-                            <td>{{ team.Doubles or 0 }}</td>
-                            <td>{{ team.Triples or 0 }}</td>
-                            <td>{{ team.HR or 0 }}</td>
-                            <td>{{ team.RBI or 0 }}</td>
-                            <td>{{ team.R or 0 }}</td>
-                            <td>{{ team.BB or 0 }}</td>
-                            <td>{{ team.SF or 0 }}</td>
-                            <td class="avg-highlight">{{ format_percentage(team.AVG) }}</td>
-                            <td>{{ format_percentage(team.OBP) }}</td>
-                            <td>{{ format_percentage(team.SLG) }}</td>
+                            <td data-value="{{ team.Games or 0 }}">{{ team.Games or 0 }}</td>
+                            <td data-value="{{ team.PA or 0 }}">{{ team.PA or 0 }}</td>
+                            <td data-value="{{ team.AB or 0 }}">{{ team.AB or 0 }}</td>
+                            <td data-value="{{ team.H or 0 }}">{{ team.H or 0 }}</td>
+                            <td data-value="{{ team.Doubles or 0 }}">{{ team.Doubles or 0 }}</td>
+                            <td data-value="{{ team.Triples or 0 }}">{{ team.Triples or 0 }}</td>
+                            <td data-value="{{ team.HR or 0 }}">{{ team.HR or 0 }}</td>
+                            <td data-value="{{ team.RBI or 0 }}">{{ team.RBI or 0 }}</td>
+                            <td data-value="{{ team.R or 0 }}">{{ team.R or 0 }}</td>
+                            <td data-value="{{ team.BB or 0 }}">{{ team.BB or 0 }}</td>
+                            <td data-value="{{ team.SF or 0 }}">{{ team.SF or 0 }}</td>
+                            <td class="avg-highlight" data-value="{{ team.AVG }}">{{ format_percentage(team.AVG) }}</td>
+                            <td data-value="{{ team.OBP }}">{{ format_percentage(team.OBP) }}</td>
+                            <td data-value="{{ team.SLG }}">{{ format_percentage(team.SLG) }}</td>
+                            <td data-value="{{ team.OPS }}">{{ format_percentage(team.OPS) }}</td>
                         </tr>
                         {% endfor %}
                         
                         {% for team in aggregated_teams %}
                         <tr style="background-color: #f0f0f0;">
-                            <td class="team-name">
+                            <td class="team-name" data-value="{{ team.team_name }}">
                                 {% if team.season_filter_number %}
                                     <a href="/season/{{ team.season_filter_number }}" style="text-decoration: none; color: inherit;">
                                         {{ team.team_name }} *
@@ -346,20 +440,21 @@
                                     {{ team.team_name }} *
                                 {% endif %}
                             </td>
-                            <td>{{ team.Games or 0 }}</td>
-                            <td>{{ team.PA or 0 }}</td>
-                            <td>{{ team.AB or 0 }}</td>
-                            <td>{{ team.H or 0 }}</td>
-                            <td>{{ team.Doubles or 0 }}</td>
-                            <td>{{ team.Triples or 0 }}</td>
-                            <td>{{ team.HR or 0 }}</td>
-                            <td>{{ team.RBI or 0 }}</td>
-                            <td>{{ team.R or 0 }}</td>
-                            <td>{{ team.BB or 0 }}</td>
-                            <td>{{ team.SF or 0 }}</td>
-                            <td class="avg-highlight">{{ format_percentage(team.AVG) }}</td>
-                            <td>{{ format_percentage(team.OBP) }}</td>
-                            <td>{{ format_percentage(team.SLG) }}</td>
+                            <td data-value="{{ team.Games or 0 }}">{{ team.Games or 0 }}</td>
+                            <td data-value="{{ team.PA or 0 }}">{{ team.PA or 0 }}</td>
+                            <td data-value="{{ team.AB or 0 }}">{{ team.AB or 0 }}</td>
+                            <td data-value="{{ team.H or 0 }}">{{ team.H or 0 }}</td>
+                            <td data-value="{{ team.Doubles or 0 }}">{{ team.Doubles or 0 }}</td>
+                            <td data-value="{{ team.Triples or 0 }}">{{ team.Triples or 0 }}</td>
+                            <td data-value="{{ team.HR or 0 }}">{{ team.HR or 0 }}</td>
+                            <td data-value="{{ team.RBI or 0 }}">{{ team.RBI or 0 }}</td>
+                            <td data-value="{{ team.R or 0 }}">{{ team.R or 0 }}</td>
+                            <td data-value="{{ team.BB or 0 }}">{{ team.BB or 0 }}</td>
+                            <td data-value="{{ team.SF or 0 }}">{{ team.SF or 0 }}</td>
+                            <td class="avg-highlight" data-value="{{ team.AVG }}">{{ format_percentage(team.AVG) }}</td>
+                            <td data-value="{{ team.OBP }}">{{ format_percentage(team.OBP) }}</td>
+                            <td data-value="{{ team.SLG }}">{{ format_percentage(team.SLG) }}</td>
+                            <td data-value="{{ team.OPS }}">{{ format_percentage(team.OPS) }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -405,5 +500,120 @@
         </div>
         {% endif %}
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const table = document.getElementById('statsTable');
+            const headers = table.querySelectorAll('th.sortable');
+            const resetButton = document.getElementById('resetSort');
+            const originalIndicator = document.getElementById('originalIndicator');
+            const tbody = table.querySelector('tbody');
+            
+            // Store the original row order
+            const originalRows = Array.from(tbody.querySelectorAll('tr')).map(row => row.cloneNode(true));
+            let currentSort = { column: -1, direction: 'asc' };
+            let isOriginalOrder = true;
+
+            headers.forEach((header, index) => {
+                header.addEventListener('click', function() {
+                    const column = parseInt(this.dataset.column);
+                    const type = this.dataset.type;
+                    
+                    // Determine sort direction
+                    if (currentSort.column === column) {
+                        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentSort.direction = 'asc';
+                    }
+                    currentSort.column = column;
+                    isOriginalOrder = false;
+                    
+                    // Update header styles
+                    headers.forEach(h => {
+                        h.classList.remove('sort-asc', 'sort-desc');
+                    });
+                    this.classList.add(`sort-${currentSort.direction}`);
+                    
+                    // Update UI indicators
+                    updateSortIndicators();
+                    
+                    // Sort the table
+                    sortTable(column, type, currentSort.direction);
+                });
+            });
+
+            resetButton.addEventListener('click', function() {
+                resetToOriginalOrder();
+            });
+
+            function sortTable(column, type, direction) {
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                
+                rows.sort((a, b) => {
+                    const aCell = a.children[column];
+                    const bCell = b.children[column];
+                    
+                    let aValue, bValue;
+                    
+                    if (type === 'number') {
+                        // Use data-value for numbers (handles formatted percentages)
+                        aValue = parseFloat(aCell.dataset.value) || 0;
+                        bValue = parseFloat(bCell.dataset.value) || 0;
+                    } else {
+                        // Use data-value for text if available, otherwise use text content
+                        aValue = (aCell.dataset.value || aCell.textContent).trim().toLowerCase();
+                        bValue = (bCell.dataset.value || bCell.textContent).trim().toLowerCase();
+                    }
+                    
+                    let comparison = 0;
+                    if (type === 'number') {
+                        comparison = aValue - bValue;
+                    } else {
+                        comparison = aValue.localeCompare(bValue);
+                    }
+                    
+                    return direction === 'asc' ? comparison : -comparison;
+                });
+                
+                // Re-append sorted rows
+                rows.forEach(row => tbody.appendChild(row));
+            }
+
+            function resetToOriginalOrder() {
+                // Clear the tbody
+                tbody.innerHTML = '';
+                
+                // Restore original rows
+                originalRows.forEach(row => {
+                    tbody.appendChild(row.cloneNode(true));
+                });
+                
+                // Reset sort state
+                currentSort = { column: -1, direction: 'asc' };
+                isOriginalOrder = true;
+                
+                // Clear header indicators
+                headers.forEach(h => {
+                    h.classList.remove('sort-asc', 'sort-desc');
+                });
+                
+                // Update UI indicators
+                updateSortIndicators();
+            }
+
+            function updateSortIndicators() {
+                if (isOriginalOrder) {
+                    resetButton.style.display = 'none';
+                    originalIndicator.style.display = 'inline';
+                } else {
+                    resetButton.style.display = 'inline-block';
+                    originalIndicator.style.display = 'none';
+                }
+            }
+
+            // Initialize UI indicators
+            updateSortIndicators();
+        });
+    </script>
 </body>
 </html>

@@ -22,20 +22,28 @@
         .breadcrumb {
             margin-bottom: 20px;
             font-size: 1.1em;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
         }
         
         .breadcrumb a {
-            color: white;
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
+            transition: all 0.2s ease;
+            padding: 4px 8px;
+            border-radius: 6px;
         }
         
         .breadcrumb a:hover {
-            text-decoration: underline;
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
         }
         
         .breadcrumb span {
-            opacity: 0.7;
-            margin: 0 8px;
+            color: rgba(255, 255, 255, 0.7);
         }
         
         .header {
@@ -186,19 +194,39 @@
             .roster-table td:nth-child(n+8) {
                 display: none;
             }
+            
+            /* Show essential columns on mobile: Player, G, PA, H, AVG, OBP, OPS */
+            .roster-table th:nth-child(1),
+            .roster-table td:nth-child(1),
+            .roster-table th:nth-child(2),
+            .roster-table td:nth-child(2),
+            .roster-table th:nth-child(3),
+            .roster-table td:nth-child(3),
+            .roster-table th:nth-child(5),
+            .roster-table td:nth-child(5),
+            .roster-table th:nth-child(8),
+            .roster-table td:nth-child(8),
+            .roster-table th:nth-child(9),
+            .roster-table td:nth-child(9),
+            .roster-table th:nth-child(11),
+            .roster-table td:nth-child(11) {
+                display: table-cell;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Breadcrumb Navigation -->
+        <!-- Integrated Navigation -->
         <div class="breadcrumb">
+            <a href="#" onclick="history.back(); return false;">← Back</a>
+            <span>></span>
             <a href="/">Home</a>
             <span>></span>
             <a href="/seasons">Seasons</a>
             <span>></span>
             {% if season_filter_number %}
-                <a href="/season/{{ season_filter_number }}">Season</a>
+                <a href="/season/{{ season_filter_number }}">{{ season_name or 'Season' }}</a>
                 <span>></span>
             {% endif %}
             <span>{{ team_display_name }}</span>
@@ -220,7 +248,7 @@
                     <table class="roster-table">
                         <thead>
                             <tr>
-                                <th>Player</th>
+                                <th style="text-align: left;">Player</th>
                                 <th>G</th>
                                 <th>PA</th>
                                 <th>AB</th>
@@ -230,6 +258,7 @@
                                 <th>AVG</th>
                                 <th>OBP</th>
                                 <th>SLG</th>
+                                <th>OPS</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -255,6 +284,7 @@
                                 <td>{{ format_percentage(player.AVG) }}</td>
                                 <td class="obp-highlight">{{ format_percentage(player.OBP) }}</td>
                                 <td>{{ format_percentage(player.SLG) }}</td>
+                                <td>{{ format_percentage(player.OPS) }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>

@@ -12,6 +12,8 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+# Update your calculate_batting_stats function in app.py:
+
 def calculate_batting_stats(stats_dict):
     """
     Calculate derived batting statistics from raw stats
@@ -57,6 +59,9 @@ def calculate_batting_stats(stats_dict):
         stats['SLG'] = round(total_bases / ab, 3)
     else:
         stats['SLG'] = 0.000
+    
+    # Calculate OPS (On-base Plus Slugging)
+    stats['OPS'] = round(stats['OBP'] + stats['SLG'], 3)
     
     return stats
 
@@ -852,8 +857,96 @@ def season_detail(filter_number):
                             min_pa_for_leaders=min_pa_for_leaders,  # Use the variable!
                             league_avg='.000')
 
+# Season Batting Stats Route
+@app.route('/season/<filter_number>/batting')
+def season_batting(filter_number):
+    """Season-specific batting statistics page"""
+    
+    conn = get_db_connection()
+    
+    # Get season info
+    season = conn.execute('''
+        SELECT * FROM Seasons WHERE FilterNumber = ?
+    ''', (filter_number,)).fetchone()
+    
+    if not season:
+        conn.close()
+        return "Season not found", 404
+    
+    # Get games played for this season (using same pattern as season_detail)
+    season_stats = conn.execute('''
+        SELECT 
+            COUNT(DISTINCT g.GameNumber) as TotalGames,
+            COUNT(DISTINCT p.PersonNumber) as TotalPlayers,
+            SUM(b.HR) as TotalHRs
+        FROM game_stats g
+        JOIN Teams t ON g.TeamNumber = t.TeamNumber
+        LEFT JOIN batting_stats b ON b.TeamNumber = t.TeamNumber AND b.GameNumber = g.GameNumber
+        LEFT JOIN People p ON p.PersonNumber = b.PlayerNumber
+        WHERE t.LongTeamName LIKE '%' || ? || '%'
+            AND (p.LastName != 'Subs' OR p.LastName IS NULL)
+    ''', (season['short_name'],)).fetchone()
+    
+    games_played = season_stats['TotalGames'] if season_stats else 0
+    qualified_pa_threshold = int(games_played * 2.5)
+    
+    # Get all batting stats for players in this season (using same pattern as season_detail)
+    batting_query = '''
+        SELECT 
+            p.PersonNumber,
+            p.FirstName,
+            p.LastName,
+            SUM(b.G) as Games,
+            SUM(b.PA) as PA,
+            SUM(b.R) as R,
+            SUM(b.H) as H,
+            SUM(b."2B") as Doubles,
+            SUM(b."3B") as Triples,
+            SUM(b.HR) as HR,
+            SUM(b.BB) as BB,
+            SUM(b.RBI) as RBI,
+            SUM(b.SF) as SF,
+            SUM(b.OE) as OE
+        FROM People p
+        JOIN batting_stats b ON p.PersonNumber = b.PlayerNumber
+        JOIN Teams t ON b.TeamNumber = t.TeamNumber
+        WHERE t.LongTeamName LIKE '%' || ? || '%'
+            AND p.LastName != 'Subs'
+        GROUP BY p.PersonNumber, p.FirstName, p.LastName
+        HAVING SUM(b.G) > 0
+    '''
+    
+    raw_players = conn.execute(batting_query, (season['short_name'],)).fetchall()
+    
+    # Calculate batting averages and sort by OBP
+    players = []
+    for player in raw_players:
+        player_stats = calculate_batting_stats(dict(player))
+        players.append(player_stats)
+    
+    # Sort by OBP (descending), then PA (descending)
+    players.sort(key=lambda x: (x.get('OBP', 0), x.get('PA', 0)), reverse=True)
+    
+    conn.close()
+    
+    return render_template('season_batting.html',
+                         season=season,
+                         players=players,
+                         qualified_pa_threshold=qualified_pa_threshold,
+                         season_filter_number=filter_number)
 
 
+
+
+
+
+
+
+
+
+
+
+# Season Rosters Route
 @app.route('/team/<int:team_number>')
 def team_detail(team_number):
     conn = get_db_connection()
@@ -935,24 +1028,28 @@ def team_detail(team_number):
         game_dict['Opponent'] = clean_opponent
         results.append(game_dict)
     
+
     # Get season info for breadcrumbs
     season_code = re.search(r'([A-Z]\d{2})$', team['LongTeamName'])
     season_filter_number = None
+    season_name = None
     if season_code:
         season_data = conn.execute('''
-            SELECT FilterNumber FROM Seasons WHERE short_name = ?
+            SELECT FilterNumber, season_name FROM Seasons WHERE short_name = ?
         ''', (season_code.group(1),)).fetchone()
         if season_data:
             season_filter_number = season_data['FilterNumber']
+            season_name = season_data['season_name']
     
     conn.close()
-    
     return render_template('team_detail.html',
-                         team=team,
-                         team_display_name=team_display_name,
-                         roster=roster,
-                         results=results,
-                         season_filter_number=season_filter_number)
+                        team=team,
+                        team_display_name=team_display_name,
+                        roster=roster,
+                        results=results,
+                        season_filter_number=season_filter_number,
+                        season_name=season_name)
+
 
 @app.route('/boxscore/<int:team_number>/<int:game_number>')
 def boxscore(team_number, game_number):

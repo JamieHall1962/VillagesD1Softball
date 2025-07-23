@@ -22,20 +22,28 @@
         .breadcrumb {
             margin-bottom: 20px;
             font-size: 1.1em;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
         }
         
         .breadcrumb a {
-            color: white;
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
+            transition: all 0.2s ease;
+            padding: 4px 8px;
+            border-radius: 6px;
         }
         
         .breadcrumb a:hover {
-            text-decoration: underline;
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
         }
         
         .breadcrumb span {
-            opacity: 0.7;
-            margin: 0 8px;
+            color: rgba(255, 255, 255, 0.7);
         }
         
         .header {
@@ -207,13 +215,21 @@
             .standings-table td:nth-child(n+6) {
                 display: none;
             }
+            
+            /* Adjust leaders tables for mobile */
+            .leaders-table th:nth-child(3),
+            .leaders-table td:nth-child(3) {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Breadcrumb Navigation -->
+        <!-- Integrated Navigation -->
         <div class="breadcrumb">
+            <a href="#" onclick="history.back(); return false;">← Back</a>
+            <span>></span>
             <a href="/">Home</a>
             <span>></span>
             <a href="/seasons">Seasons</a>
@@ -326,7 +342,20 @@
             
             <!-- Leaders Section -->
             <div class="section">
-                <h2 class="section-title">Season Leaders</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title" style="margin: 0; border: none; padding: 0;">Season Leaders</h2>
+                    <a href="/season/{{ season.FilterNumber }}/batting" 
+                       style="background: linear-gradient(45deg, #667eea, #764ba2); 
+                              color: white; 
+                              padding: 8px 16px; 
+                              border-radius: 6px; 
+                              text-decoration: none; 
+                              font-weight: bold;
+                              font-size: 0.9em;
+                              transition: all 0.2s ease;">
+                        View All Season Batting →
+                    </a>
+                </div>
                 
                 <!-- Batting Average Leaders -->
                 <div style="margin-bottom: 30px;">
@@ -341,6 +370,7 @@
                                 <th>AB</th>
                                 <th>Hits</th>
                                 <th>AVG</th>
+                                <th>OPS</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -355,6 +385,7 @@
                                 <td>{{ player.AB }}</td>
                                 <td>{{ player.H }}</td>
                                 <td class="avg-highlight">{{ format_percentage(player.AVG) }}</td>
+                                <td>{{ format_percentage(player.OPS) }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>   

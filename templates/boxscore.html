@@ -22,20 +22,28 @@
         .breadcrumb {
             margin-bottom: 20px;
             font-size: 1.1em;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
         }
         
         .breadcrumb a {
-            color: white;
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
+            transition: all 0.2s ease;
+            padding: 4px 8px;
+            border-radius: 6px;
         }
         
         .breadcrumb a:hover {
-            text-decoration: underline;
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
         }
         
         .breadcrumb span {
-            opacity: 0.7;
-            margin: 0 8px;
+            color: rgba(255, 255, 255, 0.7);
         }
         
         .game-header {
@@ -215,13 +223,31 @@
             .batting-table td:nth-child(n+8) {
                 display: none;
             }
+            
+            /* Show essential columns on mobile: Player, PA, H, AVG, OBP, OPS */
+            .batting-table th:nth-child(1),
+            .batting-table td:nth-child(1),
+            .batting-table th:nth-child(2),
+            .batting-table td:nth-child(2),
+            .batting-table th:nth-child(5),
+            .batting-table td:nth-child(5),
+            .batting-table th:nth-child(13),
+            .batting-table td:nth-child(13),
+            .batting-table th:nth-child(14),
+            .batting-table td:nth-child(14),
+            .batting-table th:nth-child(16),
+            .batting-table td:nth-child(16) {
+                display: table-cell;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Breadcrumb Navigation -->
+        <!-- Integrated Navigation -->
         <div class="breadcrumb">
+            <a href="#" onclick="history.back(); return false;">← Back</a>
+            <span>></span>
             <a href="/">Home</a>
             <span>></span>
             <a href="/seasons">Seasons</a>
@@ -308,6 +334,7 @@
                         <th>AVG</th>
                         <th>OBP</th>
                         <th>SLG</th>
+                        <th>OPS</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -338,6 +365,8 @@
                         <td class="avg-highlight">{{ format_percentage(player.AVG) }}</td>
                         <td>{{ format_percentage(player.OBP) }}</td>
                         <td>{{ format_percentage(player.SLG) }}</td>
+                        <td>{{ format_percentage(player.OPS) }}</td>
+                        <td>{{ format_percentage(player.OPS) }}</td>
                     </tr>
                     {% endfor %}
                     <!-- Team Totals Row -->
@@ -357,6 +386,7 @@
                         <td class="avg-highlight"><strong>{{ format_percentage(home_team_totals.AVG) }}</strong></td>
                         <td><strong>{{ format_percentage(home_team_totals.OBP) }}</strong></td>
                         <td><strong>{{ format_percentage(home_team_totals.SLG) }}</strong></td>
+                        <td><strong>{{ format_percentage(home_team_totals.OPS) }}</strong></td>
                     </tr>
                 </tbody>
             </table>
@@ -433,6 +463,7 @@
                         <td class="avg-highlight"><strong>{{ format_percentage(opponent_team_totals.AVG) }}</strong></td>
                         <td><strong>{{ format_percentage(opponent_team_totals.OBP) }}</strong></td>
                         <td><strong>{{ format_percentage(opponent_team_totals.SLG) }}</strong></td>
+                        <td><strong>{{ format_percentage(opponent_team_totals.OPS) }}</strong></td>
                     </tr>
                 </tbody>
             </table>

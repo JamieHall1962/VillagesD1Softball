@@ -41,6 +41,34 @@
             opacity: 0.9;
         }
 
+        /* Integrated Navigation Styles for Header */
+        .header .nav-breadcrumb {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .header .nav-breadcrumb a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .header .nav-breadcrumb a:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        .header .nav-breadcrumb span {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
         .logo {
             width: 120px;
             height: 120px;
@@ -133,6 +161,7 @@
             background: #5a67d8;
             transform: translateY(-2px);
         }
+        
         .depth-hint {
             font-size: 0.85em;
             color: #ffd700;
@@ -144,23 +173,24 @@
             border-left: 5px solid #667eea;
         }
         
-        .nav-breadcrumb {
+        /* Content Area Breadcrumbs (legacy support) */
+        .content .nav-breadcrumb {
             margin-bottom: 20px;
             font-size: 1.1em;
         }
 
-        .nav-breadcrumb a {
+        .content .nav-breadcrumb a {
             color: #667eea;
             text-decoration: none;
             font-weight: 600;
         }
 
-        .nav-breadcrumb a:hover {
+        .content .nav-breadcrumb a:hover {
             color: #5a67d8;
             text-decoration: underline;
         }
 
-        .nav-breadcrumb span {
+        .content .nav-breadcrumb span {
             color: #666;
             margin: 0 8px;
         }

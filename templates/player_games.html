@@ -4,12 +4,9 @@
 
 {% block content %}
 <div class="header">
-    <h1>{{ player.FirstName }} {{ player.LastName }} - Game Logs</h1>
-    <p>Individual game statistics and results</p>
-</div>
-
-<div class="content">
     <div class="nav-breadcrumb">
+        <a href="#" onclick="history.back(); return false;" class="back-link">← Back</a>
+        <span> > </span>
         <a href="/">Home</a>
         <span> > </span>
         <a href="/players">Players</a>
@@ -18,7 +15,11 @@
         <span> > </span>
         <span>Game Logs</span>
     </div>
-    
+    <h1>{{ player.FirstName }} {{ player.LastName }} - Game Logs</h1>
+    <p>Individual game statistics and results</p>
+</div>
+
+<div class="content">
     <!-- Game Summary Card -->
     <div class="summary-card">
         <div class="summary-row">
@@ -119,11 +120,31 @@
 </div>
 
 <style>
+/* Integrated Navigation Styles */
 .nav-breadcrumb {
-    margin-bottom: 20px;
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.nav-breadcrumb a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.nav-breadcrumb a:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+}
+
+.nav-breadcrumb span {
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .summary-card {
@@ -218,8 +239,6 @@
     font-weight: bold;
     color: #667eea;
 }
-
-
 
 .easter-egg-zone {
     flex: 0 0 260px;

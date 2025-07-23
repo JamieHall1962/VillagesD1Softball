@@ -498,7 +498,7 @@ def player_games(player_id):
     seasons_data = conn.execute('SELECT FilterNumber, season_name, short_name FROM Seasons').fetchall()
     seasons_dict = {row['FilterNumber']: {'season_name': row['season_name'], 'short_name': row['short_name']} for row in seasons_data}
     
-    # Get game logs with opposing pitcher info
+    # Get game logs with opposing pitcher info (USING EXACT GSTATNUMBER MATCHING)
     games_query = '''
         SELECT 
             g.Date,
@@ -529,11 +529,12 @@ def player_games(player_id):
         FROM batting_stats b
         JOIN game_stats g ON b.TeamNumber = g.TeamNumber AND b.GameNumber = g.GameNumber
         LEFT JOIN (
-            -- Find opposing pitcher
+            -- Find opposing pitcher using EXACT GStatNumber matching
             SELECT 
                 ps.TeamNumber,
                 ps.PlayerNumber,
                 opp_game.Date,
+                opp_game.GStatNumber,
                 p.FirstName,
                 p.LastName
             FROM pitching_stats ps
@@ -541,7 +542,7 @@ def player_games(player_id):
             JOIN game_stats opp_game ON ps.TeamNumber = opp_game.TeamNumber AND ps.GameNumber = opp_game.GameNumber
             WHERE (ps.W > 0 OR ps.L > 0)
         ) opp_pitcher ON g.OpponentTeamNumber = opp_pitcher.TeamNumber 
-                      AND g.Date = opp_pitcher.Date
+                      AND g.GStatNumber = opp_pitcher.GStatNumber
         WHERE b.PlayerNumber = ? AND b.G = 1
         ORDER BY 
             CASE 

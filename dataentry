@@ -1,0 +1,477 @@
+import React, { useState, useEffect } from 'react';
+import { AlertTriangle, CheckCircle, XCircle, TrendingUp, Database, Search, Filter } from 'lucide-react';
+
+const SoftballValidationSystem = () => {
+  const [activeTab, setActiveTab] = useState('validation');
+  const [validationResults, setValidationResults] = useState([]);
+  const [crossCheckResults, setCrossCheckResults] = useState([]);
+  const [filters, setFilters] = useState({
+    severity: 'all',
+    type: 'all',
+    status: 'all'
+  });
+
+  // Sample data for demonstration
+  const sampleData = {
+    players: [
+      { id: 1, name: 'John Smith', team: 'Eagles', year: 2024, games: 25, atBats: 85, hits: 28, avg: 0.329, hrs: 5, rbis: 18 },
+      { id: 2, name: 'Jane Doe', team: 'Hawks', year: 2024, games: 22, atBats: 78, hits: 35, avg: 0.449, hrs: 8, rbis: 24 },
+      { id: 3, name: 'Bob Wilson', team: 'Eagles', year: 2024, games: 20, atBats: 65, hits: 85, avg: 1.308, hrs: 12, rbis: 45 },
+      { id: 4, name: 'Alice Johnson', team: 'Falcons', year: 2023, games: 18, atBats: 62, hits: 22, avg: 0.355, hrs: 3, rbis: 15 }
+    ],
+    games: [
+      { id: 1, date: '2024-06-15', homeTeam: 'Eagles', awayTeam: 'Hawks', homeScore: 12, awayScore: 8, innings: 7 },
+      { id: 2, date: '2024-06-20', homeTeam: 'Falcons', awayTeam: 'Eagles', homeScore: 15, awayScore: 14, innings: 9 },
+      { id: 3, date: '2024-06-25', homeTeam: 'Hawks', awayTeam: 'Falcons', homeScore: 6, awayScore: 22, innings: 7 }
+    ],
+    teamStats: [
+      { team: 'Eagles', totalRuns: 145, totalHits: 178, games: 25 },
+      { team: 'Hawks', totalRuns: 132, totalHits: 165, games: 24 },
+      { team: 'Falcons', totalRuns: 155, totalHits: 189, games: 26 }
+    ]
+  };
+
+  // Validation rules
+  const validationRules = [
+    {
+      id: 'batting_average',
+      name: 'Batting Average Validation',
+      check: (player) => player.avg > 1.0,
+      severity: 'error',
+      message: 'Batting average cannot exceed 1.000'
+    },
+    {
+      id: 'hits_vs_atbats',
+      name: 'Hits vs At-Bats',
+      check: (player) => player.hits > player.atBats,
+      severity: 'error',
+      message: 'Hits cannot exceed at-bats'
+    },
+    {
+      id: 'calculated_avg',
+      name: 'Calculated Average Mismatch',
+      check: (player) => player.atBats > 0 && Math.abs((player.hits / player.atBats) - player.avg) > 0.005,
+      severity: 'warning',
+      message: 'Calculated batting average does not match recorded average'
+    },
+    {
+      id: 'games_played',
+      name: 'Games Played Validation',
+      check: (player) => player.games > 162,
+      severity: 'error',
+      message: 'Games played exceeds maximum possible for season'
+    },
+    {
+      id: 'unusual_power',
+      name: 'Unusual Power Numbers',
+      check: (player) => player.hrs > player.hits * 0.5,
+      severity: 'warning',
+      message: 'Home runs seem high relative to total hits'
+    },
+    {
+      id: 'rbis_vs_hrs',
+      name: 'RBI Validation',
+      check: (player) => player.rbis > 0 && player.hrs > player.rbis,
+      severity: 'info',
+      message: 'Home runs exceed RBIs (unusual but possible)'
+    }
+  ];
+
+  // Cross-check rules
+  const crossCheckRules = [
+    {
+      id: 'team_totals',
+      name: 'Team Total Consistency',
+      check: (data) => {
+        const results = [];
+        data.teamStats.forEach(team => {
+          const playerTotals = data.players
+            .filter(p => p.team === team.team)
+            .reduce((sum, p) => sum + (p.hits || 0), 0);
+          
+          if (Math.abs(playerTotals - team.totalHits) > 5) {
+            results.push({
+              team: team.team,
+              playerTotal: playerTotals,
+              teamTotal: team.totalHits,
+              difference: Math.abs(playerTotals - team.totalHits)
+            });
+          }
+        });
+        return results;
+      },
+      severity: 'warning',
+      message: 'Team hit totals do not match sum of individual player stats'
+    },
+    {
+      id: 'duplicate_players',
+      name: 'Duplicate Player Check',
+      check: (data) => {
+        const seen = new Set();
+        const duplicates = [];
+        
+        data.players.forEach(player => {
+          const key = `${player.name}-${player.team}-${player.year}`;
+          if (seen.has(key)) {
+            duplicates.push(player);
+          }
+          seen.add(key);
+        });
+        
+        return duplicates;
+      },
+      severity: 'error',
+      message: 'Duplicate player records found'
+    },
+    {
+      id: 'score_consistency',
+      name: 'Game Score Validation',
+      check: (data) => {
+        return data.games.filter(game => 
+          game.homeScore < 0 || game.awayScore < 0 || 
+          (game.homeScore === game.awayScore && game.innings <= 7)
+        );
+      },
+      severity: 'warning',
+      message: 'Unusual game scores detected'
+    }
+  ];
+
+  // Run validation checks
+  const runValidation = () => {
+    const results = [];
+    
+    sampleData.players.forEach(player => {
+      validationRules.forEach(rule => {
+        if (rule.check(player)) {
+          results.push({
+            id: `${rule.id}-${player.id}`,
+            type: 'validation',
+            severity: rule.severity,
+            rule: rule.name,
+            message: rule.message,
+            player: player.name,
+            team: player.team,
+            data: player,
+            timestamp: new Date().toISOString()
+          });
+        }
+      });
+    });
+    
+    setValidationResults(results);
+  };
+
+  // Run cross-check analysis
+  const runCrossChecks = () => {
+    const results = [];
+    
+    crossCheckRules.forEach(rule => {
+      const checkResults = rule.check(sampleData);
+      
+      if (Array.isArray(checkResults) && checkResults.length > 0) {
+        checkResults.forEach((result, index) => {
+          results.push({
+            id: `${rule.id}-${index}`,
+            type: 'crosscheck',
+            severity: rule.severity,
+            rule: rule.name,
+            message: rule.message,
+            data: result,
+            timestamp: new Date().toISOString()
+          });
+        });
+      }
+    });
+    
+    setCrossCheckResults(results);
+  };
+
+  // Filter results based on current filters
+  const filterResults = (results) => {
+    return results.filter(result => {
+      if (filters.severity !== 'all' && result.severity !== filters.severity) return false;
+      if (filters.type !== 'all' && result.type !== filters.type) return false;
+      return true;
+    });
+  };
+
+  // Initialize with sample checks
+  useEffect(() => {
+    runValidation();
+    runCrossChecks();
+  }, []);
+
+  const getSeverityColor = (severity) => {
+    switch (severity) {
+      case 'error': return 'text-red-600 bg-red-50 border-red-200';
+      case 'warning': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+      case 'info': return 'text-blue-600 bg-blue-50 border-blue-200';
+      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+    }
+  };
+
+  const getSeverityIcon = (severity) => {
+    switch (severity) {
+      case 'error': return <XCircle className="h-5 w-5" />;
+      case 'warning': return <AlertTriangle className="h-5 w-5" />;
+      case 'info': return <CheckCircle className="h-5 w-5" />;
+      default: return <CheckCircle className="h-5 w-5" />;
+    }
+  };
+
+  const ValidationCard = ({ result }) => (
+    <div className={`border rounded-lg p-4 ${getSeverityColor(result.severity)}`}>
+      <div className="flex items-start justify-between">
+        <div className="flex items-center">
+          {getSeverityIcon(result.severity)}
+          <div className="ml-3">
+            <h3 className="font-medium">{result.rule}</h3>
+            <p className="text-sm mt-1">{result.message}</p>
+            {result.player && (
+              <p className="text-xs mt-2">
+                Player: {result.player} ({result.team})
+              </p>
+            )}
+            {result.data && typeof result.data === 'object' && result.data.team && (
+              <p className="text-xs mt-2">
+                Team: {result.data.team} | Expected: {result.data.teamTotal} | Actual: {result.data.playerTotal}
+              </p>
+            )}
+          </div>
+        </div>
+        <span className="text-xs opacity-75">
+          {new Date(result.timestamp).toLocaleTimeString()}
+        </span>
+      </div>
+    </div>
+  );
+
+  const StatCard = ({ title, value, icon: Icon, color }) => (
+    <div className="bg-white rounded-lg shadow p-6">
+      <div className="flex items-center">
+        <div className={`flex-shrink-0 p-3 rounded-full ${color}`}>
+          <Icon className="h-6 w-6 text-white" />
+        </div>
+        <div className="ml-4">
+          <p className="text-sm font-medium text-gray-600">{title}</p>
+          <p className="text-2xl font-bold text-gray-900">{value}</p>
+        </div>
+      </div>
+    </div>
+  );
+
+  const allResults = [...validationResults, ...crossCheckResults];
+  const filteredResults = filterResults(allResults);
+  const errorCount = allResults.filter(r => r.severity === 'error').length;
+  const warningCount = allResults.filter(r => r.severity === 'warning').length;
+  const infoCount = allResults.filter(r => r.severity === 'info').length;
+
+  return (
+    <div className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Data Validation & Quality Control</h1>
+        <p className="text-gray-600">Automated checks to ensure data integrity and consistency</p>
+      </div>
+
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <StatCard 
+          title="Total Records"
+          value={sampleData.players.length}
+          icon={Database}
+          color="bg-blue-500"
+        />
+        <StatCard 
+          title="Errors"
+          value={errorCount}
+          icon={XCircle}
+          color="bg-red-500"
+        />
+        <StatCard 
+          title="Warnings"
+          value={warningCount}
+          icon={AlertTriangle}
+          color="bg-yellow-500"
+        />
+        <StatCard 
+          title="Info"
+          value={infoCount}
+          icon={CheckCircle}
+          color="bg-green-500"
+        />
+      </div>
+
+      {/* Navigation Tabs */}
+      <div className="flex space-x-1 mb-6">
+        <button
+          onClick={() => setActiveTab('validation')}
+          className={`px-4 py-2 rounded-md font-medium ${
+            activeTab === 'validation' 
+              ? 'bg-blue-500 text-white' 
+              : 'bg-white text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          Validation Results
+        </button>
+        <button
+          onClick={() => setActiveTab('crosscheck')}
+          className={`px-4 py-2 rounded-md font-medium ${
+            activeTab === 'crosscheck' 
+              ? 'bg-blue-500 text-white' 
+              : 'bg-white text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          Cross-Check Analysis
+        </button>
+        <button
+          onClick={() => setActiveTab('rules')}
+          className={`px-4 py-2 rounded-md font-medium ${
+            activeTab === 'rules' 
+              ? 'bg-blue-500 text-white' 
+              : 'bg-white text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          Validation Rules
+        </button>
+      </div>
+
+      {/* Filters */}
+      <div className="bg-white rounded-lg shadow p-4 mb-6">
+        <div className="flex items-center space-x-4">
+          <Filter className="h-5 w-5 text-gray-500" />
+          <select
+            value={filters.severity}
+            onChange={(e) => setFilters({...filters, severity: e.target.value})}
+            className="border border-gray-300 rounded-md px-3 py-2"
+          >
+            <option value="all">All Severities</option>
+            <option value="error">Errors</option>
+            <option value="warning">Warnings</option>
+            <option value="info">Info</option>
+          </select>
+          <select
+            value={filters.type}
+            onChange={(e) => setFilters({...filters, type: e.target.value})}
+            className="border border-gray-300 rounded-md px-3 py-2"
+          >
+            <option value="all">All Types</option>
+            <option value="validation">Validation</option>
+            <option value="crosscheck">Cross-Check</option>
+          </select>
+          <div className="flex space-x-2">
+            <button
+              onClick={runValidation}
+              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+            >
+              Re-run Validation
+            </button>
+            <button
+              onClick={runCrossChecks}
+              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+            >
+              Re-run Cross-Checks
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Results Display */}
+      {activeTab === 'validation' && (
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Validation Results ({filteredResults.filter(r => r.type === 'validation').length})</h2>
+          {filteredResults.filter(r => r.type === 'validation').length === 0 ? (
+            <div className="bg-white rounded-lg shadow p-8 text-center">
+              <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
+              <p className="text-gray-600">No validation issues found!</p>
+            </div>
+          ) : (
+            filteredResults.filter(r => r.type === 'validation').map(result => (
+              <ValidationCard key={result.id} result={result} />
+            ))
+          )}
+        </div>
+      )}
+
+      {activeTab === 'crosscheck' && (
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Cross-Check Analysis ({filteredResults.filter(r => r.type === 'crosscheck').length})</h2>
+          {filteredResults.filter(r => r.type === 'crosscheck').length === 0 ? (
+            <div className="bg-white rounded-lg shadow p-8 text-center">
+              <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
+              <p className="text-gray-600">All cross-checks passed!</p>
+            </div>
+          ) : (
+            filteredResults.filter(r => r.type === 'crosscheck').map(result => (
+              <ValidationCard key={result.id} result={result} />
+            ))
+          )}
+        </div>
+      )}
+
+      {activeTab === 'rules' && (
+        <div className="space-y-6">
+          <h2 className="text-xl font-semibold">Validation Rules Configuration</h2>
+          
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="font-medium">Player Validation Rules</h3>
+            </div>
+            <div className="divide-y divide-gray-200">
+              {validationRules.map(rule => (
+                <div key={rule.id} className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-medium text-gray-900">{rule.name}</h4>
+                      <p className="text-sm text-gray-600 mt-1">{rule.message}</p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        rule.severity === 'error' ? 'bg-red-100 text-red-800' :
+                        rule.severity === 'warning' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-blue-100 text-blue-800'
+                      }`}>
+                        {rule.severity}
+                      </span>
+                      <input type="checkbox" defaultChecked className="rounded" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="font-medium">Cross-Check Rules</h3>
+            </div>
+            <div className="divide-y divide-gray-200">
+              {crossCheckRules.map(rule => (
+                <div key={rule.id} className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-medium text-gray-900">{rule.name}</h4>
+                      <p className="text-sm text-gray-600 mt-1">{rule.message}</p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        rule.severity === 'error' ? 'bg-red-100 text-red-800' :
+                        rule.severity === 'warning' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-blue-100 text-blue-800'
+                      }`}>
+                        {rule.severity}
+                      </span>
+                      <input type="checkbox" defaultChecked className="rounded" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SoftballValidationSystem;

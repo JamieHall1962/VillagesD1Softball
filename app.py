@@ -1196,14 +1196,16 @@ def boxscore(team_number, game_number):
     # Get season info for breadcrumbs
     season_code = re.search(r'([A-Z]\d{2})$', home_team['LongTeamName'])
     season_filter_number = None
+    season_name = None
+    
     if season_code:
         season_data = conn.execute('''
-            SELECT FilterNumber FROM Seasons WHERE short_name = ?
+            SELECT FilterNumber, season_name FROM Seasons WHERE short_name = ?
         ''', (season_code.group(1),)).fetchone()
         if season_data:
             season_filter_number = season_data['FilterNumber']
+            season_name = season_data['season_name']
     
-
     conn.close()
     
     return render_template('boxscore.html',
@@ -1218,8 +1220,8 @@ def boxscore(team_number, game_number):
                          opponent_team_totals=opponent_team_totals,   
                          home_pitching=home_pitching,
                          opponent_pitching=opponent_pitching,
-                         season_filter_number=season_filter_number)
-
+                         season_filter_number=season_filter_number,
+                         season_name=season_name)
 
 
 @app.route('/pitching')

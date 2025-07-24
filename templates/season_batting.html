@@ -216,7 +216,7 @@ document.getElementById('playerSearch').addEventListener('keyup', function() {
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         const qualified = this.getAttribute('data-qualified') === 'true';
-        const qualifiedThreshold = {{ qualified_pa_threshold }};
+        const qualifiedThreshold = 30; // Default threshold, adjust as needed
         
         // Update active state
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -325,4 +325,6 @@ function updateSortArrows(clickedHeader, direction) {
     arrow.textContent = direction === 'asc' ? '↑' : '↓';
 }
 </script>
+
+
 {% endblock %}

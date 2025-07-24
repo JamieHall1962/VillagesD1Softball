@@ -119,17 +119,18 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
-            table-layout: fixed;  /* ADD THIS */
+            table-layout: fixed;
         }
 
-        .standings-table th:nth-child(1) { width: 25%; }  /* Team name */
-        .standings-table th:nth-child(2) { width: 8%; }   /* W */
-        .standings-table th:nth-child(3) { width: 8%; }   /* L */
-        .standings-table th:nth-child(4) { width: 10%; }  /* Pct */
-        .standings-table th:nth-child(5) { width: 8%; }   /* GB */
-        .standings-table th:nth-child(6) { width: 10%; }  /* RF */
-        .standings-table th:nth-child(7) { width: 10%; }  /* RA */
-        .standings-table th:nth-child(8) { width: 10%; }  /* Diff */
+        .standings-table th:nth-child(1) { width: 22%; }  /* Team name */
+        .standings-table th:nth-child(2) { width: 7%; }   /* W */
+        .standings-table th:nth-child(3) { width: 7%; }   /* L */
+        .standings-table th:nth-child(4) { width: 7%; }   /* T */
+        .standings-table th:nth-child(5) { width: 9%; }   /* Pct */
+        .standings-table th:nth-child(6) { width: 8%; }   /* GB */
+        .standings-table th:nth-child(7) { width: 10%; }  /* RF */
+        .standings-table th:nth-child(8) { width: 10%; }  /* RA */
+        .standings-table th:nth-child(9) { width: 10%; }  /* Diff */
         
         .standings-table th,
         .standings-table td {
@@ -211,8 +212,8 @@
                 grid-template-columns: repeat(2, 1fr);
             }
             
-            .standings-table th:nth-child(n+6),
-            .standings-table td:nth-child(n+6) {
+            .standings-table th:nth-child(n+7),
+            .standings-table td:nth-child(n+7) {
                 display: none;
             }
             
@@ -276,6 +277,7 @@
                                     <th>Team</th>
                                     <th>W</th>
                                     <th>L</th>
+                                    <th>T</th>
                                     <th>Pct</th>
                                     <th>GB</th>
                                     <th>RF</th>
@@ -293,6 +295,7 @@
                                     </td>
                                     <td class="record-col">{{ team.Wins }}</td>
                                     <td class="record-col">{{ team.Losses }}</td>
+                                    <td class="record-col">{{ team.Ties or 0 }}</td>
                                     <td class="record-col">{{ format_percentage(team.Pct) }}</td>
                                     <td class="record-col">{{ team.GB }}</td>
                                     <td class="record-col">{{ team.RunsScored or 0 }}</td>
@@ -311,6 +314,7 @@
                                 <th>Team</th>
                                 <th>W</th>
                                 <th>L</th>
+                                <th>T</th>
                                 <th>Pct</th>
                                 <th>GB</th>
                                 <th>RF</th>
@@ -328,6 +332,7 @@
                                 </td>
                                 <td class="record-col">{{ team.Wins }}</td>
                                 <td class="record-col">{{ team.Losses }}</td>
+                                <td class="record-col">{{ team.Ties or 0 }}</td>
                                 <td class="record-col">{{ format_percentage(team.Pct) }}</td>
                                 <td class="record-col">{{ team.GB }}</td>
                                 <td class="record-col">{{ team.RunsScored or 0 }}</td>

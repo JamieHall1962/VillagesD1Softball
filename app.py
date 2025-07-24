@@ -658,7 +658,7 @@ def seasons():
                          overall_stats=overall_stats)
 
 
-
+# Seasons Detail Route
 @app.route('/season/<filter_number>')
 def season_detail(filter_number):
     conn = get_db_connection()
@@ -671,9 +671,7 @@ def season_detail(filter_number):
     if not season:
         return "Season not found", 404
     
-    # Get teams for this season with their records
-
-
+    # Get teams for this season with their records (including ties)
     teams_query = '''
         SELECT 
             t.TeamNumber,
@@ -681,6 +679,7 @@ def season_detail(filter_number):
             t.Manager,
             COUNT(CASE WHEN g.Runs > g.OppRuns THEN 1 END) as Wins,
             COUNT(CASE WHEN g.Runs < g.OppRuns THEN 1 END) as Losses,
+            COUNT(CASE WHEN g.Runs = g.OppRuns AND g.Runs > 0 THEN 1 END) as Ties,
             SUM(g.Runs) as RunsScored,
             SUM(g.OppRuns) as RunsAllowed
         FROM Teams t
@@ -692,7 +691,6 @@ def season_detail(filter_number):
     
     teams_raw = conn.execute(teams_query, (season['short_name'],)).fetchall()
     
-
     # Process teams to add display names and detect divisions
     teams = []
     has_divisions = False
@@ -721,50 +719,66 @@ def season_detail(filter_number):
     # Calculate Games Behind within divisions
     if has_divisions:
         for division_name, division_teams in divisions.items():
-            # Sort by wins desc, then run differential
-            division_teams.sort(key=lambda x: (x['Wins'], (x['RunsScored'] or 0) - (x['RunsAllowed'] or 0)), reverse=True)
+            # Sort by win percentage (including ties), then run differential
+            for team in division_teams:
+                total_games = team['Wins'] + team['Losses'] + team['Ties']
+                if total_games > 0:
+                    team['Pct'] = round((team['Wins'] + 0.5 * team['Ties']) / total_games, 3)
+                else:
+                    team['Pct'] = 0.000
+            
+            division_teams.sort(key=lambda x: (x['Pct'], (x['RunsScored'] or 0) - (x['RunsAllowed'] or 0)), reverse=True)
             
             if division_teams:
-                leader_wins = division_teams[0]['Wins']
-                leader_losses = division_teams[0]['Losses']
+                leader = division_teams[0]
+                leader_wins = leader['Wins']
+                leader_losses = leader['Losses']
+                leader_ties = leader['Ties']
                 
                 for team in division_teams:
-                    # Calculate winning percentage
-                    total_games = team['Wins'] + team['Losses']
-                    if total_games > 0:
-                        team['Pct'] = round(team['Wins'] / total_games, 3)
-                    else:
-                        team['Pct'] = 0.000
-                    
-                    # Calculate Games Behind
-                    if team['Wins'] == leader_wins and team['Losses'] == leader_losses:
+                    # Calculate Games Behind with ties
+                    if (team['Wins'] == leader_wins and 
+                        team['Losses'] == leader_losses and 
+                        team['Ties'] == leader_ties):
                         team['GB'] = '-'
                     else:
-                        gb = ((leader_wins - team['Wins']) + (team['Losses'] - leader_losses)) / 2.0
+                        # GB = ((Leader record) - (Team record)) / 2
+                        # Where record = Wins + 0.5*Ties - Losses
+                        leader_record = leader_wins + 0.5 * leader_ties - leader_losses
+                        team_record = team['Wins'] + 0.5 * team['Ties'] - team['Losses']
+                        gb = (leader_record - team_record) / 2.0
                         team['GB'] = f"{gb:.1f}" if gb % 1 != 0 else str(int(gb))
     else:
         # Single division - calculate GB and Pct
-        teams.sort(key=lambda x: (x['Wins'], (x['RunsScored'] or 0) - (x['RunsAllowed'] or 0)), reverse=True)
+        for team in teams:
+            total_games = team['Wins'] + team['Losses'] + team['Ties']
+            if total_games > 0:
+                team['Pct'] = round((team['Wins'] + 0.5 * team['Ties']) / total_games, 3)
+            else:
+                team['Pct'] = 0.000
+        
+        teams.sort(key=lambda x: (x['Pct'], (x['RunsScored'] or 0) - (x['RunsAllowed'] or 0)), reverse=True)
+        
         if teams:
-            leader_wins = teams[0]['Wins']
-            leader_losses = teams[0]['Losses']
+            leader = teams[0]
+            leader_wins = leader['Wins']
+            leader_losses = leader['Losses']
+            leader_ties = leader['Ties']
             
             for team in teams:
-                # Calculate winning percentage
-                total_games = team['Wins'] + team['Losses']
-                if total_games > 0:
-                    team['Pct'] = round(team['Wins'] / total_games, 3)
-                else:
-                    team['Pct'] = 0.000
-                    
-                # Calculate Games Behind
-                if team['Wins'] == leader_wins and team['Losses'] == leader_losses:
+                # Calculate Games Behind with ties
+                if (team['Wins'] == leader_wins and 
+                    team['Losses'] == leader_losses and 
+                    team['Ties'] == leader_ties):
                     team['GB'] = '-'
                 else:
-                    gb = ((leader_wins - team['Wins']) + (team['Losses'] - leader_losses)) / 2.0
+                    # GB = ((Leader record) - (Team record)) / 2
+                    # Where record = Wins + 0.5*Ties - Losses
+                    leader_record = leader_wins + 0.5 * leader_ties - leader_losses
+                    team_record = team['Wins'] + 0.5 * team['Ties'] - team['Losses']
+                    gb = (leader_record - team_record) / 2.0
                     team['GB'] = f"{gb:.1f}" if gb % 1 != 0 else str(int(gb))
 
-    
     # Get season stats for calculating minimum PA
     season_stats = conn.execute('''
         SELECT 
@@ -779,12 +793,9 @@ def season_detail(filter_number):
             AND (p.LastName != 'Subs' OR p.LastName IS NULL)
     ''', (season['short_name'],)).fetchone()
 
-    
     total_games = season_stats['TotalGames'] or 0
     min_pa_for_leaders = int(total_games * 2.5)
-    
 
-    
     # Get batting leaders
     batting_leaders_query = '''
         SELECT 
@@ -801,9 +812,7 @@ def season_detail(filter_number):
         LIMIT 10
     '''
     
-   
     batting_leaders_raw = conn.execute(batting_leaders_query, (season['short_name'], min_pa_for_leaders)).fetchall()
-    
 
     # Process batting leaders
     batting_leaders = []
@@ -814,9 +823,7 @@ def season_detail(filter_number):
         team_name = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)
         player_dict['team_display_name'] = team_name
         batting_leaders.append(player_dict)
-    
 
-    
     # Get HR leaders
     hr_leaders_query = '''
         SELECT 
@@ -843,7 +850,8 @@ def season_detail(filter_number):
         team_name = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)
         player_dict['team_display_name'] = team_name
         hr_leaders.append(player_dict)
-    
+
+    conn.close()
 
     return render_template('season_detail.html', 
                             season=season, 
@@ -851,11 +859,15 @@ def season_detail(filter_number):
                             divisions=divisions if has_divisions else None,
                             has_divisions=has_divisions,
                             total_teams=len(teams),
-                            batting_leaders=batting_leaders,  # Use the variable!
-                            hr_leaders=hr_leaders,           # Use the variable!
-                            season_stats=season_stats,       # Use the variable!
-                            min_pa_for_leaders=min_pa_for_leaders,  # Use the variable!
+                            batting_leaders=batting_leaders,
+                            hr_leaders=hr_leaders,
+                            season_stats=season_stats,
+                            min_pa_for_leaders=min_pa_for_leaders,
                             league_avg='.000')
+
+
+
+
 
 # Season Batting Stats Route
 @app.route('/season/<filter_number>/batting')

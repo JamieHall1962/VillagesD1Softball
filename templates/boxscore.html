@@ -366,7 +366,6 @@
                         <td>{{ format_percentage(player.OBP) }}</td>
                         <td>{{ format_percentage(player.SLG) }}</td>
                         <td>{{ format_percentage(player.OPS) }}</td>
-                        <td>{{ format_percentage(player.OPS) }}</td>
                     </tr>
                     {% endfor %}
                     <!-- Team Totals Row -->
@@ -414,6 +413,7 @@
                         <th>AVG</th>
                         <th>OBP</th>
                         <th>SLG</th>
+                        <th>OPS</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -444,6 +444,7 @@
                         <td class="avg-highlight">{{ format_percentage(player.AVG) }}</td>
                         <td>{{ format_percentage(player.OBP) }}</td>
                         <td>{{ format_percentage(player.SLG) }}</td>
+                        <td>{{ format_percentage(player.OPS) }}</td>
                     </tr>
                     {% endfor %}
                     <!-- Team Totals Row -->

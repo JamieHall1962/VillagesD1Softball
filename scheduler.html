@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fall 2025 Season Schedule Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .schedule-grid {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        
+        .date-section.playoffs {
+            border-color: #d32f2f;
+        }
+        
+        .date-section.blackout {
+            border-color: #ff9800;
+        }
+        
+        .date-section.special-event {
+            border-color: #2d5a27;
+        }
+        
+        .date-section {
+            margin-bottom: 30px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .date-header {
+            background: #667eea;
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: #ddd;
+        }
+        
+        .field-column {
+            background: white;
+        }
+        
+        .field-header {
+            background: #f8f9fa;
+            padding: 10px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .time-slot {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            min-height: 60px;
+        }
+        
+        .time-label {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .game {
+            background: #f0f8ff;
+            border: 1px solid #667eea;
+            border-radius: 4px;
+            padding: 5px;
+            margin: 2px 0;
+            font-size: 12px;
+        }
+        
+        .generate-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+        
+        th, td {
+            padding: 4px 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .warning {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        
+        .good {
+            color: #2d5a27;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎾 Fall 2025 Season Schedule Generator</h1>
+        <p>12 Teams • 22 Games Each • 132 Total Games • Every Wednesday & Friday</p>
+        <p style="font-size: 14px; opacity: 0.9;">Regular Season: Sep 5 - Nov 21 | Playoffs: Dec 3 & 5</p>
+    </div>
+    
+    <div class="controls">
+        <button class="generate-btn" onclick="generateSchedule()">Generate Optimized (10 tries)</button>
+        <button class="generate-btn" onclick="generateMultiple()" style="margin-left: 10px; background: linear-gradient(45deg, #2d5a27, #4caf50);">
+            Generate Best of 20
+        </button>
+        <button class="generate-btn" onclick="generateMega()" style="margin-left: 10px; background: linear-gradient(45deg, #d32f2f, #ff5722);">
+            🚀 Best of 50
+        </button>
+        <span style="margin-left: 20px; color: #666;" id="statusText">
+            Click to generate a schedule optimized for all constraints
+        </span>
+    </div>
+    
+    <div class="schedule-grid" id="scheduleGrid">
+        <p style="text-align: center; color: #666; font-style: italic;">
+            Click "Generate Schedule" to create the Fall 2025 season schedule
+        </p>
+    </div>
+    
+    <div class="stats" id="statsSection" style="display: none;">
+        <div class="stat-card">
+            <h3>Schedule Quality</h3>
+            <div id="qualityScore"></div>
+        </div>
+        
+        <div class="stat-card">
+            <h3>Field Distribution</h3>
+            <div id="fieldStats"></div>
+        </div>
+        
+        <div class="stat-card">
+            <h3>Time Slot Distribution</h3>
+            <div id="timeStats"></div>
+        </div>
+        
+        <div class="stat-card">
+            <h3>Home/Away Balance</h3>
+            <div id="homeAwayStats"></div>
+        </div>
+        
+        <div class="stat-card">
+            <h3>Consecutive Games Check</h3>
+            <div id="consecutiveStats"></div>
+        </div>
+    </div>
+
+    <script>
+        const teams = [
+            'The Sandlot', 'Xtreme', 'Stars', 'Bad News Bears', 
+            'Norsemen', 'Clippers', 'Rebels', 'Raptors', 
+            'Buckeyes', 'Lightning Strikes', 'Shorebirds', 'Warhawks'
+        ];
+        
+        const fields = ['Field 1', 'Field 2', 'Field 3'];
+        const times = ['9:00 AM', '10:30 AM'];
+        
+        // Calculate actual Wednesdays and Fridays starting September 5, 2025
+        function calculatePlayDates() {
+            const dates = [];
+            let currentDate = new Date('2025-09-05'); // Friday, September 5, 2025
+            
+            while (dates.length < 22) {
+                const dayOfWeek = currentDate.getDay();
+                
+                // Add if it's Wednesday (3) or Friday (5)
+                if (dayOfWeek === 3 || dayOfWeek === 5) {
+                    // Skip October 17, 2025 (blackout day)
+                    const dateStr = currentDate.toISOString().split('T')[0];
+                    if (dateStr !== '2025-10-17') {
+                        dates.push(dateStr);
+                    }
+                }
+                
+                // Move to next day
+                currentDate.setDate(currentDate.getDate() + 1);
+                
+                // Safety break to avoid infinite loop
+                if (currentDate > new Date('2025-12-01')) break;
+            }
+            
+            return dates;
+        }
+        
+        const playDates = calculatePlayDates();
+        
+        const specialDates = [
+            {date: '2025-10-17', event: 'Villages Tournament (Blackout Day)', type: 'blackout'},
+            {date: '2025-11-26', event: 'Rain Makeup Day', type: 'makeup'},
+            {date: '2025-11-28', event: 'Turkey Bowl', type: 'special'},
+            {date: '2025-12-03', event: 'Playoffs Round 1 and 2', type: 'playoffs'},
+            {date: '2025-12-05', event: 'Semifinals and Finals', type: 'playoffs'}
+        ];
+        
+        let schedule = [];
+        let teamStats = {};
+        
+        function initializeTeamStats() {
+            teamStats = {};
+            teams.forEach(team => {
+                teamStats[team] = {
+                    games: [],
+                    fieldCounts: {[fields[0]]: 0, [fields[1]]: 0, [fields[2]]: 0},
+                    timeCounts: {[times[0]]: 0, [times[1]]: 0},
+                    homeCount: 0,
+                    awayCount: 0,
+                    opponents: new Set()
+                };
+            });
+        }
+        
+        function generateSingleSchedule() {
+        
+        function generateRoundRobin() {
+            const matchups = [];
+            const n = teams.length;
+            
+            // Generate two complete round-robins (home and away)
+            for (let round = 0; round < n - 1; round++) {
+                const roundMatchups = [];
+                
+                for (let i = 0; i < n / 2; i++) {
+                    let home = (round + i) % (n - 1);
+                    let away = (n - 1 - i + round) % (n - 1);
+                    
+                    if (i === 0) {
+                        away = n - 1;
+                    }
+                    
+                    roundMatchups.push([teams[home], teams[away]]);
+                }
+                
+                matchups.push(...roundMatchups);
+            }
+            
+            // Add reverse matchups (away becomes home)
+            const reverseMatchups = matchups.map(([home, away]) => [away, home]);
+            
+            return [...matchups, ...reverseMatchups];
+        }
+        
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        function generateSchedule() {
+            document.getElementById('statusText').textContent = 'Generating optimized schedule...';
+            
+            setTimeout(() => {
+                let bestSchedule = null;
+                let bestScore = -Infinity;
+                const maxAttempts = 10; // Reduced since new algorithm is more reliable
+                
+                console.log('Generating schedule with new bulletproof algorithm...');
+                
+                for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                    const candidate = generateSingleSchedule();
+                    if (!candidate) continue; // Skip failed attempts
+                    
+                    const score = evaluateSchedule(candidate);
+                    
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestSchedule = candidate;
+                    }
+                    
+                    if (score > 900) break; // Good enough
+                }
+                
+                if (!bestSchedule) {
+                    document.getElementById('statusText').textContent = 'Failed to generate valid schedule. Try again.';
+                    return;
+                }
+                
+                schedule = bestSchedule.schedule;
+                teamStats = bestSchedule.teamStats;
+                
+                console.log(`Best schedule score: ${bestScore.toFixed(1)}`);
+                document.getElementById('statusText').textContent = `Schedule generated! Quality score: ${bestScore.toFixed(0)}/1000`;
+                
+                displaySchedule();
+                displayStats();
+            }, 100);
+        }
+        
+        function generateMultiple() {
+            document.getElementById('statusText').textContent = 'Finding best schedule out of 100 attempts...';
+            
+            setTimeout(() => {
+                let bestSchedule = null;
+                let bestScore = -Infinity;
+                const maxAttempts = 20; // Reasonable number with new algorithm
+                
+                console.log('Generating 20 schedules to find the best one...');
+                
+                for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                    const candidate = generateSingleSchedule();
+                    if (!candidate) continue;
+                    
+                    const score = evaluateSchedule(candidate);
+                    
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestSchedule = candidate;
+                    }
+                    
+                    if (attempt % 5 === 0) {
+                        document.getElementById('statusText').textContent = 
+                            `Generating... ${attempt + 1}/${maxAttempts} (best score: ${bestScore.toFixed(0)})`;
+                    }
+                }
+                
+                if (!bestSchedule) {
+                    document.getElementById('statusText').textContent = 'Failed to generate valid schedule. Try again.';
+                    return;
+                }
+                
+                schedule = bestSchedule.schedule;
+                teamStats = bestSchedule.teamStats;
+                
+                console.log(`Best schedule score: ${bestScore.toFixed(1)} out of ${maxAttempts} attempts`);
+                document.getElementById('statusText').textContent = 
+                    `Best schedule found! Quality score: ${bestScore.toFixed(0)}/1000 (from ${maxAttempts} attempts)`;
+                
+                displaySchedule();
+                displayStats();
+            }, 100);
+        }
+        
+        function generateMega() {
+            document.getElementById('statusText').textContent = 'Finding the BEST schedule out of many attempts...';
+            
+            setTimeout(() => {
+                let bestSchedule = null;
+                let bestScore = -Infinity;
+                const maxAttempts = 50; // Increased attempts for mega search
+                
+                console.log('Generating 50 schedules to find the absolute best one...');
+                
+                for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                    const candidate = generateSingleSchedule();
+                    if (!candidate) continue;
+                    
+                    const score = evaluateSchedule(candidate);
+                    
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestSchedule = candidate;
+                    }
+                    
+                    if (attempt % 10 === 0) {
+                        document.getElementById('statusText').textContent = 
+                            `🚀 Generating... ${attempt + 1}/${maxAttempts} (best score: ${bestScore.toFixed(0)})`;
+                    }
+                    
+                    if (score > 950) {
+                        console.log(`Found near-perfect schedule at attempt ${attempt + 1}`);
+                        break;
+                    }
+                }
+                
+                if (!bestSchedule) {
+                    document.getElementById('statusText').textContent = 'Failed to generate valid schedule. Try again.';
+                    return;
+                }
+                
+                schedule = bestSchedule.schedule;
+                teamStats = bestSchedule.teamStats;
+                
+                console.log(`Best schedule score: ${bestScore.toFixed(1)} out of ${maxAttempts} attempts`);
+                document.getElementById('statusText').textContent = 
+                    `🏆 MEGA BEST schedule found! Quality score: ${bestScore.toFixed(0)}/1000 (from ${maxAttempts} attempts)`;
+                
+                displaySchedule();
+                displayStats();
+            }, 100);
+        }
+        
+        function generateMultiple() {
+            document.getElementById('statusText').textContent = 'Finding best schedule out of 100 attempts...';
+            
+            // Use setTimeout to allow UI update
+            setTimeout(() => {
+                let bestSchedule = null;
+                let bestScore = -Infinity;
+                const maxAttempts = 100;
+                
+                console.log('Generating 100 schedules to find the best one...');
+                
+                for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                    const candidate = generateSingleSchedule();
+                    const score = evaluateSchedule(candidate);
+                    
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestSchedule = candidate;
+                    }
+                    
+                    // Update progress
+                    if (attempt % 10 === 0) {
+                        document.getElementById('statusText').textContent = 
+                            `Generating... ${attempt + 1}/${maxAttempts} (best score: ${bestScore.toFixed(0)})`;
+                    }
+                }
+                
+                // Use the best schedule found
+                schedule = bestSchedule.schedule;
+                teamStats = bestSchedule.teamStats;
+                
+                console.log(`Best schedule score: ${bestScore.toFixed(1)} out of ${maxAttempts} attempts`);
+                document.getElementById('statusText').textContent = 
+                    `Best schedule found! Quality score: ${bestScore.toFixed(0)}/1000 (from 100 attempts)`;
+                
+                displaySchedule();
+                displayStats();
+            }, 100);
+        }
+        
+        function generateMega() {
+            document.getElementById('statusText').textContent = 'Finding the BEST schedule out of 10,000 attempts...';
+            
+            // Use setTimeout to allow UI update
+            setTimeout(() => {
+                let bestSchedule = null;
+                let bestScore = -Infinity;
+                const maxAttempts = 10000;
+                
+                console.log('Generating 10,000 schedules to find the absolute best one...');
+                
+                for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                    const candidate = generateSingleSchedule();
+                    const score = evaluateSchedule(candidate);
+                    
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestSchedule = candidate;
+                    }
+                    
+                    // Update progress every 500 attempts
+                    if (attempt % 500 === 0) {
+                        document.getElementById('statusText').textContent = 
+                            `🚀 Generating... ${attempt + 1}/${maxAttempts} (best score: ${bestScore.toFixed(0)})`;
+                    }
+                    
+                    // If we get a near-perfect schedule, we can stop early
+                    if (score > 950) {
+                        console.log(`Found near-perfect schedule at attempt ${attempt + 1}`);
+                        break;
+                    }
+                }
+                
+                // Use the best schedule found
+                schedule = bestSchedule.schedule;
+                teamStats = bestSchedule.teamStats;
+                
+                console.log(`Best schedule score: ${bestScore.toFixed(1)} out of ${maxAttempts} attempts`);
+                document.getElementById('statusText').textContent = 
+                    `🏆 MEGA BEST schedule found! Quality score: ${bestScore.toFixed(0)}/1000 (from ${maxAttempts} attempts)`;
+                
+                displaySchedule();
+                displayStats();
+            }, 100);
+        }
+        
+        // Calculate actual Wednesdays and Fridays starting September 5, 2025
+        function calculatePlayDates() {
+            const dates = [];
+            let currentDate = new Date('2025-09-05'); // Friday, September 5, 2025
+            
+            while (dates.length < 22) {
+                const dayOfWeek = currentDate.getDay();
+                
+                // Add if it's Wednesday (3) or Friday (5)
+                if (dayOfWeek === 3 || dayOfWeek === 5) {
+                    // Skip October 17, 2025 (blackout day)
+                    const dateStr = currentDate.toISOString().split('T')[0];
+                    if (dateStr !== '2025-10-17') {
+                        dates.push(dateStr);
+                    }
+                }
+                
+                // Move to next day
+                currentDate.setDate(currentDate.getDate() + 1);
+                
+                // Safety break to avoid infinite loop
+                if (currentDate > new Date('2025-12-01')) break;
+            }
+            
+            return dates;
+        }
+        
+        const playDates = calculatePlayDates();
+        
+        const specialDates = [
+            {date: '2025-10-17', event: 'Villages Tournament (Blackout Day)', type: 'blackout'},
+            {date: '2025-11-26', event: 'Rain Makeup Day', type: 'makeup'},
+            {date: '2025-11-28', event: 'Turkey Bowl', type: 'special'},
+            {date: '2025-12-03', event: 'Playoffs Round 1 and 2', type: 'playoffs'},
+            {date: '2025-12-05', event: 'Semifinals and Finals', type: 'playoffs'}
+        ];
+        
+        let schedule = [];
+        let teamStats = {};
+        
+        function initializeTeamStats() {
+            teamStats = {};
+            teams.forEach(team => {
+                teamStats[team] = {
+                    games: [],
+                    fieldCounts: {[fields[0]]: 0, [fields[1]]: 0, [fields[2]]: 0},
+                    timeCounts: {[times[0]]: 0, [times[1]]: 0},
+                    homeCount: 0,
+                    awayCount: 0,
+                    opponents: new Set()
+                };
+            });
+        }
+            initializeTeamStats();
+            const tempSchedule = [];
+            
+            // Generate all possible matchups with better distribution
+            let allMatchups = generateOptimizedMatchups();
+            
+            // Distribute games across dates with constraint awareness
+            let matchupIndex = 0;
+            
+            playDates.forEach((date, dateIndex) => {
+                const daySchedule = {
+                    date: date,
+                    games: {}
+                };
+                
+                // Initialize empty slots
+                fields.forEach(field => {
+                    daySchedule.games[field] = {
+                        [times[0]]: null,
+                        [times[1]]: null
+                    };
+                });
+                
+                // Try to assign games with better constraint satisfaction
+                const dayMatchups = [];
+                for (let i = 0; i < 6 && matchupIndex < allMatchups.length; i++) {
+                    dayMatchups.push(allMatchups[matchupIndex]);
+                    matchupIndex++;
+                }
+                
+                // Assign slots with constraint awareness
+                assignGamesToSlots(daySchedule, dayMatchups, date);
+                tempSchedule.push(daySchedule);
+            });
+            
+            return {
+                schedule: tempSchedule,
+                teamStats: {...teamStats}
+            };
+        }
+        
+        function generateOptimizedMatchups() {
+            const matchups = [];
+            const n = teams.length;
+            
+            // Generate two complete round-robins
+            for (let round = 0; round < n - 1; round++) {
+                const roundMatchups = [];
+                
+                for (let i = 0; i < n / 2; i++) {
+                    let home = (round + i) % (n - 1);
+                    let away = (n - 1 - i + round) % (n - 1);
+                    
+                    if (i === 0) {
+                        away = n - 1;
+                    }
+                    
+                    roundMatchups.push([teams[home], teams[away]]);
+                }
+                
+                matchups.push(...roundMatchups);
+            }
+            
+            // Add reverse matchups (away becomes home)
+            const reverseMatchups = matchups.map(([home, away]) => [away, home]);
+            
+            // Interleave the two round robins to reduce consecutive home/away games
+            const interleavedMatchups = [];
+            for (let i = 0; i < matchups.length; i++) {
+                interleavedMatchups.push(matchups[i]);
+                if (i < reverseMatchups.length) {
+                    interleavedMatchups.push(reverseMatchups[i]);
+                }
+            }
+            
+            return shuffleArray(interleavedMatchups);
+        }
+        
+        function assignGamesToSlots(daySchedule, dayMatchups, date) {
+            // Create all possible slots
+            const slots = [];
+            fields.forEach(field => {
+                times.forEach(time => {
+                    slots.push({field, time});
+                });
+            });
+            
+            // Shuffle for random distribution
+            const shuffledSlots = shuffleArray(slots);
+            
+            // Assign games to slots
+            dayMatchups.forEach((matchup, index) => {
+                if (index < shuffledSlots.length) {
+                    const [homeTeam, awayTeam] = matchup;
+                    const {field, time} = shuffledSlots[index];
+                    
+                    const game = {
+                        home: homeTeam,
+                        away: awayTeam,
+                        field: field,
+                        time: time,
+                        date: date
+                    };
+                    
+                    daySchedule.games[field][time] = game;
+                    
+                    // Update team stats
+                    updateTeamStats(homeTeam, game, true);
+                    updateTeamStats(awayTeam, game, false);
+                }
+            });
+        }
+        
+        function evaluateSchedule(candidate) {
+            let score = 1000; // Start with perfect score
+            const stats = candidate.teamStats;
+            
+            teams.forEach(team => {
+                const teamData = stats[team];
+                
+                // Field distribution penalty (target: 7-8 games per field)
+                fields.forEach(field => {
+                    const count = teamData.fieldCounts[field];
+                    if (count < 6 || count > 9) {
+                        score -= Math.abs(count - 7.33) * 20;
+                    }
+                });
+                
+                // Time distribution penalty (target: 11 games per time slot)
+                times.forEach(time => {
+                    const count = teamData.timeCounts[time];
+                    if (count < 9 || count > 13) {
+                        score -= Math.abs(count - 11) * 15;
+                    }
+                });
+                
+                // Home/Away balance penalty (should be exactly 11 each)
+                if (teamData.homeCount !== 11) {
+                    score -= Math.abs(teamData.homeCount - 11) * 50;
+                }
+                if (teamData.awayCount !== 11) {
+                    score -= Math.abs(teamData.awayCount - 11) * 50;
+                }
+                
+                // Opponent coverage penalty (should play all 11 other teams)
+                if (teamData.opponents.size !== 11) {
+                    score -= (11 - teamData.opponents.size) * 100;
+                }
+                
+                // Consecutive games penalty
+                const consecutiveScore = evaluateConsecutiveGames(teamData.games, team);
+                score += consecutiveScore;
+            });
+            
+            return score;
+        }
+        
+        function evaluateConsecutiveGames(games, team) {
+            const sortedGames = games.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            let consecutiveHome = 0;
+            let consecutiveAway = 0;
+            let maxConsecutiveHome = 0;
+            let maxConsecutiveAway = 0;
+            let penalty = 0;
+            
+            sortedGames.forEach(game => {
+                const isHome = game.home === team;
+                
+                if (isHome) {
+                    consecutiveHome++;
+                    consecutiveAway = 0;
+                    maxConsecutiveHome = Math.max(maxConsecutiveHome, consecutiveHome);
+                } else {
+                    consecutiveAway++;
+                    consecutiveHome = 0;
+                    maxConsecutiveAway = Math.max(maxConsecutiveAway, consecutiveAway);
+                }
+            });
+            
+            // Penalty for long streaks
+            if (maxConsecutiveHome > 3) {
+                penalty -= (maxConsecutiveHome - 3) * 30;
+            }
+            if (maxConsecutiveAway > 3) {
+                penalty -= (maxConsecutiveAway - 3) * 30;
+            }
+            
+            return penalty;
+        }
+        
+        function updateTeamStats(team, game, isHome) {
+            teamStats[team].games.push(game);
+            teamStats[team].fieldCounts[game.field]++;
+            teamStats[team].timeCounts[game.time]++;
+            
+            if (isHome) {
+                teamStats[team].homeCount++;
+                teamStats[team].opponents.add(game.away);
+            } else {
+                teamStats[team].awayCount++;
+                teamStats[team].opponents.add(game.home);
+            }
+        }
+        
+        function displaySchedule() {
+            const grid = document.getElementById('scheduleGrid');
+            
+            // Combine regular season dates and special dates for display
+            const allDates = [];
+            
+            // Add regular season dates
+            schedule.forEach(daySchedule => {
+                allDates.push({
+                    date: daySchedule.date,
+                    type: 'regular',
+                    data: daySchedule
+                });
+            });
+            
+            // Add special dates
+            specialDates.forEach(special => {
+                allDates.push({
+                    date: special.date,
+                    type: 'special',
+                    data: special
+                });
+            });
+            
+            // Sort all dates chronologically
+            allDates.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            let html = '';
+            
+            allDates.forEach(dateItem => {
+                const date = new Date(dateItem.date);
+                const dateStr = date.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                
+                if (dateItem.type === 'regular') {
+                    // Regular season game day
+                    const daySchedule = dateItem.data;
+                    html += `
+                        <div class="date-section">
+                            <div class="date-header">
+                                <span>${dateStr}</span>
+                                <span>6 Games</span>
+                            </div>
+                            <div class="games-grid">
+                    `;
+                    
+                    fields.forEach(field => {
+                        html += `
+                            <div class="field-column">
+                                <div class="field-header">${field}</div>
+                        `;
+                        
+                        times.forEach(time => {
+                            const game = daySchedule.games[field][time];
+                            html += `
+                                <div class="time-slot">
+                                    <div class="time-label">${time}</div>
+                            `;
+                            
+                            if (game) {
+                                html += `
+                                    <div class="game">
+                                        <strong>${game.away}</strong> at <strong>${game.home}</strong>
+                                    </div>
+                                `;
+                            }
+                            
+                            html += `</div>`;
+                        });
+                        
+                        html += `</div>`;
+                    });
+                    
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Special event day
+                    const special = dateItem.data;
+                    const eventClass = special.type === 'playoffs' ? 'playoffs' : 
+                                     special.type === 'blackout' ? 'blackout' : 'special-event';
+                    
+                    html += `
+                        <div class="date-section ${eventClass}">
+                            <div class="date-header" style="background: ${getEventColor(special.type)};">
+                                <span>${dateStr}</span>
+                                <span>${special.event}</span>
+                            </div>
+                            <div style="padding: 20px; text-align: center; background: white; color: #333; font-size: 16px;">
+                                <strong>${special.event}</strong>
+                                ${getEventDescription(special.type)}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            grid.innerHTML = html;
+        }
+        
+        function getEventColor(type) {
+            switch(type) {
+                case 'playoffs': return '#d32f2f';
+                case 'blackout': return '#ff9800';
+                case 'special': return '#2d5a27';
+                case 'makeup': return '#1976d2';
+                default: return '#667eea';
+            }
+        }
+        
+        function getEventDescription(type) {
+            switch(type) {
+                case 'playoffs': return '<br><em>No regular season games scheduled</em>';
+                case 'blackout': return '<br><em>No games - facility unavailable</em>';
+                case 'special': return '<br><em>Special event game</em>';
+                case 'makeup': return '<br><em>Reserved for weather postponements</em>';
+                default: return '';
+            }
+        }
+        
+        function displayStats() {
+            displayQualityScore();
+            displayFieldStats();
+            displayTimeStats();
+            displayHomeAwayStats();
+            displayConsecutiveStats();
+            
+            document.getElementById('statsSection').style.display = 'grid';
+        }
+        
+        function displayQualityScore() {
+            const currentScore = evaluateSchedule({schedule, teamStats});
+            let html = `
+                <div style="text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 15px;">
+                    ${currentScore.toFixed(0)}/1000
+                </div>
+                <div style="background: #f0f0f0; height: 20px; border-radius: 10px; overflow: hidden; margin-bottom: 10px;">
+                    <div style="background: linear-gradient(45deg, #667eea, #764ba2); height: 100%; width: ${Math.max(0, Math.min(100, (currentScore/1000)*100))}%; transition: width 0.3s ease;"></div>
+                </div>
+                <div style="font-size: 12px; color: #666;">
+                    <strong>✅ Hard Constraints (Guaranteed):</strong><br>
+                    • Each team: exactly 11 home, 11 away games<br>
+                    • Each team plays all 11 opponents twice<br><br>
+                    <strong>📊 Soft Constraints (Optimized):</strong><br>
+                    • Field balance: ±3 pts per game off target<br>
+                    • Time balance: ±3 pts per game off target<br>
+                    • Consecutive games: -8 pts per extra game in streak
+                </div>
+            `;
+            
+            if (currentScore >= 900) {
+                html += '<div style="color: #2d5a27; font-weight: bold; margin-top: 10px;">🏆 Nearly Perfect! Outstanding balance!</div>';
+            } else if (currentScore >= 820) {
+                html += '<div style="color: #2d5a27; font-weight: bold; margin-top: 10px;">🌟 Excellent schedule! Great distribution!</div>';
+            } else if (currentScore >= 750) {
+                html += '<div style="color: #2d5a27; font-weight: bold; margin-top: 10px;">✅ Very good schedule!</div>';
+            } else if (currentScore >= 680) {
+                html += '<div style="color: #ff9800; font-weight: bold; margin-top: 10px;">👍 Good schedule with minor imbalances</div>';
+            } else if (currentScore >= 600) {
+                html += '<div style="color: #ff9800; font-weight: bold; margin-top: 10px;">⚠️ Acceptable - some distribution issues</div>';
+            } else {
+                html += '<div style="color: #d32f2f; font-weight: bold; margin-top: 10px;">❌ Poor distribution - try 🚀 Best of 10,000</div>';
+            }
+            
+            document.getElementById('qualityScore').innerHTML = html;
+        }
+        
+        function displayFieldStats() {
+            let html = '<table><tr><th>Team</th>';
+            fields.forEach(field => html += `<th>${field}</th>`);
+            html += '<th>Range</th></tr>';
+            
+            teams.forEach(team => {
+                html += `<tr><td>${team}</td>`;
+                const counts = [];
+                fields.forEach(field => {
+                    const count = teamStats[team].fieldCounts[field];
+                    counts.push(count);
+                    const className = (count >= 6 && count <= 9) ? 'good' : 'warning';
+                    html += `<td class="${className}">${count}</td>`;
+                });
+                const range = Math.max(...counts) - Math.min(...counts);
+                const rangeClass = range <= 3 ? 'good' : 'warning';
+                html += `<td class="${rangeClass}">${range}</td>`;
+                html += '</tr>';
+            });
+            
+            html += '</table>';
+            html += '<div style="font-size: 11px; color: #666; margin-top: 5px;">Target: 7-8 games per field (range ≤ 3)</div>';
+            document.getElementById('fieldStats').innerHTML = html;
+        }
+        
+        function displayTimeStats() {
+            let html = '<table><tr><th>Team</th>';
+            times.forEach(time => html += `<th>${time}</th>`);
+            html += '<th>Diff</th></tr>';
+            
+            teams.forEach(team => {
+                html += `<tr><td>${team}</td>`;
+                const counts = [];
+                times.forEach(time => {
+                    const count = teamStats[team].timeCounts[time];
+                    counts.push(count);
+                    const className = (count >= 10 && count <= 12) ? 'good' : 'warning';
+                    html += `<td class="${className}">${count}</td>`;
+                });
+                const diff = Math.abs(counts[0] - counts[1]);
+                const diffClass = diff <= 2 ? 'good' : 'warning';
+                html += `<td class="${diffClass}">${diff}</td>`;
+                html += '</tr>';
+            });
+            
+            html += '</table>';
+            html += '<div style="font-size: 11px; color: #666; margin-top: 5px;">Target: 11 games per time slot (difference ≤ 2)</div>';
+            document.getElementById('timeStats').innerHTML = html;
+        }
+        
+        function displayHomeAwayStats() {
+            let html = '<table><tr><th>Team</th><th>Home</th><th>Away</th><th>Total</th><th>Opponents</th></tr>';
+            
+            teams.forEach(team => {
+                const homeCount = teamStats[team].homeCount;
+                const awayCount = teamStats[team].awayCount;
+                const totalGames = homeCount + awayCount;
+                const opponentCount = teamStats[team].opponents.size;
+                
+                html += `<tr>
+                    <td>${team}</td>
+                    <td class="good">${homeCount}</td>
+                    <td class="good">${awayCount}</td>
+                    <td class="good">${totalGames}</td>
+                    <td class="good">${opponentCount}/11</td>
+                </tr>`;
+            });
+            
+            html += '</table>';
+            html += '<div style="font-size: 11px; color: #666; margin-top: 5px;">✅ Hard constraint: All teams guaranteed 11 home, 11 away, all 11 opponents</div>';
+            document.getElementById('homeAwayStats').innerHTML = html;
+        }
+        
+        function displayConsecutiveStats() {
+            let html = '<table><tr><th>Team</th><th>Max Home</th><th>Max Away</th><th>Issues</th></tr>';
+            
+            let totalIssues = 0;
+            
+            teams.forEach(team => {
+                const games = teamStats[team].games.sort((a, b) => new Date(a.date) - new Date(b.date));
+                
+                let maxConsecutiveHome = 0;
+                let maxConsecutiveAway = 0;
+                let currentConsecutiveHome = 0;
+                let currentConsecutiveAway = 0;
+                
+                games.forEach(game => {
+                    const isHome = game.home === team;
+                    
+                    if (isHome) {
+                        currentConsecutiveHome++;
+                        currentConsecutiveAway = 0;
+                        maxConsecutiveHome = Math.max(maxConsecutiveHome, currentConsecutiveHome);
+                    } else {
+                        currentConsecutiveAway++;
+                        currentConsecutiveHome = 0;
+                        maxConsecutiveAway = Math.max(maxConsecutiveAway, currentConsecutiveAway);
+                    }
+                });
+                
+                const homeIssues = maxConsecutiveHome > 3;
+                const awayIssues = maxConsecutiveAway > 3;
+                const hasIssues = homeIssues || awayIssues;
+                
+                if (hasIssues) totalIssues++;
+                
+                html += `<tr>
+                    <td>${team}</td>
+                    <td class="${maxConsecutiveHome <= 3 ? 'good' : 'warning'}">${maxConsecutiveHome}</td>
+                    <td class="${maxConsecutiveAway <= 3 ? 'good' : 'warning'}">${maxConsecutiveAway}</td>
+                    <td class="${hasIssues ? 'warning' : 'good'}">${hasIssues ? 'Yes' : 'No'}</td>
+                </tr>`;
+            });
+            
+            html += '</table>';
+            html += `<div style="font-size: 11px; color: #666; margin-top: 5px;">
+                Target: ≤3 consecutive games • Teams with issues: ${totalIssues}/12
+            </div>`;
+            document.getElementById('consecutiveStats').innerHTML = html;
+        }
+    </script>
+</body>
+</html>

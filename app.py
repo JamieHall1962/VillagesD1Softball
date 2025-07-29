@@ -548,11 +548,14 @@ def player_games(player_id):
         WHERE b.PlayerNumber = ? AND b.G = 1
         ORDER BY 
             CASE 
-                WHEN substr(g.Date, 7, 2) < '50' THEN '20' || substr(g.Date, 7, 2)
-                ELSE '19' || substr(g.Date, 7, 2)
-            END DESC,
-            substr(g.Date, 1, 2) DESC,
-            substr(g.Date, 4, 2) DESC
+                WHEN g.Date LIKE '____-__-__' THEN g.Date  -- YYYY-MM-DD format (S25+)
+                WHEN substr(g.Date, 7, 2) < '50' THEN '20' || substr(g.Date, 7, 2) || '-' || 
+                    CASE WHEN length(substr(g.Date, 1, 2)) = 1 THEN '0' || substr(g.Date, 1, 2) ELSE substr(g.Date, 1, 2) END || '-' ||
+                    CASE WHEN length(substr(g.Date, 4, 2)) = 1 THEN '0' || substr(g.Date, 4, 2) ELSE substr(g.Date, 4, 2) END
+                ELSE '19' || substr(g.Date, 7, 2) || '-' || 
+                    CASE WHEN length(substr(g.Date, 1, 2)) = 1 THEN '0' || substr(g.Date, 1, 2) ELSE substr(g.Date, 1, 2) END || '-' ||
+                    CASE WHEN length(substr(g.Date, 4, 2)) = 1 THEN '0' || substr(g.Date, 4, 2) ELSE substr(g.Date, 4, 2) END
+            END DESC
     '''
     
     raw_games = conn.execute(games_query, (player_id,)).fetchall()

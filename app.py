@@ -800,7 +800,8 @@ def season_detail(filter_number):
     batting_leaders_query = '''
         SELECT 
             p.PersonNumber, p.FirstName, p.LastName, t.LongTeamName,
-            SUM(b.PA) as PA, SUM(b.H) as H, SUM(b.BB) as BB, SUM(b.SF) as SF
+            SUM(b.PA) as PA, SUM(b.H) as H, SUM(b.BB) as BB, SUM(b.SF) as SF,
+            SUM(b.'2B') as '2B', SUM(b.'3B') as '3B', SUM(b.HR) as HR, SUM(b.OE) as OE
         FROM People p
         JOIN batting_stats b ON p.PersonNumber = b.PlayerNumber
         JOIN Teams t ON b.TeamNumber = t.TeamNumber
@@ -908,6 +909,7 @@ def season_batting(filter_number):
             p.PersonNumber,
             p.FirstName,
             p.LastName,
+            t.LongTeamName,
             SUM(b.G) as Games,
             SUM(b.PA) as PA,
             SUM(b.R) as R,
@@ -924,7 +926,7 @@ def season_batting(filter_number):
         JOIN Teams t ON b.TeamNumber = t.TeamNumber
         WHERE t.LongTeamName LIKE '%' || ? || '%'
             AND p.LastName != 'Subs'
-        GROUP BY p.PersonNumber, p.FirstName, p.LastName
+        GROUP BY p.PersonNumber, p.FirstName, p.LastName, t.LongTeamName
         HAVING SUM(b.G) > 0
     '''
     
@@ -934,6 +936,12 @@ def season_batting(filter_number):
     players = []
     for player in raw_players:
         player_stats = calculate_batting_stats(dict(player))
+        
+        # Clean team name (same logic as season_detail)
+        team_name = player_stats['LongTeamName']
+        team_name = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)
+        player_stats['team_display_name'] = team_name
+        
         players.append(player_stats)
     
     # Sort by OBP (descending), then PA (descending)

@@ -37,6 +37,7 @@
             <thead>
                 <tr>
                     <th data-sort="name">Player <span class="sort-arrow">↕</span></th>
+                    <th data-sort="team">Team <span class="sort-arrow">↕</span></th>
                     <th data-sort="games">GP <span class="sort-arrow">↕</span></th>
                     <th data-sort="pa">PA <span class="sort-arrow">↕</span></th>
                     <th data-sort="ab">AB <span class="sort-arrow">↕</span></th>
@@ -58,6 +59,7 @@
                 {% for player in players %}
                 <tr class="player-row" data-name="{{ player.FirstName }} {{ player.LastName }}" data-pa="{{ player.PA or 0 }}">
                     <td><a href="/player/{{ player.PersonNumber }}" class="player-link">{{ player.FirstName }} {{ player.LastName }}</a></td>
+                    <td>{{ player.team_display_name }}</td>
                     <td data-value="{{ player.Games or 0 }}">{{ player.Games or 0 }}</td>
                     <td data-value="{{ player.PA or 0 }}">{{ player.PA or 0 }}</td>
                     <td data-value="{{ player.AB or 0 }}">{{ player.AB or 0 }}</td>
@@ -258,21 +260,22 @@ function sortTable(column, direction) {
     // Simple column index mapping
     const columnMap = {
         'name': 0,
-        'games': 1, 
-        'pa': 2,
-        'ab': 3,
-        'r': 4,
-        'h': 5,
-        'doubles': 6,
-        'triples': 7,
-        'hr': 8,
-        'rbi': 9,
-        'bb': 10,
-        'oe': 11,
-        'avg': 12,
-        'obp': 13,
-        'slg': 14,
-        'ops': 15
+        'team': 1,
+        'games': 2, 
+        'pa': 3,
+        'ab': 4,
+        'r': 5,
+        'h': 6,
+        'doubles': 7,
+        'triples': 8,
+        'hr': 9,
+        'rbi': 10,
+        'bb': 11,
+        'oe': 12,
+        'avg': 13,
+        'obp': 14,
+        'slg': 15,
+        'ops': 16
     };
     
     const columnIndex = columnMap[column];

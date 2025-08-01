@@ -607,34 +607,15 @@ def seasons():
         FROM Seasons s
         LEFT JOIN Teams t ON t.LongTeamName LIKE '%' || s.short_name || '%'
         GROUP BY s.FilterNumber, s.season_name, s.short_name, s.Champion
-        ORDER BY 
-            CASE 
-                WHEN s.short_name LIKE '%08' THEN 2008
-                WHEN s.short_name LIKE '%09' THEN 2009
-                WHEN s.short_name LIKE '%10' THEN 2010
-                WHEN s.short_name LIKE '%11' THEN 2011
-                WHEN s.short_name LIKE '%12' THEN 2012
-                WHEN s.short_name LIKE '%13' THEN 2013
-                WHEN s.short_name LIKE '%14' THEN 2014
-                WHEN s.short_name LIKE '%15' THEN 2015
-                WHEN s.short_name LIKE '%16' THEN 2016
-                WHEN s.short_name LIKE '%17' THEN 2017
-                WHEN s.short_name LIKE '%18' THEN 2018
-                WHEN s.short_name LIKE '%19' THEN 2019
-                WHEN s.short_name LIKE '%20' THEN 2020
-                WHEN s.short_name LIKE '%21' THEN 2021
-                WHEN s.short_name LIKE '%22' THEN 2022
-                WHEN s.short_name LIKE '%23' THEN 2023
-                WHEN s.short_name LIKE '%24' THEN 2024
-                WHEN s.short_name LIKE '%25' THEN 2025
-                ELSE 0
-            END DESC,
+
+        ORDER BY s.year_extracted DESC, 
             CASE 
                 WHEN s.short_name LIKE 'F%' THEN 3
                 WHEN s.short_name LIKE 'S%' THEN 2  
                 WHEN s.short_name LIKE 'W%' THEN 1
                 ELSE 0
             END DESC
+
     '''
     
     seasons_data = conn.execute(seasons_query).fetchall()

@@ -183,6 +183,29 @@
             overflow-y: auto;
         }
         
+        .no-data-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .no-data-message h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .manager-highlight {
+            background: #fff3cd !important;
+            font-weight: bold;
+        }
+        
+        .sub-row {
+            background: #f8f9fa !important;
+            font-style: italic;
+            color: #6c757d;
+        }
+        
         @media (max-width: 1200px) {
             .content-grid {
                 grid-template-columns: 1fr;
@@ -263,7 +286,7 @@
                         </thead>
                         <tbody>
                             {% for player in roster %}
-                            <tr>
+                            <tr {% if player.IsManager %}class="manager-highlight"{% elif player.IsSub %}class="sub-row"{% endif %}>
                                 <td class="player-name">
                                     {% if player.IsSub %}
                                         <!-- Non-clickable for Subs -->
@@ -274,6 +297,7 @@
                                             {{ player.FirstName }} {{ player.LastName }}
                                         </a>
                                     {% endif %}
+                                    {% if player.IsManager %}<span style="font-size: 0.8em; color: #856404;"> (Manager)</span>{% endif %}
                                 </td>
                                 <td>{{ player.Games or 0 }}</td>
                                 <td>{{ player.PA or 0 }}</td>
@@ -296,26 +320,33 @@
             <div class="section">
                 <h2 class="section-title">Game Results</h2>
                 <div class="results-section">
-                    <table class="results-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Opponent</th>
-                                <th>Result</th>
-                                <th>Score</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for game in results %}
-                            <tr class="clickable-row" onclick="window.location.href='/boxscore/{{ team.TeamNumber }}/{{ game.GameNumber }}'">
-                                <td>{{ game.Date.split()[0] if game.Date else 'N/A' }}</td>
-                                <td>{{ game.Opponent }}</td>
-                                <td class="result-{{ game.Result.lower() }}">{{ game.Result }}</td>
-                                <td class="score">{{ game.Runs }}-{{ game.OppRuns }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    {% if results and results|length > 0 %}
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Opponent</th>
+                                    <th>Result</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for game in results %}
+                                <tr class="clickable-row" onclick="window.location.href='/boxscore/{{ team.TeamNumber }}/{{ game.GameNumber }}'">
+                                    <td>{{ game.Date.split()[0] if game.Date else 'N/A' }}</td>
+                                    <td>{{ game.Opponent }}</td>
+                                    <td class="result-{{ game.Result.lower() }}">{{ game.Result }}</td>
+                                    <td class="score">{{ game.Runs }}-{{ game.OppRuns }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="no-data-message">
+                            <h3>No Games Played Yet</h3>
+                            <p>Game results will appear here once the season begins!</p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

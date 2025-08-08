@@ -942,14 +942,6 @@ def season_batting(filter_number):
 
 
 
-
-
-
-
-
-
-
-
 # Season Rosters Route
 @app.route('/team/<int:team_number>')
 def team_detail(team_number):
@@ -1004,6 +996,46 @@ def team_detail(team_number):
         player_stats = calculate_batting_stats(dict(player))
         roster.append(player_stats)
     
+    # If no roster data from stats (like F25 teams), fall back to Roster table
+    if not roster or len(roster) == 0:
+        fallback_roster_query = '''
+            SELECT 
+                p.PersonNumber,
+                p.FirstName,
+                p.LastName,
+                0 as Games,
+                0 as PA,
+                0 as R,
+                0 as H,
+                0 as Doubles,
+                0 as Triples,
+                0 as HR,
+                0 as BB,
+                0 as RBI,
+                0 as SF,
+                0 as OE,
+                CASE WHEN p.LastName = 'Subs' THEN 1 ELSE 0 END as IsSub,
+                CASE WHEN TRIM(p.FirstName || ' ' || p.LastName) = TRIM(t.Manager) THEN 1 ELSE 0 END as IsManager
+            FROM People p
+            JOIN Roster r ON p.PersonNumber = r.PersonNumber  
+            JOIN Teams t ON r.TeamNumber = t.TeamNumber
+            WHERE r.TeamNumber = ?
+            ORDER BY 
+                CASE WHEN p.LastName = 'Subs' THEN 1 ELSE 0 END,
+                p.LastName, p.FirstName
+        '''
+        
+        fallback_roster_raw = conn.execute(fallback_roster_query, (team_number,)).fetchall()
+        
+        # Calculate stats for each player (will be zeros)
+        roster = []
+        for player in fallback_roster_raw:
+            player_dict = dict(player)
+            player_stats = calculate_batting_stats(player_dict)
+            # Add the IsManager flag from the query
+            player_stats['IsManager'] = player_dict['IsManager']
+            roster.append(player_stats)
+    
     # Get game results
     results_query = '''
         SELECT 
@@ -1053,6 +1085,9 @@ def team_detail(team_number):
                         results=results,
                         season_filter_number=season_filter_number,
                         season_name=season_name)
+
+
+
 
 
 @app.route('/boxscore/<int:team_number>/<int:game_number>')

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Softball Stats Sync - Batting + Pitching WITH Sub Logic
+Complete Softball Stats Sync - All Tables + Sub Logic + Aggregation
 """
 
 import sqlite3
@@ -72,7 +72,7 @@ def apply_subs_logic(df):
     return df
 
 def sync_batting_stats(conn):
-    """Sync batting stats"""
+    """Sync batting stats with proper sub aggregation"""
     print("\n--- SYNCING BATTING STATS ---")
     
     temp_file = extract_table("data.csv", "BattingStats")
@@ -83,7 +83,7 @@ def sync_batting_stats(conn):
         df = pd.read_csv(temp_file)
         print(f"Loaded {len(df)} batting records")
         
-        # Apply sub logic
+        # Apply sub logic BEFORE aggregation
         df = apply_subs_logic(df)
         
         # Column fixes
@@ -92,12 +92,27 @@ def sync_batting_stats(conn):
         
         # Keep only needed columns
         cols = ['TeamNumber', 'GameNumber', 'PlayerNumber', 'HomeTeam', 'PA', 'R', 'H', '2B', '3B', 'HR', 'OE', 'BB', 'RBI', 'SF', 'G']
-        df_clean = df[cols]
+        available_cols = [col for col in cols if col in df.columns]
+        df_clean = df[available_cols]
+        
+        print(f"Before aggregation: {len(df_clean)} records")
+        
+        # CRITICAL: AGGREGATE SUB STATS - Group by key fields and sum numeric stats
+        numeric_cols = ['PA', 'R', 'H', '2B', '3B', 'HR', 'OE', 'BB', 'RBI', 'SF', 'G']
+        available_numeric = [col for col in numeric_cols if col in df_clean.columns]
+        
+        # Group by team, game, player and sum the stats
+        df_aggregated = df_clean.groupby(['TeamNumber', 'GameNumber', 'PlayerNumber']).agg({
+            'HomeTeam': 'first',  # Take first HomeTeam value
+            **{col: 'sum' for col in available_numeric}
+        }).reset_index()
+        
+        print(f"After aggregation: {len(df_aggregated)} unique player/game records")
         
         # Sync with database
         cursor = conn.cursor()
         cursor.execute("DROP TABLE IF EXISTS temp_staging_batting")
-        df_clean.to_sql("temp_staging_batting", conn, index=False)
+        df_aggregated.to_sql("temp_staging_batting", conn, index=False)
         
         # Count changes
         cursor.execute("""
@@ -146,7 +161,7 @@ def sync_batting_stats(conn):
             """)
         
         cursor.execute("DROP TABLE temp_staging_batting")
-        unchanged_count = len(df_clean) - new_count - changed_count
+        unchanged_count = len(df_aggregated) - new_count - changed_count
         
         print(f"Batting: {new_count} new, {changed_count} changed, {unchanged_count} unchanged")
         return new_count, changed_count, unchanged_count
@@ -156,7 +171,7 @@ def sync_batting_stats(conn):
         os.remove(temp_file)
 
 def sync_pitching_stats(conn):
-    """Sync pitching stats"""
+    """Sync pitching stats with sub aggregation"""
     print("\n--- SYNCING PITCHING STATS ---")
     
     temp_file = extract_table("data.csv", "PitchingStats")
@@ -182,10 +197,21 @@ def sync_pitching_stats(conn):
             print("No valid pitching data found")
             return 0, 0, 0
         
+        # AGGREGATE PITCHING STATS
+        numeric_cols = ['IP', 'BB', 'W', 'L', 'IBB']
+        available_numeric = [col for col in numeric_cols if col in df_clean.columns]
+        
+        df_aggregated = df_clean.groupby(['TeamNumber', 'GameNumber', 'PlayerNumber']).agg({
+            'HomeTeam': 'first',
+            **{col: 'sum' for col in available_numeric}
+        }).reset_index()
+        
+        print(f"Pitching aggregated from {len(df_clean)} to {len(df_aggregated)} records")
+        
         # Sync with database
         cursor = conn.cursor()
         cursor.execute("DROP TABLE IF EXISTS temp_staging_pitching")
-        df_clean.to_sql("temp_staging_pitching", conn, index=False)
+        df_aggregated.to_sql("temp_staging_pitching", conn, index=False)
         
         # Count changes
         cursor.execute("""
@@ -231,7 +257,7 @@ def sync_pitching_stats(conn):
             """)
         
         cursor.execute("DROP TABLE temp_staging_pitching")
-        unchanged_count = len(df_clean) - new_count - changed_count
+        unchanged_count = len(df_aggregated) - new_count - changed_count
         
         print(f"Pitching: {new_count} new, {changed_count} changed, {unchanged_count} unchanged")
         return new_count, changed_count, unchanged_count
@@ -261,7 +287,7 @@ def sync_game_stats(conn):
         }
         df = df.rename(columns=column_mapping)
         
-        # Keep only needed columns (matching your game_stats table structure)
+        # Keep only needed columns
         cols = ['TeamNumber', 'GameNumber', 'Date', 'Innings', 'HomeTeam', 'Opponent', 'Runs', 'OppRuns',
                 'RunsInning1', 'RunsInning2', 'RunsInning3', 'RunsInning4', 'RunsInning5',
                 'RunsInning6', 'RunsInning7', 'RunsInning8', 'RunsInning9']
@@ -296,7 +322,6 @@ def sync_game_stats(conn):
         
         # Execute changes
         if new_count > 0:
-            # Build dynamic INSERT based on available columns
             col_list = ', '.join(available_cols)
             cursor.execute(f"""
             INSERT INTO game_stats ({col_list})
@@ -310,7 +335,6 @@ def sync_game_stats(conn):
             """)
         
         if changed_count > 0:
-            # Build dynamic UPDATE based on available columns
             set_clauses = [f"{col} = s.{col}" for col in available_cols if col not in ['TeamNumber', 'GameNumber']]
             cursor.execute(f"""
             UPDATE game_stats 

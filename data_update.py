@@ -114,7 +114,9 @@ def sync_batting_stats(conn):
         JOIN batting_stats b ON s.TeamNumber = b.TeamNumber 
                             AND s.GameNumber = b.GameNumber 
                             AND s.PlayerNumber = b.PlayerNumber
-        WHERE s.PA != b.PA OR s.R != b.R OR s.H != b.H OR s.RBI != b.RBI
+        WHERE s.HomeTeam != b.HomeTeam OR s.PA != b.PA OR s.R != b.R OR s.H != b.H 
+           OR s.[2B] != b.[2B] OR s.[3B] != b.[3B] OR s.HR != b.HR OR s.OE != b.OE 
+           OR s.BB != b.BB OR s.RBI != b.RBI OR s.SF != b.SF OR s.G != b.G
         """)
         changed_count = cursor.fetchone()[0]
         

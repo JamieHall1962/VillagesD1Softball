@@ -101,10 +101,14 @@ def sync_batting_stats(conn):
         numeric_cols = ['PA', 'R', 'H', '2B', '3B', 'HR', 'OE', 'BB', 'RBI', 'SF', 'G']
         available_numeric = [col for col in numeric_cols if col in df_clean.columns]
         
-        # Group by team, game, player and sum the stats
+        # Group by team, game, player and sum the stats  
+        numeric_cols_to_sum = ['PA', 'R', 'H', '2B', '3B', 'HR', 'OE', 'BB', 'RBI', 'SF']
+        available_numeric_to_sum = [col for col in numeric_cols_to_sum if col in df_clean.columns]
+
         df_aggregated = df_clean.groupby(['TeamNumber', 'GameNumber', 'PlayerNumber']).agg({
-            'HomeTeam': 'first',  # Take first HomeTeam value
-            **{col: 'sum' for col in available_numeric}
+            'HomeTeam': 'first',
+            **{col: 'sum' for col in available_numeric_to_sum},
+            'G': lambda x: 1  # Always set G to 1 for aggregated records
         }).reset_index()
         
         print(f"After aggregation: {len(df_aggregated)} unique player/game records")
@@ -201,10 +205,18 @@ def sync_pitching_stats(conn):
         numeric_cols = ['IP', 'BB', 'W', 'L', 'IBB']
         available_numeric = [col for col in numeric_cols if col in df_clean.columns]
         
+        # AGGREGATE PITCHING STATS
+        numeric_cols_to_sum = ['IP', 'BB', 'W', 'L', 'IBB']
+        available_numeric_to_sum = [col for col in numeric_cols_to_sum if col in df_clean.columns]
+
         df_aggregated = df_clean.groupby(['TeamNumber', 'GameNumber', 'PlayerNumber']).agg({
             'HomeTeam': 'first',
-            **{col: 'sum' for col in available_numeric}
+            **{col: 'sum' for col in available_numeric_to_sum}
         }).reset_index()
+
+        # Add G column set to 1 for all aggregated records (if G exists in the data)
+        if 'G' in df_clean.columns:
+            df_aggregated['G'] = 1
         
         print(f"Pitching aggregated from {len(df_clean)} to {len(df_aggregated)} records")
         

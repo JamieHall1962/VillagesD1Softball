@@ -267,8 +267,8 @@ def sync_pitching_stats(conn):
         os.remove(temp_file)
 
 def sync_game_stats(conn):
-    """Sync game stats"""
-    print("\n--- SYNCING GAME STATS ---")
+    """Sync game stats with missing fields populated"""
+    print("\n--- SYNCING GAME STATS (Enhanced) ---")
     
     temp_file = extract_table("data.csv", "GameStats")
     if not temp_file:
@@ -278,7 +278,7 @@ def sync_game_stats(conn):
         df = pd.read_csv(temp_file)
         print(f"Loaded {len(df)} game records")
         
-        # Map CSV columns to database columns
+        # Map CSV columns to database columns AND fix date format
         column_mapping = {
             'GameDate': 'Date',
             'INN1': 'RunsInning1', 'INN2': 'RunsInning2', 'INN3': 'RunsInning3',
@@ -287,19 +287,98 @@ def sync_game_stats(conn):
         }
         df = df.rename(columns=column_mapping)
         
-        # Keep only needed columns
-        cols = ['TeamNumber', 'GameNumber', 'Date', 'Innings', 'HomeTeam', 'Opponent', 'Runs', 'OppRuns',
-                'RunsInning1', 'RunsInning2', 'RunsInning3', 'RunsInning4', 'RunsInning5',
-                'RunsInning6', 'RunsInning7', 'RunsInning8', 'RunsInning9']
-        available_cols = [col for col in cols if col in df.columns]
+        # Convert date format from M/D/YYYY to YYYY-MM-DD
+        if 'Date' in df.columns:
+            def fix_date_format(date_str):
+                try:
+                    # Parse dates like "9/5/2025 0:00" or "9/5/2025"
+                    date_part = str(date_str).split()[0]  # Remove time component
+                    month, day, year = date_part.split('/')
+                    return f"{year}-{month.zfill(2)}-{day.zfill(2)}"
+                except:
+                    return date_str
+            
+            df['Date'] = df['Date'].apply(fix_date_format)
+            print(f"Sample converted dates: {df['Date'].head(3).tolist()}")
+        
+        # Simple opponent team mapping
+        team_mapping = {
+            'Bad News Bears': 529,
+            'Buckeyes': 534, 
+            'Clippers': 527,
+            'Lightning Strikes': 532,
+            'Norsemen': 537,
+            'Raptors': 531,
+            'Rebels': 533,
+            'Shorebirds': 535,
+            'Stars': 526,
+            'The Sandlot': 536,
+            'Warhawks': 528,
+            'Xtreme': 530
+        }
+        
+        # Add OpponentTeamNumber using simple mapping
+        if 'Opponent' in df.columns:
+            df['OpponentTeamNumber'] = df['Opponent'].map(team_mapping)
+            # Check for unmapped opponents
+            unmapped = df[df['OpponentTeamNumber'].isna()]['Opponent'].unique()
+            if len(unmapped) > 0:
+                print(f"WARNING: Unmapped opponents: {unmapped}")
+        
+        # Keep only the columns we need
+        base_cols = ['TeamNumber', 'GameNumber', 'Date', 'Innings', 'HomeTeam', 
+                    'Opponent', 'OpponentTeamNumber', 'Runs', 'OppRuns']
+        inning_cols = ['RunsInning1', 'RunsInning2', 'RunsInning3', 'RunsInning4', 'RunsInning5',
+                      'RunsInning6', 'RunsInning7', 'RunsInning8', 'RunsInning9']
+        
+        all_possible_cols = base_cols + inning_cols
+        available_cols = [col for col in all_possible_cols if col in df.columns]
         df_clean = df[available_cols]
+        
+        print(f"Columns being synced: {available_cols}")
         
         if df_clean.empty:
             print("No valid game data found")
             return 0, 0, 0
         
-        # Sync with database
+        # Get current max GStatNumber and assign sequential numbers
         cursor = conn.cursor()
+        cursor.execute("SELECT COALESCE(MAX(GStatNumber), 0) FROM game_stats")
+        max_gstat = cursor.fetchone()[0]
+        print(f"Current highest GStatNumber: {max_gstat}")
+        
+        # Add simple sequential GStatNumbers starting from max + 1
+        df_clean['GStatNumber'] = range(max_gstat + 1, max_gstat + 1 + len(df_clean))
+        print(f"New records will be numbered {max_gstat + 1} to {max_gstat + len(df_clean)}")
+        
+        # Update available_cols to include GStatNumber
+        available_cols = ['GStatNumber'] + available_cols
+        
+        # Add missing columns to database if needed
+        cursor.execute("PRAGMA table_info(game_stats)")
+        existing_columns = [row[1] for row in cursor.fetchall()]
+        
+        needed_columns = [
+            ('GStatNumber', 'INTEGER'),
+            ('OpponentTeamNumber', 'INTEGER'),
+            ('OpponentGStatNumber', 'INTEGER'),
+            ('OppRunsInning1', 'INTEGER DEFAULT 0'),
+            ('OppRunsInning2', 'INTEGER DEFAULT 0'),
+            ('OppRunsInning3', 'INTEGER DEFAULT 0'),
+            ('OppRunsInning4', 'INTEGER DEFAULT 0'),
+            ('OppRunsInning5', 'INTEGER DEFAULT 0'),
+            ('OppRunsInning6', 'INTEGER DEFAULT 0'),
+            ('OppRunsInning7', 'INTEGER DEFAULT 0'),
+            ('OppRunsInning8', 'INTEGER DEFAULT 0'),
+            ('OppRunsInning9', 'INTEGER DEFAULT 0')
+        ]
+        
+        for col_name, col_def in needed_columns:
+            if col_name not in existing_columns:
+                print(f"Adding missing column: {col_name}")
+                cursor.execute(f"ALTER TABLE game_stats ADD COLUMN {col_name} {col_def}")
+        
+        # Sync with database
         cursor.execute("DROP TABLE IF EXISTS temp_staging_game")
         df_clean.to_sql("temp_staging_game", conn, index=False)
         
@@ -320,7 +399,7 @@ def sync_game_stats(conn):
         """)
         changed_count = cursor.fetchone()[0]
         
-        # Execute changes
+        # Insert new records
         if new_count > 0:
             col_list = ', '.join(available_cols)
             cursor.execute(f"""
@@ -334,6 +413,7 @@ def sync_game_stats(conn):
             )
             """)
         
+        # Update existing records
         if changed_count > 0:
             set_clauses = [f"{col} = s.{col}" for col in available_cols if col not in ['TeamNumber', 'GameNumber']]
             cursor.execute(f"""
@@ -345,6 +425,38 @@ def sync_game_stats(conn):
             """)
         
         cursor.execute("DROP TABLE temp_staging_game")
+        
+        # Second pass: Link opponent data using simple lookups
+        print("Linking opponent data...")
+        
+        # Update OpponentGStatNumber by linking to opponent's record
+        cursor.execute("""
+        UPDATE game_stats 
+        SET OpponentGStatNumber = (
+            SELECT opp.GStatNumber 
+            FROM game_stats opp 
+            WHERE opp.TeamNumber = game_stats.OpponentTeamNumber 
+            AND opp.GameNumber = game_stats.GameNumber
+        )
+        WHERE OpponentTeamNumber IS NOT NULL
+        AND GStatNumber > ?
+        """, (max_gstat,))
+        
+        # Update opponent inning data
+        for i in range(1, 10):
+            cursor.execute(f"""
+            UPDATE game_stats 
+            SET OppRunsInning{i} = (
+                SELECT opp.RunsInning{i} 
+                FROM game_stats opp 
+                WHERE opp.GStatNumber = game_stats.OpponentGStatNumber
+            )
+            WHERE OpponentGStatNumber IS NOT NULL
+            AND GStatNumber > ?
+            """, (max_gstat,))
+        
+        print("Opponent data linked successfully")
+        
         unchanged_count = len(df_clean) - new_count - changed_count
         
         print(f"Game Stats: {new_count} new, {changed_count} changed, {unchanged_count} unchanged")
@@ -353,6 +465,10 @@ def sync_game_stats(conn):
     finally:
         import os
         os.remove(temp_file)
+
+
+
+
 
 def main():
     print("COMPLETE SOFTBALL STATS SYNC")

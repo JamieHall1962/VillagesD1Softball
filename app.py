@@ -767,14 +767,13 @@ def season_detail(filter_number):
     season_stats = conn.execute('''
         SELECT 
             COUNT(DISTINCT g.GameNumber) as TotalGames,
-            COUNT(DISTINCT p.PersonNumber) as TotalPlayers,
+            COUNT(DISTINCT CASE WHEN p.LastName != 'Subs' THEN p.PersonNumber END) as TotalPlayers,
             SUM(b.HR) as TotalHRs
         FROM game_stats g
         JOIN Teams t ON g.TeamNumber = t.TeamNumber
         LEFT JOIN batting_stats b ON b.TeamNumber = t.TeamNumber AND b.GameNumber = g.GameNumber
         LEFT JOIN People p ON p.PersonNumber = b.PlayerNumber
         WHERE t.LongTeamName LIKE '%' || ? || '%'
-            AND (p.LastName != 'Subs' OR p.LastName IS NULL)
     ''', (season['short_name'],)).fetchone()
 
     total_games = season_stats['TotalGames'] or 0
@@ -874,14 +873,13 @@ def season_batting(filter_number):
     season_stats = conn.execute('''
         SELECT 
             COUNT(DISTINCT g.GameNumber) as TotalGames,
-            COUNT(DISTINCT p.PersonNumber) as TotalPlayers,
+            COUNT(DISTINCT CASE WHEN p.LastName != 'Subs' THEN p.PersonNumber END) as TotalPlayers,
             SUM(b.HR) as TotalHRs
         FROM game_stats g
         JOIN Teams t ON g.TeamNumber = t.TeamNumber
         LEFT JOIN batting_stats b ON b.TeamNumber = t.TeamNumber AND b.GameNumber = g.GameNumber
         LEFT JOIN People p ON p.PersonNumber = b.PlayerNumber
         WHERE t.LongTeamName LIKE '%' || ? || '%'
-            AND (p.LastName != 'Subs' OR p.LastName IS NULL)
     ''', (season['short_name'],)).fetchone()
     
     games_played = season_stats['TotalGames'] if season_stats else 0
@@ -990,11 +988,36 @@ def team_detail(team_number):
     
     roster_raw = conn.execute(roster_query, (team_number,)).fetchall()
     
-    # Calculate stats for each player
+    # Calculate stats for each player and accumulate team totals
     roster = []
+    team_totals = {
+        'PA': 0, 'R': 0, 'H': 0, 'Doubles': 0,
+        'Triples': 0, 'HR': 0, 'BB': 0, 'RBI': 0, 'SF': 0, 'OE': 0
+    }
+    
     for player in roster_raw:
         player_stats = calculate_batting_stats(dict(player))
         roster.append(player_stats)
+        
+        # Accumulate totals (skip Games - we'll get that separately)
+        for key in team_totals:
+            team_totals[key] += player_stats.get(key, 0)
+    
+    # Get actual team games played count
+    team_games_played = conn.execute('''
+        SELECT COUNT(DISTINCT GameNumber) as TeamGames
+        FROM game_stats
+        WHERE TeamNumber = ?
+    ''', (team_number,)).fetchone()
+    
+    # Add team games to totals
+    team_totals['Games'] = team_games_played['TeamGames'] if team_games_played else 0
+    
+    # Calculate team totals derived stats
+    if team_totals['PA'] > 0:
+        team_totals = calculate_batting_stats(team_totals)
+    else:
+        team_totals = None
     
     # If no roster data from stats (like F25 teams), fall back to Roster table
     if not roster or len(roster) == 0:
@@ -1082,6 +1105,7 @@ def team_detail(team_number):
                         team=team,
                         team_display_name=team_display_name,
                         roster=roster,
+                        team_totals=team_totals,
                         results=results,
                         season_filter_number=season_filter_number,
                         season_name=season_name)

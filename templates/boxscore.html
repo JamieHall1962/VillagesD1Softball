@@ -156,8 +156,16 @@
             top: 0;
         }
         
-        .batting-table tr:hover {
-            background-color: rgba(102, 126, 234, 0.1);
+        .batting-table tbody tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .batting-table tbody tr:nth-child(odd) {
+            background-color: white;
+        }
+
+        .batting-table tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.1) !important;
         }
         
         .player-name {
@@ -204,8 +212,16 @@
             font-weight: bold;
         }
         
-        .pitching-table tr:hover {
-            background-color: rgba(102, 126, 234, 0.1);
+        .pitching-table tbody tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .pitching-table tbody tr:nth-child(odd) {
+            background-color: white;
+        }
+
+        .pitching-table tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.1) !important;
         }
         
         .decision-w {

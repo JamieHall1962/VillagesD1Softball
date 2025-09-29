@@ -135,8 +135,16 @@
             top: 0;
         }
         
-        .seasons-table tr:hover {
-            background-color: rgba(102, 126, 234, 0.1);
+        .seasons-table tbody tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .seasons-table tbody tr:nth-child(odd) {
+            background-color: white;
+        }
+
+        .seasons-table tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.1) !important;
         }
         
         .team-name {

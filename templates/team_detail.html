@@ -106,8 +106,16 @@
             top: 0;
         }
         
-        .roster-table tr:hover {
-            background-color: rgba(102, 126, 234, 0.1);
+        .roster-table tbody tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+        
+        .roster-table tbody tr:nth-child(odd) {
+            background-color: white;
+        }
+        
+        .roster-table tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.1) !important;
         }
         
         .player-name {
@@ -204,6 +212,15 @@
             background: #f8f9fa !important;
             font-style: italic;
             color: #6c757d;
+        }
+        
+        .totals-row {
+            font-weight: bold;
+            border-top: 3px solid #5a67d8 !important;
+        }
+        
+        .totals-row td {
+            border-bottom: none !important;
         }
         
         @media (max-width: 1200px) {
@@ -312,6 +329,23 @@
                             </tr>
                             {% endfor %}
                         </tbody>
+                        {% if team_totals %}
+                        <tfoot>
+                            <tr class="totals-row">
+                                <td class="player-name">Team Totals</td>
+                                <td>{{ team_totals.Games or 0 }}</td>
+                                <td>{{ team_totals.PA or 0 }}</td>
+                                <td>{{ team_totals.AB or 0 }}</td>
+                                <td>{{ team_totals.H or 0 }}</td>
+                                <td>{{ team_totals.HR or 0 }}</td>
+                                <td>{{ team_totals.RBI or 0 }}</td>
+                                <td>{{ format_percentage(team_totals.AVG) }}</td>
+                                <td>{{ format_percentage(team_totals.OBP) }}</td>
+                                <td>{{ format_percentage(team_totals.SLG) }}</td>
+                                <td>{{ format_percentage(team_totals.OPS) }}</td>
+                            </tr>
+                        </tfoot>
+                        {% endif %}
                     </table>
                 </div>
             </div>

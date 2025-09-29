@@ -149,8 +149,16 @@
             font-size: 0.9em;
         }
         
-        .standings-table tr:hover {
-            background-color: rgba(102, 126, 234, 0.1);
+        .standings-table tbody tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .standings-table tbody tr:nth-child(odd) {
+            background-color: white;
+        }
+
+        .standings-table tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.1) !important;
         }
         
         .team-name {
@@ -181,8 +189,16 @@
             font-weight: bold;
         }
         
-        .leaders-table tr:hover {
-            background-color: rgba(102, 126, 234, 0.1);
+        .leaders-table tbody tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .leaders-table tbody tr:nth-child(odd) {
+            background-color: white;
+        }
+
+        .leaders-table tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.1) !important;
         }
         
         .player-name {

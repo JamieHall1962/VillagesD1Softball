@@ -154,8 +154,16 @@
             color: #fff;
         }
         
-        .pitchers-table tr:hover {
-            background-color: rgba(102, 126, 234, 0.1);
+        .pitchers-table tbody tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .pitchers-table tbody tr:nth-child(odd) {
+            background-color: white;
+        }
+
+        .pitchers-table tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.1) !important;
         }
         
         .pitcher-name {

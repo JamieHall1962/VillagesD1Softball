@@ -213,8 +213,16 @@
             font-weight: 600;
         }
 
-        tr:hover {
-            background: rgba(102, 126, 234, 0.1);
+        tbody tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: white;
+        }
+
+        tbody tr:hover {
+            background: rgba(102, 126, 234, 0.1) !important;
         }
 
         .stat-grid {

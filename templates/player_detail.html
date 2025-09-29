@@ -164,8 +164,16 @@
             color: #667eea;
         }
         
-        .team-stats-table tr:hover {
-            background-color: rgba(102, 126, 234, 0.1);
+        .team-stats-table tbody tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .team-stats-table tbody tr:nth-child(odd) {
+            background-color: white;
+        }
+
+        .team-stats-table tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.1) !important;
         }
         
         .team-name {

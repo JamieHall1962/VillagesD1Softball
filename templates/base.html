@@ -213,11 +213,12 @@
             font-weight: 600;
         }
 
-        tbody tr:nth-child(even) {
+        /* Zebra striping using classes instead of :nth-child for better filtering support */
+        tbody tr.row-even {
             background-color: rgba(0, 0, 0, 0.02);
         }
 
-        tbody tr:nth-child(odd) {
+        tbody tr.row-odd {
             background-color: white;
         }
 
@@ -275,5 +276,26 @@
     <div class="container">
         {% block content %}{% endblock %}
     </div>
+    
+    <script>
+        // Global zebra striping function for all tables
+        function applyZebraStriping() {
+            // Apply to all tbody rows that don't already have custom striping
+            document.querySelectorAll('tbody tr').forEach((row, index) => {
+                // Only apply if row doesn't already have row-even or row-odd class
+                // (to avoid interfering with pages that have their own zebra logic)
+                if (!row.classList.contains('row-even') && !row.classList.contains('row-odd')) {
+                    if (index % 2 === 0) {
+                        row.classList.add('row-even');
+                    } else {
+                        row.classList.add('row-odd');
+                    }
+                }
+            });
+        }
+        
+        // Apply zebra striping on page load
+        document.addEventListener('DOMContentLoaded', applyZebraStriping);
+    </script>
 </body>
 </html>

@@ -213,9 +213,45 @@
 .player-row.hidden {
     display: none;
 }
+
+/* Zebra striping classes for visible rows */
+.row-even {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.row-odd {
+    background-color: white;
+}
+
+#playersTable tbody tr:hover {
+    background-color: rgba(102, 126, 234, 0.1) !important;
+}
 </style>
 
 <script>
+// Function to reapply zebra striping to visible rows only
+function reapplyZebraStriping() {
+    const rows = document.querySelectorAll('.player-row');
+    let visibleIndex = 0;
+    
+    rows.forEach(row => {
+        if (row.style.display !== 'none' && !row.classList.contains('hidden')) {
+            // Remove both classes first
+            row.classList.remove('row-even', 'row-odd');
+            // Apply appropriate class based on visible index
+            if (visibleIndex % 2 === 0) {
+                row.classList.add('row-even');
+            } else {
+                row.classList.add('row-odd');
+            }
+            visibleIndex++;
+        } else {
+            // Remove striping from hidden rows
+            row.classList.remove('row-even', 'row-odd');
+        }
+    });
+}
+
 // Search functionality
 document.getElementById('playerSearch').addEventListener('keyup', function() {
     const searchTerm = this.value.toLowerCase();
@@ -229,6 +265,8 @@ document.getElementById('playerSearch').addEventListener('keyup', function() {
             row.classList.add('hidden');
         }
     });
+    
+    reapplyZebraStriping();
 });
 
 // PA Filter functionality
@@ -252,6 +290,8 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
                 row.style.display = 'none';
             }
         });
+        
+        reapplyZebraStriping();
     });
 });
 
@@ -331,6 +371,8 @@ function sortTable(column, direction) {
     // Clear and re-append sorted rows
     tbody.innerHTML = '';
     rows.forEach(row => tbody.appendChild(row));
+    
+    reapplyZebraStriping();
 }
 
 function updateSortArrows(clickedHeader, direction) {
@@ -343,5 +385,10 @@ function updateSortArrows(clickedHeader, direction) {
     const arrow = clickedHeader.querySelector('.sort-arrow');
     arrow.textContent = direction === 'asc' ? '↑' : '↓';
 }
+
+// Apply zebra striping on initial load
+document.addEventListener('DOMContentLoaded', function() {
+    reapplyZebraStriping();
+});
 </script>
 {% endblock %}

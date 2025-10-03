@@ -154,11 +154,12 @@
             color: #fff;
         }
         
-        .pitchers-table tbody tr:nth-child(even) {
+        /* Zebra striping classes for visible rows */
+        .pitchers-table tbody tr.row-even {
             background-color: rgba(0, 0, 0, 0.02);
         }
 
-        .pitchers-table tbody tr:nth-child(odd) {
+        .pitchers-table tbody tr.row-odd {
             background-color: white;
         }
 
@@ -258,12 +259,39 @@
     </div>
     
     <script>
+        // Function to reapply zebra striping to visible rows only
+        function reapplyZebraStriping() {
+            const tbody = document.getElementById('pitchersTable').querySelector('tbody');
+            const rows = tbody.querySelectorAll('tr');
+            let visibleIndex = 0;
+            
+            rows.forEach(row => {
+                if (row.style.display !== 'none') {
+                    // Remove both classes first
+                    row.classList.remove('row-even', 'row-odd');
+                    // Apply appropriate class based on visible index
+                    if (visibleIndex % 2 === 0) {
+                        row.classList.add('row-even');
+                    } else {
+                        row.classList.add('row-odd');
+                    }
+                    visibleIndex++;
+                } else {
+                    // Remove striping from hidden rows
+                    row.classList.remove('row-even', 'row-odd');
+                }
+            });
+        }
+        
         // Table sorting functionality
         document.addEventListener('DOMContentLoaded', function() {
             const table = document.getElementById('pitchersTable');
             const headers = table.querySelectorAll('th.sortable');
             const searchInput = document.getElementById('searchInput');
             let currentSort = {column: null, direction: 'asc'};
+            
+            // Apply initial zebra striping
+            reapplyZebraStriping();
             
             // Search functionality
             searchInput.addEventListener('input', function() {
@@ -279,6 +307,8 @@
                         row.style.display = 'none';
                     }
                 });
+                
+                reapplyZebraStriping();
             });
             
             // Sorting functionality
@@ -360,6 +390,8 @@
                 
                 // Re-append sorted rows
                 rows.forEach(row => tbody.appendChild(row));
+                
+                reapplyZebraStriping();
             }
         });
     </script>

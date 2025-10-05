@@ -32,7 +32,7 @@ def extract_table(csv_file, table_name):
     # Find table section
     start_idx = None
     for i, line in enumerate(lines):
-        if line.strip() == f"Table: {table_name}":
+        if line.strip().startswith(f"Table: {table_name}"):
             start_idx = i + 1
             break
     

@@ -938,6 +938,177 @@ def season_batting(filter_number):
                          season_filter_number=filter_number)
 
 
+# Season Metrics Route (Easter Egg)
+@app.route('/season/<filter_number>/metrics')
+def season_metrics(filter_number):
+    """Season-specific advanced metrics page (Easter Egg)"""
+    
+    conn = get_db_connection()
+    
+    # Get season info
+    season = conn.execute('''
+        SELECT * FROM Seasons WHERE FilterNumber = ?
+    ''', (filter_number,)).fetchone()
+    
+    if not season:
+        conn.close()
+        return "Season not found", 404
+    
+    # Get total games for this season
+    season_stats = conn.execute('''
+        SELECT 
+            COUNT(DISTINCT g.GameNumber) as TotalGames,
+            COUNT(DISTINCT CASE WHEN p.LastName != 'Subs' THEN p.PersonNumber END) as TotalPlayers
+        FROM game_stats g
+        JOIN Teams t ON g.TeamNumber = t.TeamNumber
+        LEFT JOIN batting_stats b ON b.TeamNumber = t.TeamNumber AND b.GameNumber = g.GameNumber
+        LEFT JOIN People p ON p.PersonNumber = b.PlayerNumber
+        WHERE t.LongTeamName LIKE '%' || ? || '%'
+    ''', (season['short_name'],)).fetchone()
+    
+    total_games = season_stats['TotalGames'] if season_stats else 0
+    qualified_pa_threshold = int(total_games * 2.5)
+    
+    # Get number of teams in this season
+    # Strip whitespace from short_name to handle data inconsistencies
+    season_short = season['short_name'].strip() if season['short_name'] else ''
+    
+    print(f"DEBUG: Looking for teams with season_short='{season_short}'", flush=True)
+    
+    teams_count = conn.execute('''
+        SELECT COUNT(DISTINCT t.TeamNumber) as TeamCount
+        FROM Teams t
+        WHERE t.LongTeamName LIKE '%' || ? || '%'
+    ''', (season_short,)).fetchone()
+    
+    print(f"DEBUG: teams_count result: {dict(teams_count) if teams_count else None}", flush=True)
+    
+    # Get the count from the query
+    if teams_count and 'TeamCount' in teams_count.keys():
+        num_teams_in_season = teams_count['TeamCount']
+        if num_teams_in_season == 0:
+            num_teams_in_season = 12  # No teams found, use default
+    else:
+        num_teams_in_season = 12  # Query failed, use default
+    
+    # Get batting stats for players with team context
+    batting_query = '''
+        SELECT 
+            p.PersonNumber,
+            p.FirstName,
+            p.LastName,
+            t.TeamNumber,
+            t.LongTeamName,
+            SUM(b.G) as Games,
+            SUM(b.PA) as PA,
+            SUM(b.R) as R,
+            SUM(b.H) as H,
+            SUM(b."2B") as Doubles,
+            SUM(b."3B") as Triples,
+            SUM(b.HR) as HR,
+            SUM(b.BB) as BB,
+            SUM(b.RBI) as RBI,
+            SUM(b.SF) as SF,
+            SUM(b.OE) as OE
+        FROM People p
+        JOIN batting_stats b ON p.PersonNumber = b.PlayerNumber
+        JOIN Teams t ON b.TeamNumber = t.TeamNumber
+        WHERE t.LongTeamName LIKE '%' || ? || '%'
+            AND p.LastName != 'Subs'
+        GROUP BY p.PersonNumber, p.FirstName, p.LastName, t.TeamNumber, t.LongTeamName
+        HAVING SUM(b.G) > 0
+    '''
+    
+    raw_players = conn.execute(batting_query, (season_short,)).fetchall()
+    
+    # Get BVP stats for ALL players vs pitcher #401 in a single batch query
+    bvp_batch_query = '''
+        SELECT 
+            b.PlayerNumber,
+            SUM(b.PA) as BVP_PA,
+            SUM(b.H) as BVP_H,
+            SUM(b.HR) as BVP_HR,
+            SUM(b.PA - b.BB - b.SF) as BVP_AB
+        FROM batting_stats b
+        JOIN game_stats g ON b.TeamNumber = g.TeamNumber AND b.GameNumber = g.GameNumber
+        JOIN pitching_stats ps ON ps.TeamNumber = g.OpponentTeamNumber 
+            AND ps.GameNumber = (
+                SELECT og.GameNumber 
+                FROM game_stats og 
+                WHERE og.TeamNumber = g.OpponentTeamNumber 
+                    AND og.Date = g.Date 
+                    AND og.OpponentTeamNumber = g.TeamNumber
+            )
+        WHERE ps.PlayerNumber = 401
+            AND (ps.W > 0 OR ps.L > 0)
+            AND b.G = 1
+        GROUP BY b.PlayerNumber
+    '''
+    bvp_results = conn.execute(bvp_batch_query).fetchall()
+    
+    # Create a lookup dictionary for BVP stats
+    bvp_lookup = {}
+    for bvp in bvp_results:
+        bvp_ab = bvp['BVP_AB'] or 0
+        bvp_lookup[bvp['PlayerNumber']] = {
+            'BVP_PA': bvp['BVP_PA'] or 0,
+            'BVP_H': bvp['BVP_H'] or 0,
+            'BVP_HR': bvp['BVP_HR'] or 0,
+            'BVP_AVG': round(bvp['BVP_H'] / bvp_ab, 3) if bvp_ab > 0 else 0.000
+        }
+    
+    # Calculate advanced metrics for each player
+    players = []
+    for player in raw_players:
+        player_stats = calculate_batting_stats(dict(player))
+        
+        # Calculate convBA: (((4*(H+BB)+TB)/PA)/0.305*0.25)/10
+        h = player_stats.get('H', 0)
+        bb = player_stats.get('BB', 0)
+        pa = player_stats.get('PA', 0)
+        doubles = player_stats.get('Doubles', 0)
+        triples = player_stats.get('Triples', 0)
+        hr = player_stats.get('HR', 0)
+        
+        # Total Bases = H + 2B + (2*3B) + (3*HR)
+        tb = h + doubles + (2 * triples) + (3 * hr)
+        
+        if pa > 0:
+            player_stats['convBA'] = round((((4*(h+bb)+tb)/pa)/0.305*0.25)/10, 3)
+        else:
+            player_stats['convBA'] = 0.000
+        
+        # Get BVP stats from lookup (efficient batch approach)
+        person_number = player_stats['PersonNumber']
+        if person_number in bvp_lookup:
+            player_stats.update(bvp_lookup[person_number])
+        else:
+            player_stats['BVP_PA'] = 0
+            player_stats['BVP_H'] = 0
+            player_stats['BVP_HR'] = 0
+            player_stats['BVP_AVG'] = 0.000
+        
+        # Clean team name
+        team_name = player_stats['LongTeamName']
+        team_name = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)
+        player_stats['team_display_name'] = team_name
+        
+        players.append(player_stats)
+    
+    # Sort by convBA (descending), then PA (descending)
+    players.sort(key=lambda x: (x.get('convBA', 0), x.get('PA', 0)), reverse=True)
+    
+    conn.close()
+    
+    return render_template('season_metrics.html',
+                         season=season,
+                         players=players,
+                         qualified_pa_threshold=qualified_pa_threshold,
+                         season_filter_number=filter_number,
+                         total_games=total_games,
+                         total_teams=num_teams_in_season)
+
+
 
 
 # Season Rosters Route
@@ -1447,4 +1618,4 @@ def pitcher_detail(pitcher_id):
 
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True, use_reloader=False, port=5001)
+    app.run(debug=True, use_reloader=False, port=5020)  # Changed port to avoid conflicts

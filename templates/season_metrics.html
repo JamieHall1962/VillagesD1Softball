@@ -1,0 +1,564 @@
+{% extends "base.html" %}
+
+{% block title %}{{ season.season_name }} - Advanced Metrics{% endblock %}
+
+{% block content %}
+<div class="header">
+    <div class="nav-breadcrumb">
+        <a href="#" onclick="history.back(); return false;">← Back</a>
+        <span> > </span>
+        <a href="/">Home</a>
+        <span> > </span>
+        <a href="/seasons">Seasons</a>
+        <span> > </span>
+        <a href="/season/{{ season_filter_number }}">{{ season.season_name }}</a>
+        <span> > </span>
+        <span>Advanced Metrics</span>
+    </div>
+    <h1>{{ season.season_name }} - Advanced Metrics</h1>
+    <p>Season batting statistics with converted BA (convBA) and career BVP stats</p>
+</div>
+
+<div class="content">
+    <div class="search-container">
+        <input type="text" id="playerSearch" placeholder="Search players..." />
+    </div>
+    
+    <div class="filters-container">
+        <div class="filter-label">Player Filter:</div>
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-qualified="false">All Players</button>
+            <button class="filter-btn" data-qualified="true">Qualified ({{ qualified_pa_threshold }}+ PA)</button>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <table id="playersTable">
+            <thead>
+                <tr>
+                    <th data-sort="name">Player <span class="sort-arrow">↕</span></th>
+                    <th data-sort="team">Team <span class="sort-arrow">↕</span></th>
+                    <th data-sort="ab">AB <span class="sort-arrow">↕</span></th>
+                    <th data-sort="h">H <span class="sort-arrow">↕</span></th>
+                    <th data-sort="bb">BB <span class="sort-arrow">↕</span></th>
+                    <th data-sort="doubles">2B <span class="sort-arrow">↕</span></th>
+                    <th data-sort="triples">3B <span class="sort-arrow">↕</span></th>
+                    <th data-sort="hr">HR <span class="sort-arrow">↕</span></th>
+                    <th data-sort="avg">BA <span class="sort-arrow">↕</span></th>
+                    <th data-sort="obp">OBP <span class="sort-arrow">↕</span></th>
+                    <th data-sort="slg">SLG <span class="sort-arrow">↕</span></th>
+                    <th data-sort="convba">convBA <span class="sort-arrow">↕</span></th>
+                    <th data-sort="bvp">BVP <span class="sort-arrow">↕</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in players %}
+                <tr class="player-row" 
+                    data-name="{{ player.FirstName }} {{ player.LastName }}" 
+                    data-pa="{{ player.PA or 0 }}"
+                    data-player-id="{{ player.PersonNumber }}"
+                    data-bvp-pa="{{ player.BVP_PA }}"
+                    data-bvp-avg="{{ player.BVP_AVG }}"
+                    data-bvp-hr="{{ player.BVP_HR }}">
+                    <td><a href="/player/{{ player.PersonNumber }}" class="player-link">{{ player.FirstName }} {{ player.LastName }}</a></td>
+                    <td>{{ player.team_display_name }}</td>
+                    <td data-value="{{ player.AB or 0 }}">{{ player.AB or 0 }}</td>
+                    <td data-value="{{ player.H or 0 }}">{{ player.H or 0 }}</td>
+                    <td data-value="{{ player.BB or 0 }}">{{ player.BB or 0 }}</td>
+                    <td data-value="{{ player.Doubles or 0 }}">{{ player.Doubles or 0 }}</td>
+                    <td data-value="{{ player.Triples or 0 }}">{{ player.Triples or 0 }}</td>
+                    <td data-value="{{ player.HR or 0 }}">{{ player.HR or 0 }}</td>
+                    <td data-value="{{ player.AVG }}">{{ format_percentage(player.AVG) }}</td>
+                    <td data-value="{{ player.OBP }}">{{ format_percentage(player.OBP) }}</td>
+                    <td data-value="{{ player.SLG }}">{{ format_percentage(player.SLG) }}</td>
+                    <td data-value="{{ player.convBA }}">{{ format_percentage(player.convBA) }}</td>
+                    <td data-value="{{ player.BVP_AVG }}" class="bvp-cell">
+                        {% if player.BVP_PA > 0 %}
+                            <span class="bvp-trigger" title="Click for details">{{ format_percentage(player.BVP_AVG) }}</span>
+                        {% else %}
+                            <span class="bvp-none">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- BVP Modal -->
+<div id="bvpModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>⚾ Batter vs Pitcher</h2>
+        <div id="bvpDetails"></div>
+    </div>
+</div>
+
+<style>
+.search-container {
+    margin-bottom: 20px;
+}
+
+#playerSearch {
+    width: 300px;
+    padding: 10px;
+    border: 2px solid #667eea;
+    border-radius: 20px;
+    font-size: 16px;
+    outline: none;
+}
+
+#playerSearch:focus {
+    border-color: #5a67d8;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+}
+
+.filters-container {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-label {
+    font-weight: bold;
+    color: #667eea;
+    font-size: 1rem;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: 2px solid #667eea;
+    background: transparent;
+    color: #667eea;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.filter-btn.active {
+    background: #667eea;
+    color: white;
+}
+
+.filter-btn.active:hover {
+    background: #5a67d8;
+}
+
+.table-container {
+    max-height: 600px;
+    overflow-y: auto;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.table-container table {
+    margin: 0;
+}
+
+.table-container thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    cursor: pointer;
+    user-select: none;
+    background: #667eea !important;
+}
+
+.table-container thead th:hover {
+    background: #5a67d8 !important;
+}
+
+.sort-arrow {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-left: 5px;
+}
+
+.player-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.player-link:hover {
+    color: #5a67d8;
+    text-decoration: underline;
+}
+
+.player-row.hidden {
+    display: none;
+}
+
+.bvp-cell {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.bvp-cell:hover .bvp-trigger {
+    background-color: rgba(59, 130, 246, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.bvp-trigger {
+    color: #3b82f6;
+    font-weight: 600;
+}
+
+.bvp-none {
+    color: #999;
+}
+
+/* Draft Round Striping - Groups of players by number of teams */
+.draft-round-1 {
+    background-color: rgba(102, 126, 234, 0.25) !important;
+}
+
+.draft-round-2 {
+    background-color: rgba(255, 255, 255, 0) !important;
+}
+
+.draft-round-3 {
+    background-color: rgba(102, 126, 234, 0.25) !important;
+}
+
+.draft-round-4 {
+    background-color: rgba(255, 255, 255, 0) !important;
+}
+
+.draft-round-5 {
+    background-color: rgba(102, 126, 234, 0.25) !important;
+}
+
+.draft-round-6 {
+    background-color: rgba(255, 255, 255, 0) !important;
+}
+
+.draft-round-7 {
+    background-color: rgba(102, 126, 234, 0.25) !important;
+}
+
+.draft-round-8 {
+    background-color: rgba(255, 255, 255, 0) !important;
+}
+
+#playersTable tbody tr:hover {
+    background-color: rgba(102, 126, 234, 0.45) !important;
+    transform: scale(1.01);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: 15px;
+    width: 400px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.modal-content h2 {
+    color: #667eea;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.close, .close-record {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    right: 15px;
+    top: 10px;
+}
+
+.close:hover, .close-record:hover {
+    color: #000;
+}
+
+#bvpDetails, #recordDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: 8px;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #666;
+}
+
+.detail-value {
+    font-weight: bold;
+    color: #667eea;
+    font-size: 1.1rem;
+}
+</style>
+
+<script>
+// Get the number of teams for draft round grouping
+const teamsInSeason = {{ total_teams if total_teams else 12 }};
+
+// Function to reapply draft round striping to visible rows only
+function reapplyZebraStriping() {
+    const rows = document.querySelectorAll('.player-row');
+    let visibleIndex = 0;
+    
+    rows.forEach(row => {
+        if (row.style.display !== 'none' && !row.classList.contains('hidden')) {
+            // Remove all draft round classes
+            for (let i = 1; i <= 8; i++) {
+                row.classList.remove(`draft-round-${i}`);
+            }
+            
+            // Calculate which "draft round" this player is in
+            const draftRound = Math.floor(visibleIndex / teamsInSeason) + 1;
+            
+            // Apply the appropriate draft round class (cycle through 1-8)
+            const roundClass = ((draftRound - 1) % 8) + 1;
+            row.classList.add(`draft-round-${roundClass}`);
+            
+            visibleIndex++;
+        } else {
+            // Remove striping from hidden rows
+            for (let i = 1; i <= 8; i++) {
+                row.classList.remove(`draft-round-${i}`);
+            }
+        }
+    });
+}
+
+// Search functionality
+document.getElementById('playerSearch').addEventListener('keyup', function() {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('.player-row');
+    
+    rows.forEach(row => {
+        const playerName = row.getAttribute('data-name').toLowerCase();
+        if (playerName.includes(searchTerm)) {
+            row.classList.remove('hidden');
+        } else {
+            row.classList.add('hidden');
+        }
+    });
+    
+    reapplyZebraStriping();
+});
+
+// Qualified Filter functionality
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const qualified = this.getAttribute('data-qualified') === 'true';
+        const qualifiedThreshold = {{ qualified_pa_threshold or 0 }};
+        
+        // Update active state
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Filter rows
+        const rows = document.querySelectorAll('.player-row');
+        rows.forEach(row => {
+            const playerPA = parseInt(row.getAttribute('data-pa')) || 0;
+            
+            if (!qualified || playerPA >= qualifiedThreshold) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        reapplyZebraStriping();
+    });
+});
+
+// BVP Modal functionality
+const bvpModal = document.getElementById('bvpModal');
+const bvpClose = document.querySelector('.close');
+
+document.querySelectorAll('.bvp-cell').forEach(cell => {
+    cell.addEventListener('click', function() {
+        const row = this.closest('tr');
+        const playerName = row.getAttribute('data-name');
+        const bvpPA = row.getAttribute('data-bvp-pa');
+        const bvpAVG = row.getAttribute('data-bvp-avg');
+        const bvpHR = row.getAttribute('data-bvp-hr');
+        
+        if (bvpPA > 0) {
+            // Format AVG
+            const avgFormatted = parseFloat(bvpAVG) > 0 ? ('.' + (parseFloat(bvpAVG) * 1000).toFixed(0).padStart(3, '0')) : '.000';
+            
+            document.getElementById('bvpDetails').innerHTML = `
+                <h3 style="text-align: center; color: #3b82f6;">${playerName} vs Pitcher #401</h3>
+                <div class="detail-row">
+                    <span class="detail-label">Plate Appearances:</span>
+                    <span class="detail-value">${bvpPA}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Batting Average:</span>
+                    <span class="detail-value">${avgFormatted}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Home Runs:</span>
+                    <span class="detail-value">${bvpHR}</span>
+                </div>
+            `;
+            bvpModal.style.display = 'block';
+        }
+    });
+});
+
+bvpClose.onclick = function() {
+    bvpModal.style.display = 'none';
+}
+
+// Close modals when clicking outside
+window.onclick = function(event) {
+    if (event.target == bvpModal) {
+        bvpModal.style.display = 'none';
+    }
+}
+
+// Sorting functionality
+let currentSort = {column: null, direction: 'asc'};
+
+document.querySelectorAll('th[data-sort]').forEach(header => {
+    header.addEventListener('click', function() {
+        const column = this.getAttribute('data-sort');
+        const direction = (currentSort.column === column && currentSort.direction === 'asc') ? 'desc' : 'asc';
+        
+        sortTable(column, direction);
+        updateSortArrows(this, direction);
+        
+        currentSort = {column, direction};
+    });
+});
+
+function sortTable(column, direction) {
+    const tbody = document.querySelector('#playersTable tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    
+    // Column index mapping
+    const columnMap = {
+        'name': 0,
+        'team': 1,
+        'ab': 2,
+        'h': 3,
+        'bb': 4,
+        'doubles': 5,
+        'triples': 6,
+        'hr': 7,
+        'avg': 8,
+        'obp': 9,
+        'slg': 10,
+        'convba': 11,
+        'bvp': 12
+    };
+    
+    const columnIndex = columnMap[column];
+    
+    rows.sort((a, b) => {
+        let aVal, bVal;
+        
+        if (column === 'name' || column === 'team') {
+            // String comparison for name and team
+            const aCell = a.cells[columnIndex];
+            const bCell = b.cells[columnIndex];
+            aVal = aCell.textContent.toLowerCase().trim();
+            bVal = bCell.textContent.toLowerCase().trim();
+        } else {
+            // Get the cell by index and extract data-value
+            const aCell = a.cells[columnIndex];
+            const bCell = b.cells[columnIndex];
+            
+            aVal = parseFloat(aCell.getAttribute('data-value')) || 0;
+            bVal = parseFloat(bCell.getAttribute('data-value')) || 0;
+        }
+        
+        if (column === 'name' || column === 'team') {
+            // String comparison for names and teams
+            if (direction === 'asc') {
+                return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+            } else {
+                return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
+            }
+        } else {
+            // Numeric comparison for stats
+            if (direction === 'asc') {
+                return aVal - bVal;
+            } else {
+                return bVal - aVal;
+            }
+        }
+    });
+    
+    // Clear and re-append sorted rows
+    tbody.innerHTML = '';
+    rows.forEach(row => tbody.appendChild(row));
+    
+    reapplyZebraStriping();
+}
+
+function updateSortArrows(clickedHeader, direction) {
+    // Reset all arrows
+    document.querySelectorAll('.sort-arrow').forEach(arrow => {
+        arrow.textContent = '↕';
+    });
+    
+    // Update clicked header arrow
+    const arrow = clickedHeader.querySelector('.sort-arrow');
+    arrow.textContent = direction === 'asc' ? '↑' : '↓';
+}
+
+// Apply zebra striping on initial load
+document.addEventListener('DOMContentLoaded', function() {
+    reapplyZebraStriping();
+    
+    // Sort by convBA by default (descending)
+    const convbaHeader = document.querySelector('th[data-sort="convba"]');
+    if (convbaHeader) {
+        sortTable('convba', 'desc');
+        updateSortArrows(convbaHeader, 'desc');
+        currentSort = {column: 'convba', direction: 'desc'};
+    }
+});
+</script>
+
+{% endblock %}
+

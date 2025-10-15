@@ -374,6 +374,23 @@ function updateSortArrows(clickedHeader, direction) {
 document.addEventListener('DOMContentLoaded', function() {
     reapplyZebraStriping();
 });
+
+// Easter egg: Type "jhm" to access advanced metrics page
+let metricsKeySequence = '';
+document.addEventListener('keydown', function(e) {
+    metricsKeySequence += e.key.toLowerCase();
+    
+    if (metricsKeySequence.includes('jhm')) {
+        // Redirect to metrics page
+        window.location.href = '/season/{{ season_filter_number }}/metrics';
+        metricsKeySequence = ''; // Reset
+    }
+    
+    // Keep only last 10 characters to prevent memory issues
+    if (metricsKeySequence.length > 10) {
+        metricsKeySequence = metricsKeySequence.slice(-10);
+    }
+});
 </script>
 
 

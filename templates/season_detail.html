@@ -444,5 +444,25 @@
             </div>
         </div>
     </div>
+
+<script>
+// Easter egg: Type "jhm" to access advanced metrics page
+let keySequence = '';
+document.addEventListener('keydown', function(e) {
+    keySequence += e.key.toLowerCase();
+    
+    if (keySequence.includes('jhm')) {
+        // Redirect to metrics page
+        window.location.href = '/season/{{ season.FilterNumber }}/metrics';
+        keySequence = ''; // Reset
+    }
+    
+    // Keep only last 10 characters to prevent memory issues
+    if (keySequence.length > 10) {
+        keySequence = keySequence.slice(-10);
+    }
+});
+</script>
+
 </body>
 </html>

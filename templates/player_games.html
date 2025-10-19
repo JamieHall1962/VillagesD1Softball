@@ -552,18 +552,21 @@ function showHittingStreak() {
     let longestStreak = 0;
     let tempStreak = 0;
     
-    // Current streak: count backwards from most recent game
-    for (let i = gamesData.length - 1; i >= 0; i--) {
+    // Current streak: count FORWARD from most recent game (index 0)
+    // Games are sorted newest-first in the display
+    for (let i = 0; i < gamesData.length; i++) {
         if ((gamesData[i].H || 0) > 0) {
             currentStreak++;
         } else {
-            break;
+            break;  // Stop at first game without a hit
         }
     }
     
-    // Longest streak: iterate through all games in chronological order
-    for (let i = 0; i < gamesData.length; i++) {
-        if ((gamesData[i].H || 0) > 0) {
+    // Longest streak: iterate through games from oldest to newest
+    // Reverse the array to go chronologically
+    const gamesChronological = [...gamesData].reverse();
+    for (let i = 0; i < gamesChronological.length; i++) {
+        if ((gamesChronological[i].H || 0) > 0) {
             tempStreak++;
             longestStreak = Math.max(longestStreak, tempStreak);
         } else {

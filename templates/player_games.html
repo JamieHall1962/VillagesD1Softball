@@ -185,18 +185,16 @@
 }
 
 .summary-label {
-    font-size: 0.8rem;  /* Increased from 0.7rem */
+    font-size: 0.8rem;
     color: #666;
     margin-bottom: 2px;
 }
 
 .summary-value {
-    font-size: 1.2rem;  /* Increased from 0.95rem */
+    font-size: 1.2rem;
     font-weight: bold;
     color: #333;
 }
-
-/* Add this CSS to your existing style section in player_games.html: */
 
 .bvp-section {
     padding: 5px;
@@ -264,15 +262,15 @@
     margin: 0;
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.8rem;  /* Reduced font size for compactness */
+    font-size: 0.8rem;
 }
 
 .table-container table th,
 .table-container table td {
-    padding: 4px 6px;  /* Reduced padding for compactness */
+    padding: 4px 6px;
     text-align: center;
     border-bottom: 1px solid #eee;
-    white-space: nowrap;  /* Prevent line wrapping */
+    white-space: nowrap;
 }
 
 .table-container thead th {
@@ -281,7 +279,7 @@
     z-index: 10;
     background: #667eea !important;
     color: white;
-    font-size: 0.75rem;  /* Slightly smaller headers */
+    font-size: 0.75rem;
     font-weight: bold;
 }
 
@@ -342,6 +340,48 @@
     color: #22c55e;
 }
 
+.streak-section {
+    padding: 5px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 5px;
+    display: none;
+    width: 100%;
+    max-width: 180px;
+}
+
+.streak-section h3 {
+    color: #ef4444;
+    margin-bottom: 3px;
+    font-size: 0.7rem;
+    text-align: center;
+}
+
+.streak-stats {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+}
+
+.streak-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.streak-stat .label {
+    font-size: 0.6rem;
+    color: #666;
+    margin-bottom: 1px;
+}
+
+.streak-stat .value {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #ef4444;
+}
+
 @keyframes flash {
     0%, 100% { background: rgba(34, 197, 94, 0.1); }
     50% { background: rgba(34, 197, 94, 0.3); }
@@ -355,17 +395,20 @@
 // Get games data from the JSON script tag
 const gamesData = JSON.parse(document.getElementById('games-data').textContent);
 
-// Easter egg: Show record when "record" is typed, BVP when "bvp" is typed
+// Easter egg: Show record when "record" is typed, BVP when "bvp" is typed, streaks when "hs" is typed
 let gameLogKeySequence = '';
 document.addEventListener('keydown', function(e) {
     gameLogKeySequence += e.key.toLowerCase();
     
     if (gameLogKeySequence.includes('record')) {
         showPlayerRecord();
-        gameLogKeySequence = ''; // Reset
+        gameLogKeySequence = '';
     } else if (gameLogKeySequence.includes('bvp')) {
         showBatterVsPitcher();
-        gameLogKeySequence = ''; // Reset
+        gameLogKeySequence = '';
+    } else if (gameLogKeySequence.includes('hs')) {
+        showHittingStreak();
+        gameLogKeySequence = '';
     }
     
     // Keep only last 10 characters to prevent memory issues
@@ -500,6 +543,69 @@ function showBVPResult(title, pa, hr, avg) {
     bvpSection.style.animation = 'flash 0.5s ease-in-out';
     setTimeout(() => {
         bvpSection.style.animation = '';
+    }, 500);
+}
+
+function showHittingStreak() {
+    // Calculate current and longest hitting streaks
+    let currentStreak = 0;
+    let longestStreak = 0;
+    let tempStreak = 0;
+    
+    // Current streak: count backwards from most recent game
+    for (let i = gamesData.length - 1; i >= 0; i--) {
+        if ((gamesData[i].H || 0) > 0) {
+            currentStreak++;
+        } else {
+            break;
+        }
+    }
+    
+    // Longest streak: iterate through all games in chronological order
+    for (let i = 0; i < gamesData.length; i++) {
+        if ((gamesData[i].H || 0) > 0) {
+            tempStreak++;
+            longestStreak = Math.max(longestStreak, tempStreak);
+        } else {
+            tempStreak = 0;
+        }
+    }
+    
+    // Remove existing streak section
+    const existingStreak = document.querySelector('.streak-section');
+    if (existingStreak) {
+        existingStreak.remove();
+    }
+    
+    // Create streak section
+    const streakSection = document.createElement('div');
+    streakSection.className = 'streak-section';
+    streakSection.innerHTML = `
+        <h3>🔥 Hitting Streaks</h3>
+        <div class="streak-stats">
+            <div class="streak-stat">
+                <div class="label">Current</div>
+                <div class="value">${currentStreak}</div>
+            </div>
+            <div class="streak-stat">
+                <div class="label">Longest</div>
+                <div class="value">${longestStreak}</div>
+            </div>
+        </div>
+    `;
+    
+    // Insert in the easter egg zone
+    const easterEggZone = document.querySelector('.easter-egg-zone');
+    if (easterEggZone) {
+        easterEggZone.appendChild(streakSection);
+    }
+    
+    streakSection.style.display = 'block';
+    
+    // Flash effect
+    streakSection.style.animation = 'flash 0.5s ease-in-out';
+    setTimeout(() => {
+        streakSection.style.animation = '';
     }, 500);
 }
 </script>

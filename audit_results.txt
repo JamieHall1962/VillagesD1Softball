@@ -1,0 +1,3377 @@
+﻿================================================================================
+FALL 2025 STATS AUDIT
+Comparing data.csv vs softball_stats.db
+================================================================================
+
+Loading CSV data...
+  CSV Batting: 2143 records
+  CSV Pitching: 212 records
+  CSV Games: 204 records
+
+Loading database data (G=1 only for batting)...
+
+Filtering to Fall 2025 teams only ([526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537])...
+  DB Batting (F25 only): 2155 records
+  DB Pitching (F25 only): 222 records
+  DB Games (F25 only): 204 records
+
+================================================================================
+BATTING STATS AUDIT
+================================================================================
+
+Summary:
+  Records in CSV: 2143
+  Records in DB: 2155
+  Only in CSV (need to ADD to DB): 0
+  Only in DB (might need to DELETE): 12
+  In both (checking for differences): 2143
+
+--- RECORDS TO CONSIDER DELETING (in DB but not in CSV): 12 ---
+  Team 526, Game 2, Player 606 (Keith Turney)
+    Stats: PA=3, H=0, HR=0, RBI=0
+  Team 526, Game 12, Player 635 (Unknown (#635))
+    Stats: PA=3, H=2, HR=0, RBI=0
+  Team 526, Game 13, Player 639 (Unknown (#639))
+    Stats: PA=4, H=2, HR=0, RBI=3
+  Team 526, Game 14, Player 639 (Unknown (#639))
+    Stats: PA=4, H=1, HR=0, RBI=0
+  Team 531, Game 14, Player 635 (Unknown (#635))
+    Stats: PA=3, H=1, HR=0, RBI=1
+  Team 533, Game 14, Player 636 (Unknown (#636))
+    Stats: PA=3, H=0, HR=0, RBI=0
+  Team 535, Game 6, Player 626 (Unknown (#626))
+    Stats: PA=3, H=1, HR=0, RBI=2
+  Team 535, Game 7, Player 626 (Unknown (#626))
+    Stats: PA=3, H=1, HR=0, RBI=0
+  Team 535, Game 8, Player 630 (Unknown (#630))
+    Stats: PA=3, H=2, HR=0, RBI=0
+  Team 535, Game 9, Player 630 (Unknown (#630))
+    Stats: PA=4, H=2, HR=0, RBI=1
+  Team 535, Game 13, Player 638 (Unknown (#638))
+    Stats: PA=3, H=0, HR=0, RBI=0
+  Team 535, Game 14, Player 638 (Unknown (#638))
+    Stats: PA=3, H=2, HR=0, RBI=1
+
+[OK] No differences found in matching records
+
+================================================================================
+PITCHING STATS AUDIT
+================================================================================
+
+Summary:
+  Records in CSV: 212
+  Records in DB: 222
+  Only in CSV (need to ADD to DB): 0
+  Only in DB (might need to DELETE): 10
+  In both (checking for differences): 212
+
+--- RECORDS TO CONSIDER DELETING (in DB but not in CSV): 10 ---
+  Team 526, Game 11, Player 274 (Stars Subs)
+    Stats: IP=7.0, W=1, L=0, BB=2
+  Team 531, Game 6, Player 542 (Raptors Subs)
+    Stats: IP=7.0, W=1, L=0, BB=0
+  Team 532, Game 14, Player 540 (Lightning Strikes Subs)
+    Stats: IP=7.0, W=0, L=1, BB=1
+  Team 533, Game 14, Player 636 (Unknown (#636))
+    Stats: IP=6.0, W=1, L=0, BB=0
+  Team 534, Game 17, Player 493 (Buckeyes Subs)
+    Stats: IP=7.0, W=0, L=1, BB=1
+  Team 535, Game 6, Player 626 (Unknown (#626))
+    Stats: IP=7.0, W=1, L=0, BB=1
+  Team 535, Game 7, Player 626 (Unknown (#626))
+    Stats: IP=7.0, W=0, L=1, BB=1
+  Team 535, Game 10, Player 548 (Shorebirds Subs)
+    Stats: IP=7.0, W=1, L=0, BB=0
+  Team 535, Game 13, Player 638 (Unknown (#638))
+    Stats: IP=7.0, W=0, L=1, BB=2
+  Team 535, Game 14, Player 638 (Unknown (#638))
+    Stats: IP=7.0, W=1, L=0, BB=2
+
+[OK] No differences found in matching records
+
+================================================================================
+GAME STATS AUDIT
+================================================================================
+
+Summary:
+  Records in CSV: 204
+  Records in DB: 204
+  Only in CSV (need to ADD to DB): 0
+  Only in DB (might need to DELETE): 0
+  In both (checking for differences): 204
+
+--- RECORDS WITH DIFFERENCES: 204 ---
+
+  Team 530, Game 8
+    Date: CSV=10/1/2025 12:00:00 AM vs DB=2025-10-01
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=23 vs DB=23.0
+    OppRuns: CSV=12 vs DB=12.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=5 vs DB=5.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 12
+    Date: CSV=10/15/2025 12:00:00 AM vs DB=2025-10-15
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=3 vs DB=3.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 2
+    Date: CSV=9/10/2025 12:00:00 AM vs DB=2025-09-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=16 vs DB=16.0
+    OppRuns: CSV=11 vs DB=11.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=7 vs DB=7.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 10
+    Date: CSV=10/8/2025 12:00:00 AM vs DB=2025-10-08
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=27 vs DB=27.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 10
+    Date: CSV=10/8/2025 12:00:00 AM vs DB=2025-10-08
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=11 vs DB=11.0
+    OppRuns: CSV=21 vs DB=21.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 15
+    Date: CSV=10/29/2025 12:00:00 AM vs DB=2025-10-29
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=14 vs DB=14.0
+    OppRuns: CSV=8 vs DB=8.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 1
+    Date: CSV=9/5/2025 12:00:00 AM vs DB=2025-09-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=16 vs DB=16.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 5
+    Date: CSV=9/19/2025 12:00:00 AM vs DB=2025-09-19
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=14 vs DB=14.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 14
+    Date: CSV=10/24/2025 12:00:00 AM vs DB=2025-10-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=20 vs DB=20.0
+    OppRuns: CSV=19 vs DB=19.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 11
+    Date: CSV=10/10/2025 12:00:00 AM vs DB=2025-10-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=28 vs DB=28.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 11
+    Date: CSV=10/10/2025 12:00:00 AM vs DB=2025-10-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=29 vs DB=29.0
+    OppRuns: CSV=28 vs DB=28.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=4 vs DB=4.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=4 vs DB=4.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 12
+    Date: CSV=10/15/2025 12:00:00 AM vs DB=2025-10-15
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=12 vs DB=12.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 530, Game 4
+    Date: CSV=9/17/2025 12:00:00 AM vs DB=2025-09-17
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=12 vs DB=12.0
+    OppRuns: CSV=21 vs DB=21.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 10
+    Date: CSV=10/8/2025 12:00:00 AM vs DB=2025-10-08
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=11 vs DB=11.0
+    OppRuns: CSV=6 vs DB=6.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=3 vs DB=3.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 13
+    Date: CSV=10/22/2025 12:00:00 AM vs DB=2025-10-22
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=8 vs DB=8.0
+    OppRuns: CSV=4 vs DB=4.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 8
+    Date: CSV=10/1/2025 12:00:00 AM vs DB=2025-10-01
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=22 vs DB=22.0
+    OppRuns: CSV=20 vs DB=20.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 13
+    Date: CSV=10/22/2025 12:00:00 AM vs DB=2025-10-22
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=18 vs DB=18.0
+    OppRuns: CSV=19 vs DB=19.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=4 vs DB=4.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 9
+    Date: CSV=10/3/2025 12:00:00 AM vs DB=2025-10-03
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=14 vs DB=14.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=3 vs DB=3.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 14
+    Date: CSV=10/24/2025 12:00:00 AM vs DB=2025-10-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=22 vs DB=22.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=4 vs DB=4.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=6 vs DB=6.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 11
+    Date: CSV=10/10/2025 12:00:00 AM vs DB=2025-10-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=16 vs DB=16.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=5 vs DB=5.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 13
+    Date: CSV=10/22/2025 12:00:00 AM vs DB=2025-10-22
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=19 vs DB=19.0
+    OppRuns: CSV=18 vs DB=18.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 5
+    Date: CSV=9/19/2025 12:00:00 AM vs DB=2025-09-19
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=20 vs DB=20.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 6
+    Date: CSV=9/24/2025 12:00:00 AM vs DB=2025-09-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=16 vs DB=16.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=6 vs DB=6.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 12
+    Date: CSV=10/15/2025 12:00:00 AM vs DB=2025-10-15
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=6 vs DB=6.0
+    OppRuns: CSV=19 vs DB=19.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 5
+    Date: CSV=9/19/2025 12:00:00 AM vs DB=2025-09-19
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=14 vs DB=14.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 13
+    Date: CSV=10/22/2025 12:00:00 AM vs DB=2025-10-22
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=23 vs DB=23.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 11
+    Date: CSV=10/10/2025 12:00:00 AM vs DB=2025-10-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=28 vs DB=28.0
+    OppRuns: CSV=29 vs DB=29.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=3 vs DB=3.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=3 vs DB=3.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 530, Game 16
+    Date: CSV=10/31/2025 12:00:00 AM vs DB=2025-10-31
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=26 vs DB=26.0
+    OppRuns: CSV=14 vs DB=14.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=7 vs DB=7.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 16
+    Date: CSV=10/31/2025 12:00:00 AM vs DB=2025-10-31
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=20 vs DB=20.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 15
+    Date: CSV=10/29/2025 12:00:00 AM vs DB=2025-10-29
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=9 vs DB=9.0
+    OppRuns: CSV=11 vs DB=11.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 7
+    Date: CSV=9/26/2025 12:00:00 AM vs DB=2025-09-26
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=23 vs DB=23.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=4 vs DB=4.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 14
+    Date: CSV=10/24/2025 12:00:00 AM vs DB=2025-10-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=22 vs DB=22.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 9
+    Date: CSV=10/3/2025 12:00:00 AM vs DB=2025-10-03
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=19 vs DB=19.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 15
+    Date: CSV=10/29/2025 12:00:00 AM vs DB=2025-10-29
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=11 vs DB=11.0
+    OppRuns: CSV=9 vs DB=9.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 530, Game 14
+    Date: CSV=10/24/2025 12:00:00 AM vs DB=2025-10-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=9 vs DB=9.0
+    OppRuns: CSV=10 vs DB=10.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 8
+    Date: CSV=10/1/2025 12:00:00 AM vs DB=2025-10-01
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=12 vs DB=12.0
+    OppRuns: CSV=23 vs DB=23.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=6 vs DB=6.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 15
+    Date: CSV=10/29/2025 12:00:00 AM vs DB=2025-10-29
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=16 vs DB=16.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 11
+    Date: CSV=10/10/2025 12:00:00 AM vs DB=2025-10-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=28 vs DB=28.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=4 vs DB=4.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 15
+    Date: CSV=10/29/2025 12:00:00 AM vs DB=2025-10-29
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=16 vs DB=16.0
+    OppRuns: CSV=18 vs DB=18.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 10
+    Date: CSV=10/8/2025 12:00:00 AM vs DB=2025-10-08
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=6 vs DB=6.0
+    OppRuns: CSV=11 vs DB=11.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 1
+    Date: CSV=9/5/2025 12:00:00 AM vs DB=2025-09-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=18 vs DB=18.0
+    OppRuns: CSV=12 vs DB=12.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 17
+    Date: CSV=11/5/2025 12:00:00 AM vs DB=2025-11-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=19 vs DB=19.0
+    OppRuns: CSV=18 vs DB=18.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 8
+    Date: CSV=10/1/2025 12:00:00 AM vs DB=2025-10-01
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=16 vs DB=16.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 14
+    Date: CSV=10/24/2025 12:00:00 AM vs DB=2025-10-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 12
+    Date: CSV=10/15/2025 12:00:00 AM vs DB=2025-10-15
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=10 vs DB=10.0
+    OppRuns: CSV=18 vs DB=18.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 11
+    Date: CSV=10/10/2025 12:00:00 AM vs DB=2025-10-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=18 vs DB=18.0
+    OppRuns: CSV=19 vs DB=19.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 4
+    Date: CSV=9/17/2025 12:00:00 AM vs DB=2025-09-17
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=21 vs DB=21.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 4
+    Date: CSV=9/17/2025 12:00:00 AM vs DB=2025-09-17
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=21 vs DB=21.0
+    OppRuns: CSV=12 vs DB=12.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 16
+    Date: CSV=10/31/2025 12:00:00 AM vs DB=2025-10-31
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=20 vs DB=20.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 7
+    Date: CSV=9/26/2025 12:00:00 AM vs DB=2025-09-26
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=9 vs DB=9.0
+    OppRuns: CSV=16 vs DB=16.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=6 vs DB=6.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 4
+    Date: CSV=9/17/2025 12:00:00 AM vs DB=2025-09-17
+    Innings: CSV=6 vs DB=6.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=6 vs DB=6.0
+    OppRuns: CSV=21 vs DB=21.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 1
+    Date: CSV=9/5/2025 12:00:00 AM vs DB=2025-09-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=12 vs DB=12.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 530, Game 10
+    Date: CSV=10/8/2025 12:00:00 AM vs DB=2025-10-08
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=24 vs DB=24.0
+    OppRuns: CSV=18 vs DB=18.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=3 vs DB=3.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=7 vs DB=7.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 13
+    Date: CSV=10/22/2025 12:00:00 AM vs DB=2025-10-22
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=10 vs DB=10.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 7
+    Date: CSV=9/26/2025 12:00:00 AM vs DB=2025-09-26
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 12
+    Date: CSV=10/15/2025 12:00:00 AM vs DB=2025-10-15
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=10 vs DB=10.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 8
+    Date: CSV=10/1/2025 12:00:00 AM vs DB=2025-10-01
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=19 vs DB=19.0
+    OppRuns: CSV=21 vs DB=21.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=8 vs DB=8.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 7
+    Date: CSV=9/26/2025 12:00:00 AM vs DB=2025-09-26
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=14 vs DB=14.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 1
+    Date: CSV=9/5/2025 12:00:00 AM vs DB=2025-09-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=16 vs DB=16.0
+    OppRuns: CSV=12 vs DB=12.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 11
+    Date: CSV=10/10/2025 12:00:00 AM vs DB=2025-10-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=16 vs DB=16.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=4 vs DB=4.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 2
+    Date: CSV=9/10/2025 12:00:00 AM vs DB=2025-09-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=18 vs DB=18.0
+    OppRuns: CSV=16 vs DB=16.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 530, Game 17
+    Date: CSV=11/5/2025 12:00:00 AM vs DB=2025-11-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 15
+    Date: CSV=10/29/2025 12:00:00 AM vs DB=2025-10-29
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=18 vs DB=18.0
+    OppRuns: CSV=16 vs DB=16.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 3
+    Date: CSV=9/12/2025 12:00:00 AM vs DB=2025-09-12
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=10 vs DB=10.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=7 vs DB=7.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 6
+    Date: CSV=9/24/2025 12:00:00 AM vs DB=2025-09-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=11 vs DB=11.0
+    OppRuns: CSV=10 vs DB=10.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 530, Game 15
+    Date: CSV=10/29/2025 12:00:00 AM vs DB=2025-10-29
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=8 vs DB=8.0
+    OppRuns: CSV=14 vs DB=14.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 530, Game 9
+    Date: CSV=10/3/2025 12:00:00 AM vs DB=2025-10-03
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=12 vs DB=12.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=3 vs DB=3.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=4 vs DB=4.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 2
+    Date: CSV=9/10/2025 12:00:00 AM vs DB=2025-09-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=16 vs DB=16.0
+    OppRuns: CSV=18 vs DB=18.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=3 vs DB=3.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 9
+    Date: CSV=10/3/2025 12:00:00 AM vs DB=2025-10-03
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=10 vs DB=10.0
+    OppRuns: CSV=5 vs DB=5.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 12
+    Date: CSV=10/15/2025 12:00:00 AM vs DB=2025-10-15
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=20 vs DB=20.0
+    OppRuns: CSV=14 vs DB=14.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 4
+    Date: CSV=9/17/2025 12:00:00 AM vs DB=2025-09-17
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=14 vs DB=14.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 6
+    Date: CSV=9/24/2025 12:00:00 AM vs DB=2025-09-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=23 vs DB=23.0
+    OppRuns: CSV=12 vs DB=12.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 3
+    Date: CSV=9/12/2025 12:00:00 AM vs DB=2025-09-12
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=18 vs DB=18.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 2
+    Date: CSV=9/10/2025 12:00:00 AM vs DB=2025-09-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=11 vs DB=11.0
+    OppRuns: CSV=16 vs DB=16.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=2 vs DB=2.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 11
+    Date: CSV=10/10/2025 12:00:00 AM vs DB=2025-10-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=19 vs DB=19.0
+    OppRuns: CSV=18 vs DB=18.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=4 vs DB=4.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 6
+    Date: CSV=9/24/2025 12:00:00 AM vs DB=2025-09-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=23 vs DB=23.0
+    OppRuns: CSV=22 vs DB=22.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=4 vs DB=4.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 4
+    Date: CSV=9/17/2025 12:00:00 AM vs DB=2025-09-17
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=23 vs DB=23.0
+    OppRuns: CSV=22 vs DB=22.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=4 vs DB=4.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 16
+    Date: CSV=10/31/2025 12:00:00 AM vs DB=2025-10-31
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=10 vs DB=10.0
+    OppRuns: CSV=12 vs DB=12.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 2
+    Date: CSV=9/10/2025 12:00:00 AM vs DB=2025-09-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=27 vs DB=27.0
+    OppRuns: CSV=24 vs DB=24.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=10 vs DB=10.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 4
+    Date: CSV=9/17/2025 12:00:00 AM vs DB=2025-09-17
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=9 vs DB=9.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=3 vs DB=3.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 5
+    Date: CSV=9/19/2025 12:00:00 AM vs DB=2025-09-19
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=16 vs DB=16.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=7 vs DB=7.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 10
+    Date: CSV=10/8/2025 12:00:00 AM vs DB=2025-10-08
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=6 vs DB=6.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 6
+    Date: CSV=9/24/2025 12:00:00 AM vs DB=2025-09-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=10 vs DB=10.0
+    OppRuns: CSV=11 vs DB=11.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 530, Game 12
+    Date: CSV=10/15/2025 12:00:00 AM vs DB=2025-10-15
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=10 vs DB=10.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 17
+    Date: CSV=11/5/2025 12:00:00 AM vs DB=2025-11-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=20 vs DB=20.0
+    OppRuns: CSV=21 vs DB=21.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=4 vs DB=4.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 10
+    Date: CSV=10/8/2025 12:00:00 AM vs DB=2025-10-08
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=4 vs DB=4.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 2
+    Date: CSV=9/10/2025 12:00:00 AM vs DB=2025-09-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=14 vs DB=14.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=5 vs DB=5.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 12
+    Date: CSV=10/15/2025 12:00:00 AM vs DB=2025-10-15
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=12 vs DB=12.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 7
+    Date: CSV=9/26/2025 12:00:00 AM vs DB=2025-09-26
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=11 vs DB=11.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=4 vs DB=4.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 9
+    Date: CSV=10/3/2025 12:00:00 AM vs DB=2025-10-03
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=19 vs DB=19.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=4 vs DB=4.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 3
+    Date: CSV=9/12/2025 12:00:00 AM vs DB=2025-09-12
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=14 vs DB=14.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=4 vs DB=4.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 10
+    Date: CSV=10/8/2025 12:00:00 AM vs DB=2025-10-08
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=18 vs DB=18.0
+    OppRuns: CSV=24 vs DB=24.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=9 vs DB=9.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 2
+    Date: CSV=9/10/2025 12:00:00 AM vs DB=2025-09-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=14 vs DB=14.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 1
+    Date: CSV=9/5/2025 12:00:00 AM vs DB=2025-09-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=24 vs DB=24.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 7
+    Date: CSV=9/26/2025 12:00:00 AM vs DB=2025-09-26
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=16 vs DB=16.0
+    OppRuns: CSV=9 vs DB=9.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 8
+    Date: CSV=10/1/2025 12:00:00 AM vs DB=2025-10-01
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=20 vs DB=20.0
+    OppRuns: CSV=22 vs DB=22.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 9
+    Date: CSV=10/3/2025 12:00:00 AM vs DB=2025-10-03
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 17
+    Date: CSV=11/5/2025 12:00:00 AM vs DB=2025-11-05
+    Innings: CSV=5 vs DB=5.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=5 vs DB=5.0
+    OppRuns: CSV=21 vs DB=21.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 14
+    Date: CSV=10/24/2025 12:00:00 AM vs DB=2025-10-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=23 vs DB=23.0
+    OppRuns: CSV=16 vs DB=16.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=3 vs DB=3.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 3
+    Date: CSV=9/12/2025 12:00:00 AM vs DB=2025-09-12
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=14 vs DB=14.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 5
+    Date: CSV=9/19/2025 12:00:00 AM vs DB=2025-09-19
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=9 vs DB=9.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 6
+    Date: CSV=9/24/2025 12:00:00 AM vs DB=2025-09-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=14 vs DB=14.0
+    OppRuns: CSV=16 vs DB=16.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 10
+    Date: CSV=10/8/2025 12:00:00 AM vs DB=2025-10-08
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=10 vs DB=10.0
+    OppRuns: CSV=20 vs DB=20.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 17
+    Date: CSV=11/5/2025 12:00:00 AM vs DB=2025-11-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=18 vs DB=18.0
+    OppRuns: CSV=19 vs DB=19.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=4 vs DB=4.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 1
+    Date: CSV=9/5/2025 12:00:00 AM vs DB=2025-09-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=12 vs DB=12.0
+    OppRuns: CSV=18 vs DB=18.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 10
+    Date: CSV=10/8/2025 12:00:00 AM vs DB=2025-10-08
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=27 vs DB=27.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 16
+    Date: CSV=10/31/2025 12:00:00 AM vs DB=2025-10-31
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=21 vs DB=21.0
+    OppRuns: CSV=23 vs DB=23.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 9
+    Date: CSV=10/3/2025 12:00:00 AM vs DB=2025-10-03
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=12 vs DB=12.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 12
+    Date: CSV=10/15/2025 12:00:00 AM vs DB=2025-10-15
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=19 vs DB=19.0
+    OppRuns: CSV=6 vs DB=6.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 10
+    Date: CSV=10/8/2025 12:00:00 AM vs DB=2025-10-08
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=21 vs DB=21.0
+    OppRuns: CSV=11 vs DB=11.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=4 vs DB=4.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 5
+    Date: CSV=9/19/2025 12:00:00 AM vs DB=2025-09-19
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=16 vs DB=16.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=3 vs DB=3.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 530, Game 1
+    Date: CSV=9/5/2025 12:00:00 AM vs DB=2025-09-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=16 vs DB=16.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 12
+    Date: CSV=10/15/2025 12:00:00 AM vs DB=2025-10-15
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=14 vs DB=14.0
+    OppRuns: CSV=20 vs DB=20.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=3 vs DB=3.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 7
+    Date: CSV=9/26/2025 12:00:00 AM vs DB=2025-09-26
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=11 vs DB=11.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 13
+    Date: CSV=10/22/2025 12:00:00 AM vs DB=2025-10-22
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=18 vs DB=18.0
+    OppRuns: CSV=11 vs DB=11.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=5 vs DB=5.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 3
+    Date: CSV=9/12/2025 12:00:00 AM vs DB=2025-09-12
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=14 vs DB=14.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 5
+    Date: CSV=9/19/2025 12:00:00 AM vs DB=2025-09-19
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=9 vs DB=9.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 12
+    Date: CSV=10/15/2025 12:00:00 AM vs DB=2025-10-15
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=4 vs DB=4.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=4 vs DB=4.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 1
+    Date: CSV=9/5/2025 12:00:00 AM vs DB=2025-09-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=20 vs DB=20.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 8
+    Date: CSV=10/1/2025 12:00:00 AM vs DB=2025-10-01
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=10 vs DB=10.0
+    OppRuns: CSV=6 vs DB=6.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 6
+    Date: CSV=9/24/2025 12:00:00 AM vs DB=2025-09-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=16 vs DB=16.0
+    OppRuns: CSV=14 vs DB=14.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=6 vs DB=6.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 3
+    Date: CSV=9/12/2025 12:00:00 AM vs DB=2025-09-12
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=16 vs DB=16.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 14
+    Date: CSV=10/24/2025 12:00:00 AM vs DB=2025-10-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=16 vs DB=16.0
+    OppRuns: CSV=23 vs DB=23.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 530, Game 6
+    Date: CSV=9/24/2025 12:00:00 AM vs DB=2025-09-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=16 vs DB=16.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 8
+    Date: CSV=10/1/2025 12:00:00 AM vs DB=2025-10-01
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=21 vs DB=21.0
+    OppRuns: CSV=19 vs DB=19.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 15
+    Date: CSV=10/29/2025 12:00:00 AM vs DB=2025-10-29
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=16 vs DB=16.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=4 vs DB=4.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 3
+    Date: CSV=9/12/2025 12:00:00 AM vs DB=2025-09-12
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=14 vs DB=14.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 5
+    Date: CSV=9/19/2025 12:00:00 AM vs DB=2025-09-19
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=20 vs DB=20.0
+    OppRuns: CSV=24 vs DB=24.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 9
+    Date: CSV=10/3/2025 12:00:00 AM vs DB=2025-10-03
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 4
+    Date: CSV=9/17/2025 12:00:00 AM vs DB=2025-09-17
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=21 vs DB=21.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=3 vs DB=3.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 4
+    Date: CSV=9/17/2025 12:00:00 AM vs DB=2025-09-17
+    Innings: CSV=6 vs DB=6.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=21 vs DB=21.0
+    OppRuns: CSV=6 vs DB=6.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 530, Game 5
+    Date: CSV=9/19/2025 12:00:00 AM vs DB=2025-09-19
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=16 vs DB=16.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=6 vs DB=6.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 1
+    Date: CSV=9/5/2025 12:00:00 AM vs DB=2025-09-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=12 vs DB=12.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=4 vs DB=4.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 12
+    Date: CSV=10/15/2025 12:00:00 AM vs DB=2025-10-15
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=18 vs DB=18.0
+    OppRuns: CSV=10 vs DB=10.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 11
+    Date: CSV=10/10/2025 12:00:00 AM vs DB=2025-10-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=14 vs DB=14.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 6
+    Date: CSV=9/24/2025 12:00:00 AM vs DB=2025-09-24
+    Innings: CSV=8 vs DB=8.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=18 vs DB=18.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=6 vs DB=6.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 3
+    Date: CSV=9/12/2025 12:00:00 AM vs DB=2025-09-12
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=10 vs DB=10.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 7
+    Date: CSV=9/26/2025 12:00:00 AM vs DB=2025-09-26
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=14 vs DB=14.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=4 vs DB=4.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 14
+    Date: CSV=10/24/2025 12:00:00 AM vs DB=2025-10-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 13
+    Date: CSV=10/22/2025 12:00:00 AM vs DB=2025-10-22
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=4 vs DB=4.0
+    OppRuns: CSV=8 vs DB=8.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 9
+    Date: CSV=10/3/2025 12:00:00 AM vs DB=2025-10-03
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=9 vs DB=9.0
+    OppRuns: CSV=18 vs DB=18.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 11
+    Date: CSV=10/10/2025 12:00:00 AM vs DB=2025-10-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=14 vs DB=14.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 2
+    Date: CSV=9/10/2025 12:00:00 AM vs DB=2025-09-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=19 vs DB=19.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 16
+    Date: CSV=10/31/2025 12:00:00 AM vs DB=2025-10-31
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=3 vs DB=3.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=4 vs DB=4.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 2
+    Date: CSV=9/10/2025 12:00:00 AM vs DB=2025-09-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=19 vs DB=19.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=4 vs DB=4.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 530, Game 2
+    Date: CSV=9/10/2025 12:00:00 AM vs DB=2025-09-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=3 vs DB=3.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 9
+    Date: CSV=10/3/2025 12:00:00 AM vs DB=2025-10-03
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=5 vs DB=5.0
+    OppRuns: CSV=10 vs DB=10.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 530, Game 11
+    Date: CSV=10/10/2025 12:00:00 AM vs DB=2025-10-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=16 vs DB=16.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=4 vs DB=4.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=3 vs DB=3.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 7
+    Date: CSV=9/26/2025 12:00:00 AM vs DB=2025-09-26
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 17
+    Date: CSV=11/5/2025 12:00:00 AM vs DB=2025-11-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=8 vs DB=8.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 4
+    Date: CSV=9/17/2025 12:00:00 AM vs DB=2025-09-17
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=14 vs DB=14.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=4 vs DB=4.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 7
+    Date: CSV=9/26/2025 12:00:00 AM vs DB=2025-09-26
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=23 vs DB=23.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 13
+    Date: CSV=10/22/2025 12:00:00 AM vs DB=2025-10-22
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=11 vs DB=11.0
+    OppRuns: CSV=18 vs DB=18.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 14
+    Date: CSV=10/24/2025 12:00:00 AM vs DB=2025-10-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 3
+    Date: CSV=9/12/2025 12:00:00 AM vs DB=2025-09-12
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=18 vs DB=18.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 2
+    Date: CSV=9/10/2025 12:00:00 AM vs DB=2025-09-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 8
+    Date: CSV=10/1/2025 12:00:00 AM vs DB=2025-10-01
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=6 vs DB=6.0
+    OppRuns: CSV=10 vs DB=10.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 13
+    Date: CSV=10/22/2025 12:00:00 AM vs DB=2025-10-22
+    Innings: CSV=8 vs DB=8.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=19 vs DB=19.0
+    OppRuns: CSV=18 vs DB=18.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=4 vs DB=4.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=5 vs DB=5.0
+    RunsInning8: CSV=3 vs DB=3.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 530, Game 7
+    Date: CSV=9/26/2025 12:00:00 AM vs DB=2025-09-26
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=14 vs DB=14.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 16
+    Date: CSV=10/31/2025 12:00:00 AM vs DB=2025-10-31
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 17
+    Date: CSV=11/5/2025 12:00:00 AM vs DB=2025-11-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 4
+    Date: CSV=9/17/2025 12:00:00 AM vs DB=2025-09-17
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=22 vs DB=22.0
+    OppRuns: CSV=23 vs DB=23.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=6 vs DB=6.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 1
+    Date: CSV=9/5/2025 12:00:00 AM vs DB=2025-09-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=12 vs DB=12.0
+    OppRuns: CSV=16 vs DB=16.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=3 vs DB=3.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 8
+    Date: CSV=10/1/2025 12:00:00 AM vs DB=2025-10-01
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=12 vs DB=12.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 9
+    Date: CSV=10/3/2025 12:00:00 AM vs DB=2025-10-03
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=18 vs DB=18.0
+    OppRuns: CSV=9 vs DB=9.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 6
+    Date: CSV=9/24/2025 12:00:00 AM vs DB=2025-09-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=22 vs DB=22.0
+    OppRuns: CSV=23 vs DB=23.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=4 vs DB=4.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 9
+    Date: CSV=10/3/2025 12:00:00 AM vs DB=2025-10-03
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=14 vs DB=14.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=4 vs DB=4.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 2
+    Date: CSV=9/10/2025 12:00:00 AM vs DB=2025-09-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=24 vs DB=24.0
+    OppRuns: CSV=27 vs DB=27.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 15
+    Date: CSV=10/29/2025 12:00:00 AM vs DB=2025-10-29
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=10 vs DB=10.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 5
+    Date: CSV=9/19/2025 12:00:00 AM vs DB=2025-09-19
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=24 vs DB=24.0
+    OppRuns: CSV=20 vs DB=20.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=8 vs DB=8.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 17
+    Date: CSV=11/5/2025 12:00:00 AM vs DB=2025-11-05
+    Innings: CSV=5 vs DB=5.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=21 vs DB=21.0
+    OppRuns: CSV=5 vs DB=5.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 13
+    Date: CSV=10/22/2025 12:00:00 AM vs DB=2025-10-22
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=7 vs DB=7.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 5
+    Date: CSV=9/19/2025 12:00:00 AM vs DB=2025-09-19
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=16 vs DB=16.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 16
+    Date: CSV=10/31/2025 12:00:00 AM vs DB=2025-10-31
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=23 vs DB=23.0
+    OppRuns: CSV=21 vs DB=21.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=4 vs DB=4.0
+    RunsInning6: CSV=3 vs DB=3.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 1
+    Date: CSV=9/5/2025 12:00:00 AM vs DB=2025-09-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=20 vs DB=20.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=5 vs DB=5.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 1
+    Date: CSV=9/5/2025 12:00:00 AM vs DB=2025-09-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=17 vs DB=17.0
+    OppRuns: CSV=24 vs DB=24.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 14
+    Date: CSV=10/24/2025 12:00:00 AM vs DB=2025-10-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=19 vs DB=19.0
+    OppRuns: CSV=20 vs DB=20.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 526, Game 11
+    Date: CSV=10/10/2025 12:00:00 AM vs DB=2025-10-10
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=16 vs DB=16.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 14
+    Date: CSV=10/24/2025 12:00:00 AM vs DB=2025-10-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 8
+    Date: CSV=10/1/2025 12:00:00 AM vs DB=2025-10-01
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=16 vs DB=16.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=4 vs DB=4.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 6
+    Date: CSV=9/24/2025 12:00:00 AM vs DB=2025-09-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=12 vs DB=12.0
+    OppRuns: CSV=23 vs DB=23.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 530, Game 13
+    Date: CSV=10/22/2025 12:00:00 AM vs DB=2025-10-22
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=23 vs DB=23.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=4 vs DB=4.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 530, Game 3
+    Date: CSV=9/12/2025 12:00:00 AM vs DB=2025-09-12
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=16 vs DB=16.0
+    OppRuns: CSV=15 vs DB=15.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=5 vs DB=5.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 16
+    Date: CSV=10/31/2025 12:00:00 AM vs DB=2025-10-31
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=20 vs DB=20.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=3 vs DB=3.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 3
+    Date: CSV=9/12/2025 12:00:00 AM vs DB=2025-09-12
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=14 vs DB=14.0
+    RunsInning1: CSV=1 vs DB=1.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 17
+    Date: CSV=11/5/2025 12:00:00 AM vs DB=2025-11-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=21 vs DB=21.0
+    OppRuns: CSV=20 vs DB=20.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=6 vs DB=6.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 15
+    Date: CSV=10/29/2025 12:00:00 AM vs DB=2025-10-29
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=10 vs DB=10.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=2 vs DB=2.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 4
+    Date: CSV=9/17/2025 12:00:00 AM vs DB=2025-09-17
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=9 vs DB=9.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 16
+    Date: CSV=10/31/2025 12:00:00 AM vs DB=2025-10-31
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=12 vs DB=12.0
+    OppRuns: CSV=10 vs DB=10.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 17
+    Date: CSV=11/5/2025 12:00:00 AM vs DB=2025-11-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=8 vs DB=8.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=1 vs DB=1.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 536, Game 17
+    Date: CSV=11/5/2025 12:00:00 AM vs DB=2025-11-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=11 vs DB=11.0
+    OppRuns: CSV=30 vs DB=30.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 534, Game 14
+    Date: CSV=10/24/2025 12:00:00 AM vs DB=2025-10-24
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=10 vs DB=10.0
+    OppRuns: CSV=9 vs DB=9.0
+    RunsInning1: CSV=4 vs DB=4.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 529, Game 15
+    Date: CSV=10/29/2025 12:00:00 AM vs DB=2025-10-29
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=9 vs DB=9.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 6
+    Date: CSV=9/24/2025 12:00:00 AM vs DB=2025-09-24
+    Innings: CSV=8 vs DB=8.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=18 vs DB=18.0
+    RunsInning1: CSV=3 vs DB=3.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=4 vs DB=4.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=3 vs DB=3.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 10
+    Date: CSV=10/8/2025 12:00:00 AM vs DB=2025-10-08
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=20 vs DB=20.0
+    OppRuns: CSV=10 vs DB=10.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=1 vs DB=1.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=5 vs DB=5.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 15
+    Date: CSV=10/29/2025 12:00:00 AM vs DB=2025-10-29
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=9 vs DB=9.0
+    RunsInning1: CSV=0 vs DB=0.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 3
+    Date: CSV=9/12/2025 12:00:00 AM vs DB=2025-09-12
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=14 vs DB=14.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=4 vs DB=4.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 532, Game 13
+    Date: CSV=10/22/2025 12:00:00 AM vs DB=2025-10-22
+    Innings: CSV=8 vs DB=8.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=18 vs DB=18.0
+    OppRuns: CSV=19 vs DB=19.0
+    RunsInning1: CSV=2 vs DB=2.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=4 vs DB=4.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=5 vs DB=5.0
+    RunsInning8: CSV=2 vs DB=2.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 528, Game 7
+    Date: CSV=9/26/2025 12:00:00 AM vs DB=2025-09-26
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=13 vs DB=13.0
+    OppRuns: CSV=14 vs DB=14.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=3 vs DB=3.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 533, Game 16
+    Date: CSV=10/31/2025 12:00:00 AM vs DB=2025-10-31
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=20 vs DB=20.0
+    OppRuns: CSV=17 vs DB=17.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=2 vs DB=2.0
+    RunsInning4: CSV=5 vs DB=5.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=2 vs DB=2.0
+    RunsInning7: CSV=0 vs DB=0.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 531, Game 17
+    Date: CSV=11/5/2025 12:00:00 AM vs DB=2025-11-05
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=30 vs DB=30.0
+    OppRuns: CSV=11 vs DB=11.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=3 vs DB=3.0
+    RunsInning4: CSV=3 vs DB=3.0
+    RunsInning5: CSV=5 vs DB=5.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=12 vs DB=12.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 527, Game 5
+    Date: CSV=9/19/2025 12:00:00 AM vs DB=2025-09-19
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=15 vs DB=15.0
+    OppRuns: CSV=20 vs DB=20.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=5 vs DB=5.0
+    RunsInning3: CSV=0 vs DB=0.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=1 vs DB=1.0
+    RunsInning6: CSV=1 vs DB=1.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 535, Game 8
+    Date: CSV=10/1/2025 12:00:00 AM vs DB=2025-10-01
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=False vs DB=0.0
+    Runs: CSV=12 vs DB=12.0
+    OppRuns: CSV=13 vs DB=13.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=0 vs DB=0.0
+    RunsInning3: CSV=1 vs DB=1.0
+    RunsInning4: CSV=2 vs DB=2.0
+    RunsInning5: CSV=2 vs DB=2.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=2 vs DB=2.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+  Team 537, Game 16
+    Date: CSV=10/31/2025 12:00:00 AM vs DB=2025-10-31
+    Innings: CSV=7 vs DB=7.0
+    HomeTeam: CSV=True vs DB=1.0
+    Runs: CSV=14 vs DB=14.0
+    OppRuns: CSV=26 vs DB=26.0
+    RunsInning1: CSV=5 vs DB=5.0
+    RunsInning2: CSV=1 vs DB=1.0
+    RunsInning3: CSV=5 vs DB=5.0
+    RunsInning4: CSV=0 vs DB=0.0
+    RunsInning5: CSV=0 vs DB=0.0
+    RunsInning6: CSV=0 vs DB=0.0
+    RunsInning7: CSV=3 vs DB=3.0
+    RunsInning8: CSV=0 vs DB=0.0
+    RunsInning9: CSV=0 vs DB=0.0
+
+================================================================================
+AUDIT COMPLETE
+================================================================================
+
+Next Steps:
+1. Review all differences above
+2. Decide which source is correct for each discrepancy
+3. Prepare list of corrections needed
+4. Run correction script (to be created)

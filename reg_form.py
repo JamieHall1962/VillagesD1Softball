@@ -402,7 +402,7 @@ def process_registrations(csv_path, db_path):
         match_key = f"{first_name}|{last_name}".lower()
         
         # DEBUG: Show what we're checking
-        if idx < 5:  # Show first 5 for debugging
+        if idx < 5 or "reed" in match_key:  # Show first 5 or anyone named Reed
             print(f"  DEBUG: Checking player '{first_name} {last_name}' with key '{match_key}'")
             print(f"    In manual? {match_key in manual_matches}")
             print(f"    In confirmed? {match_key in confirmed_matches}")
@@ -720,36 +720,84 @@ def create_registration_pdf(df, output_path="registrations.pdf"):
         # Convert to list for easier indexing
         names = [f"{row['FirstName']} {row['LastName']}" for idx, row in sorted_df.iterrows()]
         
-        # Split the list in half
-        mid_point = (len(names) + 1) // 2  # Round up for left column
-        left_col = names[:mid_point]
-        right_col = names[mid_point:]
-        
+        # Calculate how many names fit per column on one page
         y_start = pdf.get_y()
+        page_height_limit = 270
+        names_per_column = int((page_height_limit - y_start) / line_height)
+        names_per_page = names_per_column * 2
+        
+        # Distribute names to left and right columns to flow naturally across pages
+        # Left column gets: indices 0, 2, 4, 6... (every other "slot")
+        # Right column gets: indices 1, 3, 5, 7... (every other "slot")  
+        # Where each "slot" is names_per_column items
+        left_col = []
+        right_col = []
+        
+        idx = 0
+        page_num = 0
+        while idx < len(names):
+            # Fill left column for this page
+            chunk_size = min(names_per_column, len(names) - idx)
+            left_col.extend(names[idx:idx + chunk_size])
+            idx += chunk_size
+            
+            if idx < len(names):
+                # Fill right column for this page
+                chunk_size = min(names_per_column, len(names) - idx)
+                right_col.extend(names[idx:idx + chunk_size])
+                idx += chunk_size
+        
+        start_page = pdf.page_no()  # Remember which page we started on
+        page_height_limit = 270  # Bottom margin threshold
         
         # Print left column
+        current_y_left = y_start
+        left_end_page = start_page
+        names_printed_on_page = 0
         for i, name in enumerate(left_col):
-            y_position = y_start + (i * line_height)
-            
-            # Check if we need a new page
-            if y_position > 270:
+            # Check if we need a new page (after names_per_column names)
+            if names_printed_on_page >= names_per_column:
                 pdf.add_page()
-                y_start = pdf.get_y()
-                y_position = y_start + (i * line_height)
+                left_end_page = pdf.page_no()
+                current_y_left = pdf.get_y()
+                names_printed_on_page = 0
             
-            pdf.set_xy(left_margin, y_position)
+            pdf.set_xy(left_margin, current_y_left)
             pdf.cell(col_width, line_height, name)
+            current_y_left += line_height
+            names_printed_on_page += 1
         
-        # Print right column (if it exists)
+        # Print right column - start back at the beginning
+        current_y_right = y_start
+        right_end_page = start_page
         if right_col:
+            # Go back to the page where we started
+            pdf.page = start_page
+            current_y_right = y_start
+            names_printed_on_page = 0
+            
             for i, name in enumerate(right_col):
-                y_position = y_start + (i * line_height)
-                pdf.set_xy(left_margin + col_width, y_position)
+                # Check if we need a new page (after names_per_column names)
+                if names_printed_on_page >= names_per_column:
+                    pdf.add_page()
+                    right_end_page = pdf.page_no()
+                    current_y_right = pdf.get_y()
+                    names_printed_on_page = 0
+                
+                pdf.set_xy(left_margin + col_width, current_y_right)
                 pdf.cell(col_width, line_height, name)
+                current_y_right += line_height
+                names_printed_on_page += 1
         
-        # Move past the end of the columns
-        max_rows = max(len(left_col), len(right_col))
-        pdf.set_y(y_start + (max_rows * line_height) + 3)
+        # Position cursor after both columns - go to whichever ends further down
+        if left_end_page > right_end_page or (left_end_page == right_end_page and current_y_left > current_y_right):
+            # Left column ends further down
+            pdf.page = left_end_page
+            pdf.set_y(current_y_left + 3)
+        else:
+            # Right column ends further down (or equal)
+            pdf.page = right_end_page
+            pdf.set_y(current_y_right + 3)
     
     # Full-Time Players Section
     if len(full_time) > 0:

@@ -75,6 +75,23 @@ def load_manual_overrides(manual_csv_path="manual_matches.csv"):
         print(f"  Error loading manual matches: {e}")
     return manual_matches
 
+def load_excluded_players(exclusion_csv_path="excluded_players.csv"):
+    """Load list of players to exclude from draft"""
+    excluded = {}
+    try:
+        df = pd.read_csv(exclusion_csv_path)
+        for idx, row in df.iterrows():
+            person_num = int(row['PersonNumber'])
+            reason = row.get('Reason', 'Excluded')
+            excluded[person_num] = reason
+            print(f"  Excluded: PersonNumber {person_num} - {reason}")
+        print(f"  Loaded {len(excluded)} excluded players")
+    except FileNotFoundError:
+        print(f"  No excluded_players.csv found (none excluded)")
+    except Exception as e:
+        print(f"  Error loading excluded players: {e}")
+    return excluded
+
 def load_persistent_decisions(csv_path="fuzzy_decisions.csv"):
     """Load persistent fuzzy match decisions from CSV file"""
     confirmed = {}
@@ -356,6 +373,10 @@ def process_registrations(csv_path, db_path):
     print("\nLoading manual match overrides...")
     manual_matches = load_manual_overrides()
     
+    # Load excluded players (do not draft list)
+    print("\nLoading excluded players list...")
+    excluded_players = load_excluded_players()
+    
     # Load persistent decisions (accumulates over time)
     print("\nLoading persistent fuzzy match decisions...")
     confirmed_matches, rejected_matches, previously_seen_matches = load_persistent_decisions()
@@ -519,9 +540,9 @@ def process_registrations(csv_path, db_path):
     print("\nSaving decisions to persistent file...")
     save_persistent_decisions(confirmed_matches, rejected_matches, previously_seen_matches)
     
-    return df, db_players
+    return df, db_players, excluded_players
 
-def create_excel_output(df, db_players, output_path):
+def create_excel_output(df, db_players, excluded_players, output_path):
     """Generate multi-worksheet Excel file"""
     print(f"\nCreating Excel workbook: {output_path}")
     
@@ -539,8 +560,16 @@ def create_excel_output(df, db_players, output_path):
         # ===== WORKSHEET 1: Full Time Players =====
         # Include ALL players who aren't SUB-ONLY (matched AND new players)
         # Managers need complete draft list regardless of PersonNumber
+        # EXCLUDE players on the do-not-draft list
         is_sub_only = df['SubOnly'].notna() & (df['SubOnly'].astype(str).str.lower() != 'no')
         full_time = df[~is_sub_only].copy()
+        
+        # Filter out excluded players
+        excluded_count = 0
+        if len(excluded_players) > 0:
+            full_time_before = len(full_time)
+            full_time = full_time[~full_time['PersonNumber'].isin(excluded_players.keys())].copy()
+            excluded_count = full_time_before - len(full_time)
         
         if len(full_time) > 0:
             full_time_output = full_time[[
@@ -550,7 +579,8 @@ def create_excel_output(df, db_players, output_path):
             # Sort alphabetically by LastName
             full_time_output = full_time_output.sort_values('LastName', key=lambda x: x.str.lower())
             full_time_output.to_excel(writer, sheet_name='full_time_players', index=False)
-            print(f"  Created 'full_time_players' sheet: {len(full_time)} players (includes new players without PersonNumbers)")
+            print(f"  Created 'full_time_players' sheet: {len(full_time)} players" + 
+                  (f" ({excluded_count} excluded from draft)" if excluded_count > 0 else ""))
         
         # ===== WORKSHEET 2: Fuzzy Matches =====
         # Show all fuzzy matches that need review
@@ -685,7 +715,7 @@ def create_excel_output(df, db_players, output_path):
     print(f"\n✓ Excel workbook created successfully!")
     print(f"  Location: {output_path}")
 
-def create_registration_pdf(df, output_path="registrations.pdf"):
+def create_registration_pdf(df, excluded_players, output_path="registrations.pdf"):
     """Create a PDF list of all registered players for website"""
     print(f"\nCreating PDF for website: {output_path}")
     
@@ -693,6 +723,10 @@ def create_registration_pdf(df, output_path="registrations.pdf"):
     is_sub_only = df['SubOnly'].notna() & (df['SubOnly'].astype(str).str.lower() != 'no')
     full_time = df[~is_sub_only].copy()
     sub_only = df[is_sub_only].copy()
+    
+    # Filter out excluded players from full-time
+    if len(excluded_players) > 0:
+        full_time = full_time[~full_time['PersonNumber'].isin(excluded_players.keys())].copy()
     
     # Create PDF
     pdf = FPDF()
@@ -820,13 +854,13 @@ def main():
     """Main execution"""
     try:
         # Process registrations
-        df, db_players = process_registrations(ZOHO_CSV_PATH, DATABASE_PATH)
+        df, db_players, excluded_players = process_registrations(ZOHO_CSV_PATH, DATABASE_PATH)
         
         # Create Excel output
-        create_excel_output(df, db_players, OUTPUT_EXCEL_PATH)
+        create_excel_output(df, db_players, excluded_players, OUTPUT_EXCEL_PATH)
         
         # Create PDF for website
-        create_registration_pdf(df, "registrations.pdf")
+        create_registration_pdf(df, excluded_players, "registrations.pdf")
         
         print("\n" + "=" * 60)
         print("PROCESSING COMPLETE!")

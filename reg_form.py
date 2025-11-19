@@ -1,10 +1,19 @@
 #!/usr/bin/env python3
-print("*** RUNNING VERSION 27 - PERSISTENT DECISIONS FILE ***")
+print("*** RUNNING VERSION 28 - VOLUNTEER-ONLY FIX ***")
 """
 D1 Softball Registration Processor
 Transforms ugly Zoho CSV export into organized Excel workbook with player matching
 
-Version 27 Changes (CRITICAL FIX - TRUE PERSISTENCE):
+Version 28 Changes (CRITICAL FIX - NON-PLAYER VOLUNTEERS):
+- FIXED: Non-player volunteers (VolunteerOnly field) now excluded from:
+  * Full-Time Players sheet
+  * New Players sheet
+  * SUB-ONLY Players sheet
+  * PDF registration list
+- Non-player volunteers still appear correctly on Non-Player Volunteers sheet
+- Non-player volunteers still appear correctly on volunteer role sheets (Managers, Umpires, Scorekeepers)
+
+Version 27 Changes (PERSISTENT DECISIONS FILE):
 - NEW: fuzzy_decisions.csv - persistent file that accumulates ALL decisions over time
 - NEW: manual_matches.csv - manual match overrides (highest priority)
 - All sheets sorted alphabetically by LastName (except Raw Cleaned)
@@ -561,8 +570,10 @@ def create_excel_output(df, db_players, excluded_players, output_path):
         # Include ALL players who aren't SUB-ONLY (matched AND new players)
         # Managers need complete draft list regardless of PersonNumber
         # EXCLUDE players on the do-not-draft list
+        # EXCLUDE non-player volunteers (VolunteerOnly)
         is_sub_only = df['SubOnly'].notna() & (df['SubOnly'].astype(str).str.lower() != 'no')
-        full_time = df[~is_sub_only].copy()
+        is_volunteer_only = df['VolunteerOnly'].notna()
+        full_time = df[~is_sub_only & ~is_volunteer_only].copy()
         
         # Filter out excluded players
         excluded_count = 0
@@ -604,7 +615,8 @@ def create_excel_output(df, db_players, excluded_players, output_path):
             print(f"  No fuzzy matches to review")
         
         # ===== WORKSHEET 3: New Players =====
-        new_players = df[df['MatchType'] == 'New Player'].copy()
+        # EXCLUDE non-player volunteers (VolunteerOnly)
+        new_players = df[(df['MatchType'] == 'New Player') & ~is_volunteer_only].copy()
         if len(new_players) > 0:
             new_output = new_players[[
                 'FirstName', 'LastName', 'Email', 'Phone', 'Age',
@@ -618,7 +630,8 @@ def create_excel_output(df, db_players, excluded_players, output_path):
             print(f"  Created 'New Players' sheet: {len(new_players)} players")
         
         # ===== WORKSHEET 4: SUB-ONLY Players =====
-        subs = df[df['SubOnly'].notna() & (df['SubOnly'].astype(str).str.lower() != 'no')].copy()
+        # EXCLUDE non-player volunteers (VolunteerOnly)
+        subs = df[is_sub_only & ~is_volunteer_only].copy()
         if len(subs) > 0:
             subs_output = subs[[
                 'PersonNumber', 'FirstName', 'LastName', 'Email', 'Phone',
@@ -720,9 +733,11 @@ def create_registration_pdf(df, excluded_players, output_path="registrations.pdf
     print(f"\nCreating PDF for website: {output_path}")
     
     # Get full-time and sub-only players
+    # EXCLUDE non-player volunteers (VolunteerOnly)
     is_sub_only = df['SubOnly'].notna() & (df['SubOnly'].astype(str).str.lower() != 'no')
-    full_time = df[~is_sub_only].copy()
-    sub_only = df[is_sub_only].copy()
+    is_volunteer_only = df['VolunteerOnly'].notna()
+    full_time = df[~is_sub_only & ~is_volunteer_only].copy()
+    sub_only = df[is_sub_only & ~is_volunteer_only].copy()
     
     # Filter out excluded players from full-time
     if len(excluded_players) > 0:

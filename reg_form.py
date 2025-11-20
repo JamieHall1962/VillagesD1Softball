@@ -1,10 +1,25 @@
 #!/usr/bin/env python3
-print("*** RUNNING VERSION 28 - VOLUNTEER-ONLY FIX ***")
+print("*** RUNNING VERSION 30 - PHONE FORMATTING + BATTING STATS ***")
 """
 D1 Softball Registration Processor
 Transforms ugly Zoho CSV export into organized Excel workbook with player matching
 
-Version 28 Changes (CRITICAL FIX - NON-PLAYER VOLUNTEERS):
+Version 30 Changes (PHONE FORMATTING):
+- NEW: Phone numbers automatically formatted to consistent (123) 456-7890 format
+- Applies to both Phone and EmergencyPhone columns
+- Handles 10-digit, 11-digit (with leading 1), and 7-digit numbers
+- Stats columns (AVG, HR, SEASON) positioned before Availability column
+
+Version 29 Changes (BATTING STATS FOR DRAFT):
+- NEW: Added batting statistics to Full-Time Players sheet:
+  * AVG - Latest season batting average (3-digit format, e.g., 811 = .811)
+  * HR - Latest season home runs (e.g., 16)
+  * SEASON - Latest season played (e.g., F25)
+  * Shows "NEW" for all three fields if player has no batting history
+- Batting Average calculated correctly: Hits / At-Bats (where AB = PA - BB - SF)
+- Stats pulled from database batting_stats table aggregated by most recent team
+
+Version 28 Changes (NON-PLAYER VOLUNTEERS FIX):
 - FIXED: Non-player volunteers (VolunteerOnly field) now excluded from:
   * Full-Time Players sheet
   * New Players sheet
@@ -230,6 +245,32 @@ def load_confirmed_matches(excel_path):
         print(f"  No previous matches found (this is normal for first run): {e}")
     return confirmed, rejected, previously_seen
 
+def format_phone_number(phone):
+    """Format phone number to consistent (123) 456-7890 format"""
+    if pd.isna(phone) or not phone:
+        return ''
+    
+    # Convert to string and strip all non-numeric characters
+    phone_str = str(phone)
+    digits = re.sub(r'\D', '', phone_str)
+    
+    # Handle different lengths
+    if len(digits) == 10:
+        # Format as (123) 456-7890
+        return f"({digits[0:3]}) {digits[3:6]}-{digits[6:10]}"
+    elif len(digits) == 11 and digits[0] == '1':
+        # Remove leading 1 and format
+        return f"({digits[1:4]}) {digits[4:7]}-{digits[7:11]}"
+    elif len(digits) == 7:
+        # Local number without area code: 456-7890
+        return f"{digits[0:3]}-{digits[3:7]}"
+    elif len(digits) > 0:
+        # Return as-is with dashes every 4 digits if unusual length
+        return digits
+    else:
+        # No digits found
+        return ''
+
 def parse_name(full_name):
     """Parse 'FirstName, LastName' format from Zoho CSV"""
     if pd.isna(full_name) or not full_name:
@@ -318,6 +359,65 @@ def load_database_players(db_path):
     print(f"Loaded {len(df)} existing players from database")
     return df
 
+def get_player_latest_stats(person_number, db_path):
+    """Get player's latest batting average, home runs, and season from database
+    Returns: (avg, hr, season) or ('NEW', 'NEW', 'NEW') if no stats found
+    
+    Batting Average = Hits / At-Bats
+    At-Bats = Plate Appearances - Walks (BB) - Sacrifice Flies (SF)
+    """
+    if pd.isna(person_number) or person_number is None:
+        return 'NEW', 'NEW', 'NEW'
+    
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        
+        # Get aggregate stats by team for this player, ordered by TeamNumber DESC (most recent first)
+        # Need PA, H, HR, BB, and SF to calculate proper batting average
+        query = """
+            SELECT b.TeamNumber, 
+                   SUM(b.PA) as total_pa, 
+                   SUM(b.H) as total_h, 
+                   SUM(b.HR) as total_hr,
+                   SUM(b.BB) as total_bb,
+                   SUM(b.SF) as total_sf,
+                   t.LongTeamName
+            FROM batting_stats b
+            LEFT JOIN Teams t ON b.TeamNumber = t.TeamNumber
+            WHERE b.PlayerNumber = ?
+            GROUP BY b.TeamNumber
+            ORDER BY b.TeamNumber DESC
+            LIMIT 1
+        """
+        
+        cursor.execute(query, (int(person_number),))
+        result = cursor.fetchone()
+        conn.close()
+        
+        if result and result[1] > 0:  # If we have data and PA > 0
+            team_num, pa, h, hr, bb, sf, team_name = result
+            
+            # Calculate At-Bats: PA - BB - SF
+            at_bats = pa - (bb if bb else 0) - (sf if sf else 0)
+            
+            # Calculate Batting Average: H / AB (as 3-digit integer, rounded)
+            avg = round((h / at_bats * 1000)) if at_bats > 0 else 0
+            
+            # Extract season from team name (e.g., "Stars F25" -> "F25")
+            season = 'UNK'
+            if team_name:
+                match = re.search(r'([WSF]\d{2})$', team_name)
+                season = match.group(1) if match else 'UNK'
+            
+            return avg, hr, season
+        else:
+            return 'NEW', 'NEW', 'NEW'
+            
+    except Exception as e:
+        print(f"  Warning: Could not fetch stats for PersonNumber {person_number}: {e}")
+        return 'NEW', 'NEW', 'NEW'
+
 def exact_match(first_name, last_name, db_players):
     """Find exact name match in database"""
     matches = db_players[
@@ -366,6 +466,13 @@ def process_registrations(csv_path, db_path):
     
     # Rename columns to clean names
     df = df.rename(columns=COLUMN_MAPPING)
+    
+    # Format phone numbers consistently
+    print("\nFormatting phone numbers...")
+    if 'Phone' in df.columns:
+        df['Phone'] = df['Phone'].apply(format_phone_number)
+    if 'EmergencyPhone' in df.columns:
+        df['EmergencyPhone'] = df['EmergencyPhone'].apply(format_phone_number)
     
     # Remove duplicates (keeping most recent), parse names in the process
     df = remove_duplicates(df)
@@ -587,8 +694,29 @@ def create_excel_output(df, db_players, excluded_players, output_path):
                 'PersonNumber', 'FirstName', 'LastName', 'Email', 'Phone', 
                 'Age', 'Position1', 'Position2', 'NeedsRunner', 'Availability'
             ]].copy()
-            # Sort alphabetically by LastName
+            
+            # Sort alphabetically by LastName FIRST
             full_time_output = full_time_output.sort_values('LastName', key=lambda x: x.str.lower())
+            
+            # Add batting stats columns (AVG, HR, SEASON) after sorting
+            print(f"  Fetching batting stats for {len(full_time_output)} players...")
+            stats_list = []
+            for idx, row in full_time_output.iterrows():
+                avg, hr, season = get_player_latest_stats(row['PersonNumber'], DATABASE_PATH)
+                stats_list.append({'AVG': avg, 'HR': hr, 'SEASON': season})
+            
+            stats_df = pd.DataFrame(stats_list)
+            # Reset index on both dataframes to ensure alignment
+            full_time_output = full_time_output.reset_index(drop=True)
+            stats_df = stats_df.reset_index(drop=True)
+            full_time_output = pd.concat([full_time_output, stats_df], axis=1)
+            
+            # Reorder columns so AVG, HR, SEASON come before Availability
+            full_time_output = full_time_output[[
+                'PersonNumber', 'FirstName', 'LastName', 'Email', 'Phone', 
+                'Age', 'Position1', 'Position2', 'NeedsRunner', 
+                'AVG', 'HR', 'SEASON', 'Availability'
+            ]]
             full_time_output.to_excel(writer, sheet_name='full_time_players', index=False)
             print(f"  Created 'full_time_players' sheet: {len(full_time)} players" + 
                   (f" ({excluded_count} excluded from draft)" if excluded_count > 0 else ""))

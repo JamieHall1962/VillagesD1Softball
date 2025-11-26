@@ -1616,6 +1616,174 @@ def pitcher_detail(pitcher_id):
                          total_seasons=len(season_records))
 
 
+@app.route('/draft')
+def draft():
+    """Display draft roster with name matching interface"""
+    import csv
+    import pandas as pd
+    from fuzzywuzzy import fuzz
+    
+    conn = get_db_connection()
+    
+    # Load all players from database for dropdown (only for new players)
+    all_players = conn.execute("""
+        SELECT PersonNumber, FirstName, LastName 
+        FROM People 
+        ORDER BY LastName, FirstName
+    """).fetchall()
+    
+    # Helper function to normalize names
+    def normalize_name(name):
+        """Normalize name by removing extra spaces and converting to uppercase"""
+        name = re.sub(r'\s+', ' ', name)
+        return name.strip().upper()
+    
+    # Load registered players from Excel (has PersonNumbers already)
+    try:
+        excel_df = pd.read_excel('w26reg.xlsx', sheet_name='full_time_players')
+        # Create lookup dict: "LASTNAME, FIRSTNAME" -> PersonNumber
+        excel_lookup = {}
+        for _, row in excel_df.iterrows():
+            key = normalize_name(f"{row['LastName']}, {row['FirstName']}")
+            excel_lookup[key] = {
+                'person_number': row['PersonNumber'],
+                'first_name': row['FirstName'],
+                'last_name': row['LastName']
+            }
+    except Exception as e:
+        excel_lookup = {}
+        print(f"Error loading Excel file: {e}")
+    
+    # Load draft CSV
+    draft_data = []
+    try:
+        with open('draft_f25.csv', 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                draft_data.append(row)
+    except FileNotFoundError:
+        conn.close()
+        return "Draft CSV file not found", 404
+    
+    # Process draft data and match to Excel
+    teams = {}
+    matched_count = 0
+    unmatched_count = 0
+    
+    for row in draft_data:
+        team_name = row['TEAM']
+        csv_name = row['PLAYER'].strip()
+        is_manager = row['IS_MANAGER'].upper() == 'YES'
+        
+        # Try direct match from Excel first (normalized)
+        csv_name_normalized = normalize_name(csv_name)
+        if csv_name_normalized in excel_lookup:
+            matched_count += 1
+            player_info = excel_lookup[csv_name_normalized]
+            db_name = f"{player_info['first_name']} {player_info['last_name']}"
+            person_number = player_info['person_number']
+        else:
+            # Not found in registered players - needs manual selection
+            unmatched_count += 1
+            db_name = None
+            person_number = None
+        
+        # Add to teams dictionary
+        if team_name not in teams:
+            teams[team_name] = []
+        
+        teams[team_name].append({
+            'csv_name': csv_name,
+            'db_name': db_name,
+            'person_number': person_number,
+            'is_manager': is_manager
+        })
+    
+    conn.close()
+    
+    success = request.args.get('success') == '1'
+    
+    return render_template('draft.html',
+                         teams=teams,
+                         all_players=all_players,
+                         total_players=len(draft_data),
+                         matched_count=matched_count,
+                         unmatched_count=unmatched_count,
+                         success=success)
+
+
+@app.route('/draft/save', methods=['POST'])
+def save_draft():
+    """Save the matched player assignments and update CSV with database names"""
+    import csv
+    from datetime import datetime
+    
+    conn = get_db_connection()
+    
+    # Get form data
+    form_data = request.form
+    
+    # Load current draft CSV
+    draft_data = []
+    try:
+        with open('draft_f25.csv', 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                draft_data.append(row)
+    except FileNotFoundError:
+        conn.close()
+        return "Draft CSV file not found", 404
+    
+    # Create backup of original file
+    backup_filename = f"draft_f25_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+    with open(backup_filename, 'w', encoding='utf-8', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=['TEAM', 'PLAYER', 'IS_MANAGER'])
+        writer.writeheader()
+        writer.writerows(draft_data)
+    
+    # Get all players from database
+    all_players = {}
+    db_players = conn.execute("""
+        SELECT PersonNumber, FirstName, LastName 
+        FROM People
+    """).fetchall()
+    
+    for player in db_players:
+        all_players[player['PersonNumber']] = {
+            'first_name': player['FirstName'],
+            'last_name': player['LastName']
+        }
+    
+    # Update draft data with matched names (only for unmatched entries)
+    row_index = 0
+    for row in draft_data:
+        team_name = row['TEAM']
+        form_key = f"player_{row_index}_{team_name}"
+        
+        if form_key in form_data:
+            person_number_str = form_data[form_key]
+            if person_number_str:  # Not empty
+                person_number = int(person_number_str)
+                if person_number in all_players:
+                    # Update with database name
+                    player = all_players[person_number]
+                    row['PLAYER'] = f"{player['last_name']}, {player['first_name']}"
+        
+        row_index += 1
+    
+    # Write updated CSV
+    with open('draft_f25.csv', 'w', encoding='utf-8', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=['TEAM', 'PLAYER', 'IS_MANAGER'])
+        writer.writeheader()
+        writer.writerows(draft_data)
+    
+    conn.close()
+    
+    # Redirect to draft page with success message
+    from flask import redirect, url_for, flash
+    return redirect('/draft?success=1')
+
+
 if __name__ == '__main__':
     init_db()
     app.run(debug=True, use_reloader=False, port=5020)  # Changed port to avoid conflicts

@@ -65,7 +65,7 @@ def apply_subs_logic(df):
                     old_player = df.iloc[i]['PersonNumber']
                     new_player = SUBS_MAPPING[team_num]
                     df.iloc[i, df.columns.get_loc('PersonNumber')] = new_player
-                    print(f"  Team {team_num}: Player {old_player} → Subs Player {new_player}")
+                    print(f"  Team {team_num}: Player {old_player} -> Subs Player {new_player}")
                     sub_count += 1
     if sub_count > 0:
         print(f"Redirected {sub_count} sub records")

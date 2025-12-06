@@ -693,6 +693,9 @@ def season_detail(filter_number):
         if division_match:
             has_divisions = True
             division_name = division_match.group(1)  # Extract what's inside parentheses
+            
+            # Remove division from display name (it's already in the heading)
+            team_dict['team_display_name'] = re.sub(r'\s*\([^)]+\)\s*', '', team_name).strip()
                 
             if division_name not in divisions:
                 divisions[division_name] = []

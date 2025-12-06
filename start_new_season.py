@@ -61,8 +61,10 @@ class NewSeasonManager:
     
     def create_team(self, team_name, short_name, manager_name=None):
         """Create new team record"""
-        # Convert team name to proper case
+        # Convert team name to proper case, but preserve acronyms like USA
         team_name_proper = team_name.title()
+        # Fix common acronyms that .title() breaks
+        team_name_proper = team_name_proper.replace('Usa', 'USA')
         full_team_name = f"{team_name_proper} {short_name}"
         
         cursor = self.conn.cursor()
@@ -220,27 +222,29 @@ class NewSeasonManager:
         """, (team_number, person_number))
     
     def parse_csv_data(self):
-        """Parse the draft CSV data - handles the actual CSV format"""
+        """Parse the draft CSV data - handles format with PID column"""
         import csv
-        from collections import defaultdict
         
         teams_data = {}
         
-        with open(self.csv_path, 'r', encoding='utf-8-sig') as file:  # utf-8-sig automatically strips BOM
+        with open(self.csv_path, 'r', encoding='utf-8-sig') as file:
             reader = csv.DictReader(file)
             
             print(f"CSV columns found: {reader.fieldnames}")
             
-            # Expect clean column names now
-            if reader.fieldnames != ['TEAM', 'PLAYER', 'IS_MANAGER']:
-                raise ValueError(f"Expected columns: ['TEAM', 'PLAYER', 'IS_MANAGER'], got: {reader.fieldnames}")
+            # Expect columns: TEAM, PLAYER, IS_MANAGER, PID
+            expected_cols = ['TEAM', 'PLAYER', 'IS_MANAGER', 'PID']
+            if reader.fieldnames != expected_cols:
+                raise ValueError(f"Expected columns: {expected_cols}, got: {reader.fieldnames}")
             
             # Read and process all data
             for row in reader:
                 team = row['TEAM'].strip()
                 player = row['PLAYER'].strip()
-                is_manager_str = row['IS_MANAGER'].strip().lower()
+                is_manager_str = row['IS_MANAGER'].strip().lower() if row['IS_MANAGER'] else ''
                 is_manager = is_manager_str in ['yes', 'y', 'true', '1']
+                pid_str = row['PID'].strip() if row['PID'] else ''
+                pid = int(pid_str) if pid_str else None
                 
                 # Initialize team if not seen before
                 if team not in teams_data:
@@ -254,10 +258,11 @@ class NewSeasonManager:
                     
                     if first_name and last_name:
                         player_info = {
-                            'draft_position': len(teams_data[team]['players']) + 1,  # Sequential numbering
+                            'draft_position': len(teams_data[team]['players']) + 1,
                             'first_name': first_name,
                             'last_name': last_name,
-                            'is_manager': is_manager
+                            'is_manager': is_manager,
+                            'pid': pid  # PersonNumber - None if new player
                         }
                         
                         teams_data[team]['players'].append(player_info)
@@ -266,9 +271,13 @@ class NewSeasonManager:
                         if is_manager:
                             manager_name = f"{first_name.title()} {last_name.title()}"
                             teams_data[team]['manager'] = manager_name
-                            print(f"DEBUG: Set manager for {team}: {manager_name}")
         
-        print(f"Parsed {len(teams_data)} teams with {sum(len(t['players']) for t in teams_data.values())} total players")
+        # Count returning vs new players
+        returning = sum(1 for t in teams_data.values() for p in t['players'] if p['pid'])
+        new = sum(1 for t in teams_data.values() for p in t['players'] if not p['pid'])
+        total = returning + new
+        
+        print(f"Parsed {len(teams_data)} teams with {total} players ({returning} returning, {new} new)")
         return teams_data
     
     def find_team_subs(self, short_name):
@@ -281,6 +290,15 @@ class NewSeasonManager:
             ORDER BY FirstName
         """)
         return {row['FirstName']: row['PersonNumber'] for row in cursor.fetchall()}
+    
+    def get_base_team_name(self, full_team_name, short_name):
+        """Extract base team name by removing season code and division"""
+        import re
+        # Remove season code (e.g., " W26")
+        base_name = full_team_name.replace(f' {short_name}', '')
+        # Remove division in parentheses (e.g., "(Palmese)" or "(Ballers)")
+        base_name = re.sub(r'\s*\([^)]+\)\s*', '', base_name).strip()
+        return base_name
     
     def add_subs_to_rosters(self, short_name):
         """Add sub players to team rosters - creates missing subs if needed"""
@@ -305,7 +323,7 @@ class NewSeasonManager:
         # First pass: identify missing subs
         for team in teams:
             team_name = team['LongTeamName']
-            base_name = team_name.replace(f' {short_name}', '')
+            base_name = self.get_base_team_name(team_name, short_name)
             
             if base_name not in subs_dict:
                 missing_subs.append(base_name)
@@ -345,7 +363,7 @@ class NewSeasonManager:
         for team in teams:
             team_number = team['TeamNumber']
             team_name = team['LongTeamName']
-            base_name = team_name.replace(f' {short_name}', '')
+            base_name = self.get_base_team_name(team_name, short_name)
             
             if base_name in subs_dict:
                 sub_person_number = subs_dict[base_name]
@@ -363,8 +381,8 @@ class NewSeasonManager:
                 print(f"  ERROR: Still no sub found for {base_name}")
         
         if subs_created > 0:
-            print(f"\n✅ Created {subs_created} new sub players")
-        print(f"✅ Added {subs_added} subs to rosters")
+            print(f"\n[OK] Created {subs_created} new sub players")
+        print(f"[OK] Added {subs_added} subs to rosters")
         
         return {'added': subs_added, 'created': subs_created}
     
@@ -493,7 +511,6 @@ class NewSeasonManager:
             
             # Create team with manager
             manager_name = team_data.get('manager')
-            print(f"DEBUG: Creating team {team_name} with manager: '{manager_name}'")
             team_number = self.create_team(team_name, short_name, manager_name)
             
             # Process each player
@@ -502,35 +519,27 @@ class NewSeasonManager:
                 last_name = player_info['last_name']
                 draft_pos = player_info['draft_position']
                 is_manager = player_info.get('is_manager', False)
-                
-                # Find or create person
-                person_id, match_type = self.find_person_match(first_name, last_name, existing_people)
+                pid = player_info.get('pid')  # PersonNumber from CSV
                 
                 manager_flag = " (MANAGER)" if is_manager else ""
                 
-                if match_type == 'exact':
+                if pid:
+                    # Returning player - use PID directly
+                    person_id = pid
+                    db_name = f"{existing_people[pid]['FirstName']} {existing_people[pid]['LastName']}" if pid in existing_people else "UNKNOWN"
+                    
                     self.exact_matches.append({
                         'team': team_name,
                         'draft_pos': draft_pos,
                         'name': f"{first_name} {last_name}",
                         'person_id': person_id,
-                        'existing_name': f"{existing_people[person_id]['FirstName']} {existing_people[person_id]['LastName']}",
+                        'existing_name': db_name,
                         'is_manager': is_manager
                     })
-                    print(f"  {draft_pos}. {first_name} {last_name}{manager_flag} -> EXACT MATCH (PersonNumber: {person_id})")
+                    print(f"  {draft_pos}. {first_name} {last_name}{manager_flag} -> PID {person_id} ({db_name})")
                 
-                elif match_type == 'fuzzy':
-                    self.fuzzy_matches.append({
-                        'team': team_name,
-                        'draft_pos': draft_pos,
-                        'name': f"{first_name} {last_name}",
-                        'person_id': person_id,
-                        'existing_name': f"{existing_people[person_id]['FirstName']} {existing_people[person_id]['LastName']}",
-                        'is_manager': is_manager
-                    })
-                    print(f"  {draft_pos}. {first_name} {last_name}{manager_flag} -> FUZZY MATCH: {existing_people[person_id]['FirstName']} {existing_people[person_id]['LastName']} (PersonNumber: {person_id})")
-                
-                else:  # new player
+                else:
+                    # New player - create record
                     person_id = self.create_person(first_name, last_name)
                     self.new_players.append({
                         'team': team_name,
@@ -580,17 +589,10 @@ class NewSeasonManager:
                 print(f"  New subs created: {subs_result['created']}")
             print(f"  Subs added to rosters: {subs_result['added']}")
         
-        print(f"\nPlayer Matching Summary:")
-        print(f"  Exact matches: {len(self.exact_matches)}")
-        print(f"  Fuzzy matches: {len(self.fuzzy_matches)} - PLEASE REVIEW")
+        print(f"\nPlayer Summary:")
+        print(f"  Returning players: {len(self.exact_matches)}")
         print(f"  New players: {len(self.new_players)}")
         print(f"  New subs: {len(self.new_subs)}")
-        
-        if self.fuzzy_matches:
-            print(f"\nFUZZY MATCHES TO REVIEW:")
-            for match in self.fuzzy_matches:
-                manager_flag = " (MANAGER)" if match.get('is_manager') else ""
-                print(f"  {match['team']}: {match['name']}{manager_flag} -> {match['existing_name']} (PersonNumber: {match['person_id']})")
         
         if self.new_subs:
             print(f"\nNEW SUBS CREATED:")
@@ -603,7 +605,7 @@ class NewSeasonManager:
                 manager_flag = " (MANAGER)" if player.get('is_manager') else ""
                 print(f"  {player['team']}: {player['name']}{manager_flag} (PersonNumber: {player['person_id']})")
         
-        total_roster_entries = len(self.exact_matches) + len(self.fuzzy_matches) + len(self.new_players)
+        total_roster_entries = len(self.exact_matches) + len(self.new_players)
         if subs_result:
             total_roster_entries += subs_result['added']
         
@@ -612,29 +614,34 @@ class NewSeasonManager:
         if excel_filename:
             print(f"\nExcel roster file created: {excel_filename}")
         
-        print(f"\n✅ SETUP COMPLETE - Ready for {self.season_info['season_name']} season!")
+        print(f"\n[OK] SETUP COMPLETE - Ready for {self.season_info['season_name']} season!")
 
 
 def main():
     """Main execution function"""
     
-    # Hardcoded paths for IDE usage
+    # ============================================================
+    # CONFIGURE THESE FOR EACH NEW SEASON
+    # ============================================================
     db_path = "softball_stats.db"
-    csv_path = "draft_f25.csv"  # Change this filename as needed for different seasons
+    csv_path = "draft_w26.csv"          # Draft CSV file with PID column
+    season_name = "Winter 2026"          # Full season name
+    short_name = "W26"                   # Short code (used in team names)
+    year = 2026                          # Year
+    # ============================================================
     
-    print(f"Using database: {db_path}")
-    print(f"Reading CSV file: {csv_path}")
-    print("-" * 40)
+    print(f"NEW SEASON SETUP")
+    print(f"=" * 50)
+    print(f"Database: {db_path}")
+    print(f"Draft CSV: {csv_path}")
+    print(f"Season: {season_name} ({short_name})")
+    print(f"=" * 50)
     
     try:
         with NewSeasonManager(db_path, csv_path) as manager:
-            # You can customize these parameters for different seasons
-            # For Winter: manager.process_season("Winter 2026", "W26", 2026)
-            # For Summer: manager.process_season("Summer 2026", "S26", 2026)
-            manager.process_season("Fall 2025", "F25", 2025)
+            manager.process_season(season_name, short_name, year)
         
         print(f"\nSuccess! Database updated and Excel file created.")
-        print(f"Please review the fuzzy matches above and verify they are correct.")
         print(f"Excel roster file is ready for live data entry.")
         
     except FileNotFoundError as e:

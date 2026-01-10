@@ -973,18 +973,13 @@ def season_metrics(filter_number):
     qualified_pa_threshold = int(total_games * 2.5)
     
     # Get number of teams in this season
-    # Strip whitespace from short_name to handle data inconsistencies
     season_short = season['short_name'].strip() if season['short_name'] else ''
-    
-    print(f"DEBUG: Looking for teams with season_short='{season_short}'", flush=True)
     
     teams_count = conn.execute('''
         SELECT COUNT(DISTINCT t.TeamNumber) as TeamCount
         FROM Teams t
         WHERE t.LongTeamName LIKE '%' || ? || '%'
     ''', (season_short,)).fetchone()
-    
-    print(f"DEBUG: teams_count result: {dict(teams_count) if teams_count else None}", flush=True)
     
     # Get the count from the query
     if teams_count and 'TeamCount' in teams_count.keys():

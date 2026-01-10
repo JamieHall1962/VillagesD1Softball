@@ -9,7 +9,7 @@ from datetime import datetime
 import shutil
 
 # HARDCODED SUB MAPPINGS FOR FALL 2025
-SUBS_MAPPING = {
+SUBS_MAPPING_F25 = {
     529: 600,   # Bad News Bears Subs
     534: 493,   # Buckeyes Subs  
     527: 480,   # Clippers Subs
@@ -23,6 +23,36 @@ SUBS_MAPPING = {
     528: 400,   # Warhawks Subs
     530: 554,   # Xtreme Subs
 }
+
+# HARDCODED SUB MAPPINGS FOR WINTER 2026
+SUBS_MAPPING_W26 = {
+    542: 600,   # Bad News Bears Subs
+    543: 560,   # Bearcats Subs
+    544: 630,   # Big Dawgs Subs
+    538: 493,   # Buckeyes Subs
+    545: 580,   # Death Stars Subs
+    546: 538,   # Gunslingers Subs
+    547: 540,   # Lightning Strikes Subs
+    539: 584,   # Norsemen Subs
+    548: 302,   # Rebels Subs
+    549: 548,   # Shorebirds Subs
+    550: 320,   # Team USA Subs
+    551: 415,   # Tigers Subs
+    540: 419,   # Wolverines Subs
+    541: 554,   # Xtreme Subs
+}
+
+# Combined subs mapping (both seasons)
+SUBS_MAPPING = {**SUBS_MAPPING_F25, **SUBS_MAPPING_W26}
+
+# Track new players added during sync
+NEW_PLAYERS_ADDED = []
+
+# W26 Team Numbers (538-551) - filter to only process these teams
+W26_TEAM_NUMBERS = set(range(538, 552))  # 538 to 551 inclusive
+
+# Set this to filter data by season (None = process all, 'W26' = only W26)
+SEASON_FILTER = 'W26'
 
 def extract_table(csv_file, table_name):
     """Extract a specific table from the multi-table CSV"""
@@ -81,7 +111,15 @@ def sync_batting_stats(conn):
     
     try:
         df = pd.read_csv(temp_file)
-        print(f"Loaded {len(df)} batting records")
+        print(f"Loaded {len(df)} batting records from CSV")
+        
+        # Filter to only W26 teams if SEASON_FILTER is set
+        if SEASON_FILTER == 'W26' and 'TeamNumber' in df.columns:
+            before_count = len(df)
+            df = df[df['TeamNumber'].isin(W26_TEAM_NUMBERS)]
+            filtered_count = before_count - len(df)
+            if filtered_count > 0:
+                print(f"Filtered out {filtered_count} non-W26 records, keeping {len(df)} W26 records")
         
         # Apply sub logic BEFORE aggregation
         df = apply_subs_logic(df)
@@ -184,7 +222,15 @@ def sync_pitching_stats(conn):
     
     try:
         df = pd.read_csv(temp_file)
-        print(f"Loaded {len(df)} pitching records")
+        print(f"Loaded {len(df)} pitching records from CSV")
+        
+        # Filter to only W26 teams if SEASON_FILTER is set
+        if SEASON_FILTER == 'W26' and 'TeamNumber' in df.columns:
+            before_count = len(df)
+            df = df[df['TeamNumber'].isin(W26_TEAM_NUMBERS)]
+            filtered_count = before_count - len(df)
+            if filtered_count > 0:
+                print(f"Filtered out {filtered_count} non-W26 records, keeping {len(df)} W26 records")
         
         # Apply sub logic
         df = apply_subs_logic(df)
@@ -288,7 +334,15 @@ def sync_game_stats(conn):
     
     try:
         df = pd.read_csv(temp_file)
-        print(f"Loaded {len(df)} game records")
+        print(f"Loaded {len(df)} game records from CSV")
+        
+        # Filter to only W26 teams if SEASON_FILTER is set
+        if SEASON_FILTER == 'W26' and 'TeamNumber' in df.columns:
+            before_count = len(df)
+            df = df[df['TeamNumber'].isin(W26_TEAM_NUMBERS)]
+            filtered_count = before_count - len(df)
+            if filtered_count > 0:
+                print(f"Filtered out {filtered_count} non-W26 records, keeping {len(df)} W26 records")
         
         # Map CSV columns to database columns AND fix date format
         column_mapping = {
@@ -313,8 +367,8 @@ def sync_game_stats(conn):
             df['Date'] = df['Date'].apply(fix_date_format)
             print(f"Sample converted dates: {df['Date'].head(3).tolist()}")
         
-        # Simple opponent team mapping
-        team_mapping = {
+        # Opponent team mapping - F25 teams
+        team_mapping_f25 = {
             'Bad News Bears': 529,
             'Buckeyes': 534, 
             'Clippers': 527,
@@ -328,6 +382,38 @@ def sync_game_stats(conn):
             'Warhawks': 528,
             'Xtreme': 530
         }
+        
+        # Opponent team mapping - W26 teams
+        team_mapping_w26 = {
+            'Bad News Bears': 542,
+            'Bearcats': 543,
+            'Big Dawgs': 544,
+            'Buckeyes': 538,
+            'Death Stars': 545,
+            'Gunslingers': 546,
+            'Lightning Strikes': 547,
+            'Norsemen': 539,
+            'Rebels': 548,
+            'Shorebirds': 549,
+            'Team USA': 550,
+            'TeamUSA': 550,
+            'Tigers': 551,
+            'Wolverines': 540,
+            'Xtreme': 541
+        }
+        
+        # Detect which season based on TeamNumber range in the data
+        # F25 teams are 526-537, W26 teams are 538-551
+        if 'TeamNumber' in df.columns:
+            max_team = df['TeamNumber'].max()
+            if max_team >= 538:
+                team_mapping = team_mapping_w26
+                print("Detected W26 season data")
+            else:
+                team_mapping = team_mapping_f25
+                print("Detected F25 season data")
+        else:
+            team_mapping = {**team_mapping_f25, **team_mapping_w26}
         
         # Add OpponentTeamNumber using simple mapping
         if 'Opponent' in df.columns:
@@ -482,6 +568,55 @@ def sync_game_stats(conn):
 
 
 
+def get_existing_players(conn):
+    """Get all existing PersonNumbers before sync"""
+    cursor = conn.cursor()
+    cursor.execute("SELECT PersonNumber FROM People")
+    return set(row[0] for row in cursor.fetchall())
+
+def check_for_new_players(conn, existing_players):
+    """Check if any new players were added during sync"""
+    cursor = conn.cursor()
+    cursor.execute("SELECT PersonNumber, FirstName, LastName FROM People")
+    current_players = cursor.fetchall()
+    
+    new_players = []
+    for person_num, first, last in current_players:
+        if person_num not in existing_players:
+            new_players.append({
+                'PersonNumber': person_num,
+                'FirstName': first,
+                'LastName': last
+            })
+    
+    return new_players
+
+def check_orphan_players(conn):
+    """Check for PlayerNumbers in stats that don't exist in People table"""
+    cursor = conn.cursor()
+    
+    # Find batting stats with no matching People record
+    cursor.execute("""
+        SELECT DISTINCT b.PlayerNumber 
+        FROM batting_stats b
+        LEFT JOIN People p ON b.PlayerNumber = p.PersonNumber
+        WHERE p.PersonNumber IS NULL
+    """)
+    batting_orphans = [row[0] for row in cursor.fetchall()]
+    
+    # Find pitching stats with no matching People record
+    cursor.execute("""
+        SELECT DISTINCT ps.PlayerNumber 
+        FROM pitching_stats ps
+        LEFT JOIN People p ON ps.PlayerNumber = p.PersonNumber
+        WHERE p.PersonNumber IS NULL
+    """)
+    pitching_orphans = [row[0] for row in cursor.fetchall()]
+    
+    # Combine unique orphans
+    all_orphans = list(set(batting_orphans + pitching_orphans))
+    return all_orphans
+
 def main():
     print("COMPLETE SOFTBALL STATS SYNC")
     print("=" * 50)
@@ -496,12 +631,19 @@ def main():
     conn = sqlite3.connect("softball_stats.db")
     
     try:
+        # Get existing players BEFORE sync
+        existing_players = get_existing_players(conn)
+        print(f"Players in database before sync: {len(existing_players)}")
+        
         # Sync all tables
         bat_new, bat_changed, bat_unchanged = sync_batting_stats(conn)
         pitch_new, pitch_changed, pitch_unchanged = sync_pitching_stats(conn)
         game_new, game_changed, game_unchanged = sync_game_stats(conn)
         
         conn.commit()
+        
+        # Check for new players added
+        new_players = check_for_new_players(conn, existing_players)
         
         # Final results
         print("\n" + "=" * 50)
@@ -510,7 +652,35 @@ def main():
         print(f"Total new records: {bat_new + pitch_new + game_new}")
         print(f"Total changed records: {bat_changed + pitch_changed + game_changed}")
         print(f"Total unchanged records: {bat_unchanged + pitch_unchanged + game_unchanged}")
-        print("ALL TABLES SYNCED SUCCESSFULLY!")
+        
+        # ALERT: New players added
+        if new_players:
+            print("\n" + "!" * 50)
+            print("!! ALERT: NEW PLAYERS ADDED !!")
+            print("!" * 50)
+            print(f"Found {len(new_players)} NEW player(s) added to database:")
+            for player in new_players:
+                print(f"  PersonNumber: {player['PersonNumber']} - {player['FirstName']} {player['LastName']}")
+            print("!" * 50)
+            print("Please verify these players are correct!")
+            print("!" * 50)
+        else:
+            print("\nNo new players added (all players already existed in database)")
+        
+        # Check for orphan player records (stats without People entry)
+        orphan_players = check_orphan_players(conn)
+        if orphan_players:
+            print("\n" + "?" * 50)
+            print("?? WARNING: ORPHAN PLAYER IDs FOUND ??")
+            print("?" * 50)
+            print(f"Found {len(orphan_players)} PlayerNumber(s) in stats with no People record:")
+            for orphan_id in orphan_players:
+                print(f"  PlayerNumber: {orphan_id}")
+            print("?" * 50)
+            print("These may be data entry errors - please investigate!")
+            print("?" * 50)
+        
+        print("\nALL TABLES SYNCED SUCCESSFULLY!")
         
     finally:
         conn.close()

@@ -806,8 +806,9 @@ def season_detail(filter_number):
     for player in batting_leaders_raw:
         player_dict = calculate_batting_stats(dict(player))
         team_name = player_dict['LongTeamName']
-        # Remove season codes (any format like W25, F24, S22, etc.)
-        team_name = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)
+        # Remove season codes AND division names
+        team_name = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)  # Remove season code
+        team_name = re.sub(r'\s*\([^)]+\)\s*', '', team_name).strip()  # Remove division
         player_dict['team_display_name'] = team_name
         batting_leaders.append(player_dict)
 
@@ -833,8 +834,9 @@ def season_detail(filter_number):
     for player in hr_leaders_raw:
         player_dict = dict(player)
         team_name = player_dict['LongTeamName']
-        # Remove season codes (any format like W25, F24, S22, etc.)
-        team_name = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)
+        # Remove season codes AND division names
+        team_name = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)  # Remove season code
+        team_name = re.sub(r'\s*\([^)]+\)\s*', '', team_name).strip()  # Remove division
         player_dict['team_display_name'] = team_name
         hr_leaders.append(player_dict)
 
@@ -922,9 +924,10 @@ def season_batting(filter_number):
     for player in raw_players:
         player_stats = calculate_batting_stats(dict(player))
         
-        # Clean team name (same logic as season_detail)
+        # Clean team name - remove season code AND division names
         team_name = player_stats['LongTeamName']
-        team_name = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)
+        team_name = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)  # Remove season code (W26, F25, etc.)
+        team_name = re.sub(r'\s*\([^)]+\)\s*', '', team_name).strip()  # Remove division (Ballers, Clippers, etc.)
         player_stats['team_display_name'] = team_name
         
         players.append(player_stats)
@@ -1086,9 +1089,10 @@ def season_metrics(filter_number):
             player_stats['BVP_HR'] = 0
             player_stats['BVP_AVG'] = 0.000
         
-        # Clean team name
+        # Clean team name - remove season code AND division names
         team_name = player_stats['LongTeamName']
-        team_name = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)
+        team_name = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)  # Remove season code
+        team_name = re.sub(r'\s*\([^)]+\)\s*', '', team_name).strip()  # Remove division
         player_stats['team_display_name'] = team_name
         
         players.append(player_stats)
@@ -1124,8 +1128,9 @@ def team_detail(team_number):
     if not team:
         return "Team not found", 404
     
-    # Clean team display name
-    team_display_name = re.sub(r'\s+[A-Z]\d{2}$', '', team['LongTeamName'])
+    # Clean team display name - remove season code AND division names
+    team_display_name = re.sub(r'\s+[A-Z]\d{2}$', '', team['LongTeamName'])  # Remove season code
+    team_display_name = re.sub(r'\s*\([^)]+\)\s*', '', team_display_name).strip()  # Remove division
     
 
     # Get team roster with stats (INCLUDING Subs)
@@ -1584,8 +1589,9 @@ def pitcher_detail(pitcher_id):
             season_code = season_match.group(1)
             season_filter_number = seasons_lookup.get(season_code)
         
-        # Clean team name
-        clean_team_name = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)
+        # Clean team name - remove season code AND division names
+        clean_team_name = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)  # Remove season code
+        clean_team_name = re.sub(r'\s*\([^)]+\)\s*', '', clean_team_name).strip()  # Remove division
         record_dict['team_display_name'] = clean_team_name
         record_dict['season_filter_number'] = season_filter_number
         

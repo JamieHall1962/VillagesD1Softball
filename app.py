@@ -1333,10 +1333,20 @@ def boxscore(team_number, game_number):
             if opponent_game_record:
                 opponent_game_number = opponent_game_record['GameNumber']
 
-    # Clean team names - remove season codes from BOTH teams
-    import re
-    home_team_name = re.sub(r'\s+[A-Z]\d{2}$', '', home_team['LongTeamName'])
-    opponent_team_name = re.sub(r'\s+[A-Z]\d{2}$', '', game['Opponent'])
+    # Clean team names - remove season codes AND division names from BOTH teams
+    this_team_name = re.sub(r'\s+[A-Z]\d{2}$', '', home_team['LongTeamName'])
+    this_team_name = re.sub(r'\s*\([^)]+\)\s*', '', this_team_name).strip()
+    opp_team_name = re.sub(r'\s+[A-Z]\d{2}$', '', game['Opponent'])
+    opp_team_name = re.sub(r'\s*\([^)]+\)\s*', '', opp_team_name).strip()
+    
+    # Determine actual home/away based on HomeTeam field (1=home, 0=away)
+    is_this_team_home = game['HomeTeam'] == 1
+    if is_this_team_home:
+        home_team_name = this_team_name
+        away_team_name = opp_team_name
+    else:
+        home_team_name = opp_team_name
+        away_team_name = this_team_name
 
     # Get batting stats for home team (INCLUDING Subs for totals)
     home_batting_all = conn.execute('''
@@ -1450,7 +1460,10 @@ def boxscore(team_number, game_number):
                          home_team=home_team,
                          opponent_team=opponent_team,
                          home_team_name=home_team_name,
-                         opponent_team_name=opponent_team_name,
+                         away_team_name=away_team_name,
+                         is_this_team_home=is_this_team_home,
+                         this_team_name=this_team_name,
+                         opp_team_name=opp_team_name,
                          home_batting_stats=home_batting_stats,
                          opponent_batting_stats=opponent_batting_stats,
                          home_team_totals=home_team_totals,           

@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Division 1 Softball - The Villages, Florida</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --red: #c41e3a;
+            --red-dark: #9a1729;
+            --blue: #1e3a8a;
+            --blue-light: #3b5998;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-600: #475569;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        /* Header / Navigation */
+        header {
+            background: var(--white);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            background: var(--blue);
+            padding: 8px 0;
+        }
+
+        .header-top-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 24px;
+        }
+
+        .header-top a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 13px;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        .header-top a:hover {
+            opacity: 1;
+        }
+
+        .nav-main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--red);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--gray-900);
+            line-height: 1.1;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-subtitle {
+            font-size: 13px;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+        }
+
+        nav a {
+            display: block;
+            padding: 10px 16px;
+            text-decoration: none;
+            color: var(--gray-800);
+            font-weight: 500;
+            font-size: 15px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        nav a:hover {
+            background: var(--gray-100);
+            color: var(--red);
+        }
+
+        nav .dropdown {
+            position: relative;
+        }
+
+        nav .dropdown-trigger {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        nav .dropdown-trigger::after {
+            content: '▾';
+            font-size: 10px;
+            opacity: 0.6;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 64px 24px;
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 56px;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.1;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .hero-text h1 span {
+            color: var(--red);
+            background: var(--white);
+            padding: 0 12px;
+            display: inline-block;
+        }
+
+        .hero-text p {
+            font-size: 20px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 32px;
+            max-width: 500px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--red);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--red-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(196, 30, 58, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--blue);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .hero-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .hero-card h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-600);
+            margin-bottom: 16px;
+        }
+
+        .next-game {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .next-game:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .team-name {
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--gray-900);
+        }
+
+        .game-time {
+            text-align: right;
+        }
+
+        .game-date {
+            font-weight: 600;
+            color: var(--red);
+        }
+
+        .game-field {
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        /* Quick Links Section */
+        .quick-links {
+            max-width: 1200px;
+            margin: -40px auto 0;
+            padding: 0 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .quick-links-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .quick-link-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 28px;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .quick-link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+
+        .quick-link-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gray-100);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .quick-link-card:hover .quick-link-icon {
+            background: var(--red);
+        }
+
+        .quick-link-card:hover .quick-link-icon svg {
+            stroke: white;
+        }
+
+        .quick-link-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--gray-600);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .quick-link-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .quick-link-desc {
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 64px 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .section-link {
+            color: var(--red);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .section-link:hover {
+            text-decoration: underline;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+        }
+
+        /* Standings Table */
+        .standings-card {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .standings-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .standings-table th {
+            background: var(--gray-100);
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-600);
+        }
+
+        .standings-table th:not(:first-child) {
+            text-align: center;
+        }
+
+        .standings-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .standings-table td:not(:first-child) {
+            text-align: center;
+        }
+
+        .standings-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .standings-table tr:hover {
+            background: var(--gray-50);
+        }
+
+        .team-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .team-rank {
+            width: 28px;
+            height: 28px;
+            background: var(--gray-200);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .team-rank.first {
+            background: var(--red);
+            color: white;
+        }
+
+        .team-name-cell {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        /* News / Announcements */
+        .news-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .news-item {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .news-item:first-child {
+            padding-top: 0;
+        }
+
+        .news-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .news-date {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--red);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .news-title {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .news-excerpt {
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--gray-900);
+            color: var(--white);
+            padding: 64px 24px 32px;
+            margin-top: 64px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+        }
+
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--red);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+        }
+
+        .footer-logo-text {
+            font-family: 'Oswald', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .footer-tagline {
+            color: var(--gray-300);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .footer-section h4 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            color: var(--gray-300);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 15px;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .footer-section a:hover {
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 48px auto 0;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: var(--gray-300);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-text p {
+                margin: 0 auto 32px;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .hero-card {
+                display: none;
+            }
+            
+            .quick-links-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+            
+            .hero-text h1 {
+                font-size: 40px;
+            }
+            
+            .quick-links-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-top">
+            <div class="header-top-content">
+                <a href="#">New Player Evaluation</a>
+                <a href="#">Subscribe to Newsletter</a>
+                <a href="#">Contact Us</a>
+            </div>
+        </div>
+        <div class="nav-main">
+            <a href="#" class="logo">
+                <div class="logo-icon">D1</div>
+                <div class="logo-text">
+                    <span class="logo-title">Division 1 Softball</span>
+                    <span class="logo-subtitle">The Villages, Florida</span>
+                </div>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="#">Schedule</a></li>
+                    <li><a href="#">Standings</a></li>
+                    <li><a href="#">Statistics</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-trigger">Teams</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-trigger">League Info</a>
+                    </li>
+                    <li><a href="#">Field of Honor</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Spring 2025<br><span>Season</span></h1>
+                <p>Competitive softball for active adults in The Villages. 14 teams, 168 players, one goal: play ball.</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn btn-primary">View Full Schedule</a>
+                    <a href="#" class="btn btn-secondary">League Statistics</a>
+                </div>
+            </div>
+            <div class="hero-card">
+                <h3>Upcoming Games</h3>
+                <div class="next-game">
+                    <div>
+                        <div class="team-name">Legends vs Classics</div>
+                    </div>
+                    <div class="game-time">
+                        <div class="game-date">Mon, Feb 3</div>
+                        <div class="game-field">Knudson Field • 8:00 AM</div>
+                    </div>
+                </div>
+                <div class="next-game">
+                    <div>
+                        <div class="team-name">Renegades vs Storm</div>
+                    </div>
+                    <div class="game-time">
+                        <div class="game-date">Mon, Feb 3</div>
+                        <div class="game-field">Buffalo Glen • 10:00 AM</div>
+                    </div>
+                </div>
+                <div class="next-game">
+                    <div>
+                        <div class="team-name">Thunder vs Heat</div>
+                    </div>
+                    <div class="game-time">
+                        <div class="game-date">Tue, Feb 4</div>
+                        <div class="game-field">Saddlebrook • 8:00 AM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Links -->
+    <section class="quick-links">
+        <div class="quick-links-grid">
+            <a href="#" class="quick-link-card">
+                <div class="quick-link-icon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <div class="quick-link-title">Schedule</div>
+                <div class="quick-link-desc">Full season calendar & results</div>
+            </a>
+            <a href="#" class="quick-link-card">
+                <div class="quick-link-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+                </div>
+                <div class="quick-link-title">Statistics</div>
+                <div class="quick-link-desc">Player & team stats</div>
+            </a>
+            <a href="#" class="quick-link-card">
+                <div class="quick-link-icon">
+                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div class="quick-link-title">Teams & Rosters</div>
+                <div class="quick-link-desc">All 14 team rosters</div>
+            </a>
+            <a href="#" class="quick-link-card">
+                <div class="quick-link-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div class="quick-link-title">Need a Sub?</div>
+                <div class="quick-link-desc">Request or offer to sub</div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="section-header">
+            <h2 class="section-title">Current Standings</h2>
+            <a href="#" class="section-link">View Full Standings →</a>
+        </div>
+        
+        <div class="content-grid">
+            <div class="standings-card">
+                <table class="standings-table">
+                    <thead>
+                        <tr>
+                            <th>Team</th>
+                            <th>W</th>
+                            <th>L</th>
+                            <th>T</th>
+                            <th>PCT</th>
+                            <th>GB</th>
+                            <th>RS</th>
+                            <th>RA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="team-cell">
+                                    <span class="team-rank first">1</span>
+                                    <span class="team-name-cell">Legends</span>
+                                </div>
+                            </td>
+                            <td>12</td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>.857</td>
+                            <td>—</td>
+                            <td>156</td>
+                            <td>89</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="team-cell">
+                                    <span class="team-rank">2</span>
+                                    <span class="team-name-cell">Renegades</span>
+                                </div>
+                            </td>
+                            <td>10</td>
+                            <td>4</td>
+                            <td>0</td>
+                            <td>.714</td>
+                            <td>2</td>
+                            <td>142</td>
+                            <td>98</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="team-cell">
+                                    <span class="team-rank">3</span>
+                                    <span class="team-name-cell">Thunder</span>
+                                </div>
+                            </td>
+                            <td>9</td>
+                            <td>5</td>
+                            <td>0</td>
+                            <td>.643</td>
+                            <td>3</td>
+                            <td>138</td>
+                            <td>112</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="team-cell">
+                                    <span class="team-rank">4</span>
+                                    <span class="team-name-cell">Classics</span>
+                                </div>
+                            </td>
+                            <td>8</td>
+                            <td>6</td>
+                            <td>0</td>
+                            <td>.571</td>
+                            <td>4</td>
+                            <td>124</td>
+                            <td>118</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="team-cell">
+                                    <span class="team-rank">5</span>
+                                    <span class="team-name-cell">Storm</span>
+                                </div>
+                            </td>
+                            <td>7</td>
+                            <td>7</td>
+                            <td>0</td>
+                            <td>.500</td>
+                            <td>5</td>
+                            <td>116</td>
+                            <td>121</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="news-card">
+                <h3 class="section-title" style="font-size: 20px; margin-bottom: 16px;">Announcements</h3>
+                <div class="news-item">
+                    <div class="news-date">Feb 1, 2025</div>
+                    <div class="news-title">Rain Delay Policy Updated</div>
+                    <div class="news-excerpt">New procedures for weather delays. Check your email for details.</div>
+                </div>
+                <div class="news-item">
+                    <div class="news-date">Jan 28, 2025</div>
+                    <div class="news-title">Spring Season Kicks Off</div>
+                    <div class="news-excerpt">14 teams ready to compete. Good luck to all!</div>
+                </div>
+                <div class="news-item">
+                    <div class="news-date">Jan 15, 2025</div>
+                    <div class="news-title">Draft Results Posted</div>
+                    <div class="news-excerpt">See the full rosters under Teams & Players.</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <div class="footer-logo-icon">D1</div>
+                    <span class="footer-logo-text">Division 1 Softball</span>
+                </div>
+                <p class="footer-tagline">The Villages' premier competitive softball league for active adults. Playing hard, having fun, building community since 2005.</p>
+            </div>
+            <div class="footer-section">
+                <h4>League</h4>
+                <ul>
+                    <li><a href="#">Schedule</a></li>
+                    <li><a href="#">Standings</a></li>
+                    <li><a href="#">Statistics</a></li>
+                    <li><a href="#">Teams</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Information</h4>
+                <ul>
+                    <li><a href="#">Rules</a></li>
+                    <li><a href="#">Fields</a></li>
+                    <li><a href="#">Governance</a></li>
+                    <li><a href="#">Umpires</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Get Involved</h4>
+                <ul>
+                    <li><a href="#">New Player Info</a></li>
+                    <li><a href="#">Volunteer</a></li>
+                    <li><a href="#">Sub Registration</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2025 Division 1 Softball, The Villages, Florida</span>
+            <span>A volunteer-run organization</span>
+        </div>
+    </footer>
+</body>
+</html>

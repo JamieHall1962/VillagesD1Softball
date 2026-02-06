@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Division 1 Softball - The Villages, Florida</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --red: #c41e3a;
+            --red-dark: #9a1729;
+            --blue: #1e3a8a;
+            --blue-light: #3b5998;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-600: #475569;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        /* Header / Navigation */
+        header {
+            background: var(--white);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            background: var(--blue);
+            padding: 8px 0;
+        }
+
+        .header-top-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-top-left {
+            display: flex;
+            gap: 24px;
+        }
+
+        .header-top a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 13px;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        .header-top a:hover {
+            opacity: 1;
+        }
+
+        .manager-login {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .manager-login:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .nav-main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--red);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--gray-900);
+            line-height: 1.1;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-subtitle {
+            font-size: 13px;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 4px;
+        }
+
+        nav a {
+            display: block;
+            padding: 10px 14px;
+            text-decoration: none;
+            color: var(--gray-800);
+            font-weight: 500;
+            font-size: 15px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        nav a:hover {
+            background: var(--gray-100);
+            color: var(--red);
+        }
+
+        nav .dropdown {
+            position: relative;
+        }
+
+        nav .dropdown-trigger {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        nav .dropdown-trigger::after {
+            content: '▾';
+            font-size: 10px;
+            opacity: 0.6;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 64px 24px;
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 56px;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.1;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .hero-text h1 span {
+            color: var(--red);
+            background: var(--white);
+            padding: 0 12px;
+            display: inline-block;
+        }
+
+        .hero-text p {
+            font-size: 20px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 32px;
+            max-width: 500px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--red);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--red-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(196, 30, 58, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--blue);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .hero-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .hero-card h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-600);
+            margin-bottom: 16px;
+        }
+
+        .next-game {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .next-game:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .team-name {
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--gray-900);
+        }
+
+        .game-time {
+            text-align: right;
+        }
+
+        .game-date {
+            font-weight: 600;
+            color: var(--red);
+        }
+
+        .game-field {
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        /* Quick Links Section */
+        .quick-links {
+            max-width: 1200px;
+            margin: -40px auto 0;
+            padding: 0 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .quick-links-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .quick-link-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 28px;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .quick-link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+
+        .quick-link-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gray-100);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .quick-link-card:hover .quick-link-icon {
+            background: var(--red);
+        }
+
+        .quick-link-card:hover .quick-link-icon svg {
+            stroke: white;
+        }
+
+        .quick-link-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--gray-600);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .quick-link-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .quick-link-desc {
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        /* This Week Section */
+        .this-week-section {
+            max-width: 1200px;
+            margin: 64px auto 0;
+            padding: 0 24px;
+        }
+
+        .this-week-card {
+            background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
+            border-radius: 16px;
+            padding: 48px;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .this-week-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            right: 40px;
+            font-size: 200px;
+            font-family: Georgia, serif;
+            opacity: 0.1;
+            color: var(--red);
+        }
+
+        .this-week-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .this-week-badge {
+            background: var(--red);
+            color: white;
+            font-family: 'Oswald', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+
+        .this-week-date {
+            color: var(--gray-300);
+            font-size: 14px;
+        }
+
+        .this-week-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .this-week-content {
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--gray-200);
+            max-width: 800px;
+        }
+
+        .this-week-content p {
+            margin-bottom: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 64px 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .section-link {
+            color: var(--red);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .section-link:hover {
+            text-decoration: underline;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+        }
+
+        /* Standings Table */
+        .standings-card {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .standings-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .standings-table th {
+            background: var(--gray-100);
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-600);
+        }
+
+        .standings-table th:not(:first-child) {
+            text-align: center;
+        }
+
+        .standings-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .standings-table td:not(:first-child) {
+            text-align: center;
+        }
+
+        .standings-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .standings-table tr:hover {
+            background: var(--gray-50);
+        }
+
+        .team-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .team-rank {
+            width: 28px;
+            height: 28px;
+            background: var(--gray-200);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .team-rank.first {
+            background: var(--red);
+            color: white;
+        }
+
+        .team-name-cell {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        /* Stat Leaders */
+        .leaders-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .leader-category {
+            margin-bottom: 24px;
+        }
+
+        .leader-category:last-child {
+            margin-bottom: 0;
+        }
+
+        .leader-category-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-600);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .leader-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .leader-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .leader-team {
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .leader-stat {
+            font-family: 'Oswald', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--red);
+        }
+
+        /* Photo Gallery Preview */
+        .gallery-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px 64px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1;
+            background: var(--gray-200);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.02);
+        }
+
+        .gallery-item:first-child {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        .gallery-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--gray-200) 0%, var(--gray-300) 100%);
+        }
+
+        .gallery-placeholder svg {
+            width: 48px;
+            height: 48px;
+            stroke: var(--gray-400);
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .gallery-item:first-child .gallery-placeholder svg {
+            width: 80px;
+            height: 80px;
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            padding: 24px 16px 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Page Demo Sections */
+        .page-demo {
+            background: var(--white);
+            border-radius: 16px;
+            margin: 48px 0;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .page-demo-header {
+            background: var(--gray-100);
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-demo-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--gray-300);
+        }
+
+        .page-demo-dot.red { background: #ef4444; }
+        .page-demo-dot.yellow { background: #f59e0b; }
+        .page-demo-dot.green { background: #22c55e; }
+
+        .page-demo-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            color: var(--gray-600);
+            margin-left: 12px;
+        }
+
+        .page-demo-content {
+            padding: 32px;
+        }
+
+        /* Manager Portal Demo */
+        .portal-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 32px;
+        }
+
+        .portal-sidebar {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .portal-nav-item {
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            color: var(--gray-600);
+            cursor: pointer;
+            margin-bottom: 4px;
+        }
+
+        .portal-nav-item.active {
+            background: var(--blue);
+            color: white;
+        }
+
+        .portal-nav-item:hover:not(.active) {
+            background: var(--gray-200);
+        }
+
+        .portal-main h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: var(--gray-900);
+        }
+
+        .sub-request-card {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sub-request-info h4 {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .sub-request-info p {
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        .sub-request-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-accept {
+            background: #22c55e;
+            color: white;
+        }
+
+        .btn-decline {
+            background: var(--gray-200);
+            color: var(--gray-600);
+        }
+
+        /* Coordinator Demo */
+        .coordinator-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .coordinator-table th {
+            text-align: left;
+            padding: 12px;
+            background: var(--gray-100);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-600);
+        }
+
+        .coordinator-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .assignment-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .assignment-badge.assigned {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .assignment-badge.needed {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .btn-assign {
+            background: var(--blue);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Data Entry Demo */
+        .data-entry-form {
+            max-width: 600px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-600);
+        }
+
+        .form-group select,
+        .form-group input {
+            padding: 10px 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+
+        .batting-line {
+            display: grid;
+            grid-template-columns: 2fr repeat(6, 1fr);
+            gap: 8px;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .batting-line select,
+        .batting-line input {
+            padding: 8px;
+            border: 1px solid var(--gray-200);
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .batting-line select {
+            text-align: left;
+        }
+
+        .batting-header {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray-600);
+            text-transform: uppercase;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--gray-900);
+            color: var(--white);
+            padding: 64px 24px 32px;
+            margin-top: 64px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+        }
+
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--red);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+        }
+
+        .footer-logo-text {
+            font-family: 'Oswald', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .footer-tagline {
+            color: var(--gray-300);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .footer-section h4 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            color: var(--gray-300);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 15px;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .footer-section a:hover {
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 48px auto 0;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: var(--gray-300);
+        }
+
+        /* Section Dividers */
+        .section-divider {
+            max-width: 1200px;
+            margin: 64px auto;
+            padding: 0 24px;
+            text-align: center;
+        }
+
+        .divider-label {
+            display: inline-block;
+            background: var(--gray-200);
+            color: var(--gray-600);
+            font-family: 'Oswald', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 8px 24px;
+            border-radius: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-text p {
+                margin: 0 auto 32px;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .hero-card {
+                display: none;
+            }
+            
+            .quick-links-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .gallery-item:first-child {
+                grid-column: span 2;
+                grid-row: span 1;
+                aspect-ratio: 2/1;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .portal-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+            
+            .hero-text h1 {
+                font-size: 40px;
+            }
+            
+            .quick-links-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .gallery-item:first-child {
+                grid-column: span 2;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-top">
+            <div class="header-top-content">
+                <div class="header-top-left">
+                    <a href="#">New Player Evaluation</a>
+                    <a href="#">Subscribe to Newsletter</a>
+                    <a href="#">Contact Us</a>
+                </div>
+                <a href="#" class="manager-login">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Manager Login
+                </a>
+            </div>
+        </div>
+        <div class="nav-main">
+            <a href="#" class="logo">
+                <div class="logo-icon">D1</div>
+                <div class="logo-text">
+                    <span class="logo-title">Division 1 Softball</span>
+                    <span class="logo-subtitle">The Villages, Florida</span>
+                </div>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="#">Schedule</a></li>
+                    <li><a href="#">Standings</a></li>
+                    <li><a href="#">Statistics</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-trigger">Teams</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-trigger">League Info</a>
+                    </li>
+                    <li><a href="#">Photos</a></li>
+                    <li><a href="#">Field of Honor</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Spring 2025<br><span>Season</span></h1>
+                <p>Competitive softball for active adults in The Villages. 14 teams, 168 players, one goal: play ball.</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn btn-primary">View Full Schedule</a>
+                    <a href="#" class="btn btn-secondary">League Statistics</a>
+                </div>
+            </div>
+            <div class="hero-card">
+                <h3>Upcoming Games</h3>
+                <div class="next-game">
+                    <div>
+                        <div class="team-name">Legends vs Classics</div>
+                    </div>
+                    <div class="game-time">
+                        <div class="game-date">Mon, Feb 3</div>
+                        <div class="game-field">Knudson Field • 8:00 AM</div>
+                    </div>
+                </div>
+                <div class="next-game">
+                    <div>
+                        <div class="team-name">Renegades vs Storm</div>
+                    </div>
+                    <div class="game-time">
+                        <div class="game-date">Mon, Feb 3</div>
+                        <div class="game-field">Buffalo Glen • 10:00 AM</div>
+                    </div>
+                </div>
+                <div class="next-game">
+                    <div>
+                        <div class="team-name">Thunder vs Heat</div>
+                    </div>
+                    <div class="game-time">
+                        <div class="game-date">Tue, Feb 4</div>
+                        <div class="game-field">Saddlebrook • 8:00 AM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Links -->
+    <section class="quick-links">
+        <div class="quick-links-grid">
+            <a href="#" class="quick-link-card">
+                <div class="quick-link-icon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <div class="quick-link-title">Schedule</div>
+                <div class="quick-link-desc">Full season calendar & results</div>
+            </a>
+            <a href="#" class="quick-link-card">
+                <div class="quick-link-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+                </div>
+                <div class="quick-link-title">Statistics</div>
+                <div class="quick-link-desc">Player & team stats</div>
+            </a>
+            <a href="#" class="quick-link-card">
+                <div class="quick-link-icon">
+                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div class="quick-link-title">Teams & Rosters</div>
+                <div class="quick-link-desc">All 14 team rosters</div>
+            </a>
+            <a href="#" class="quick-link-card">
+                <div class="quick-link-icon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                </div>
+                <div class="quick-link-title">Photo Gallery</div>
+                <div class="quick-link-desc">Game day moments</div>
+            </a>
+        </div>
+    </section>
+
+    <!-- This Week in Softball -->
+    <section class="this-week-section">
+        <div class="this-week-card">
+            <div class="this-week-header">
+                <span class="this-week-badge">This Week in Softball</span>
+                <span class="this-week-date">February 3, 2025</span>
+            </div>
+            <h2 class="this-week-title">Legends Stay Hot as Playoff Race Heats Up</h2>
+            <div class="this-week-content">
+                <p>The Legends extended their winning streak to six games with a convincing 14-8 victory over the Thunder on Tuesday. Meanwhile, the Renegades are lurking just two games back after their sweep of the Pioneers.</p>
+                <p>With three weeks left in the regular season, six teams are still mathematically alive for the four playoff spots. Key matchups this week include Legends vs. Renegades on Thursday (Knudson, 8 AM) - a game that could go a long way toward determining home field advantage.</p>
+                <p>Reminder: The rain makeup game between Storm and Heat has been rescheduled to Friday at Saddlebrook. Check the schedule page for updated times.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="section-header">
+            <h2 class="section-title">Current Standings</h2>
+            <a href="#" class="section-link">View Full Standings →</a>
+        </div>
+        
+        <div class="content-grid">
+            <div class="standings-card">
+                <table class="standings-table">
+                    <thead>
+                        <tr>
+                            <th>Team</th>
+                            <th>W</th>
+                            <th>L</th>
+                            <th>T</th>
+                            <th>PCT</th>
+                            <th>GB</th>
+                            <th>RS</th>
+                            <th>RA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="team-cell">
+                                    <span class="team-rank first">1</span>
+                                    <span class="team-name-cell">Legends</span>
+                                </div>
+                            </td>
+                            <td>12</td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>.857</td>
+                            <td>—</td>
+                            <td>156</td>
+                            <td>89</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="team-cell">
+                                    <span class="team-rank">2</span>
+                                    <span class="team-name-cell">Renegades</span>
+                                </div>
+                            </td>
+                            <td>10</td>
+                            <td>4</td>
+                            <td>0</td>
+                            <td>.714</td>
+                            <td>2</td>
+                            <td>142</td>
+                            <td>98</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="team-cell">
+                                    <span class="team-rank">3</span>
+                                    <span class="team-name-cell">Thunder</span>
+                                </div>
+                            </td>
+                            <td>9</td>
+                            <td>5</td>
+                            <td>0</td>
+                            <td>.643</td>
+                            <td>3</td>
+                            <td>138</td>
+                            <td>112</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="team-cell">
+                                    <span class="team-rank">4</span>
+                                    <span class="team-name-cell">Classics</span>
+                                </div>
+                            </td>
+                            <td>8</td>
+                            <td>6</td>
+                            <td>0</td>
+                            <td>.571</td>
+                            <td>4</td>
+                            <td>124</td>
+                            <td>118</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="team-cell">
+                                    <span class="team-rank">5</span>
+                                    <span class="team-name-cell">Storm</span>
+                                </div>
+                            </td>
+                            <td>7</td>
+                            <td>7</td>
+                            <td>0</td>
+                            <td>.500</td>
+                            <td>5</td>
+                            <td>116</td>
+                            <td>121</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="leaders-card">
+                <h3 class="section-title" style="font-size: 20px; margin-bottom: 20px;">Stat Leaders</h3>
+                
+                <div class="leader-category">
+                    <div class="leader-category-title">Batting Average</div>
+                    <div class="leader-item">
+                        <div>
+                            <div class="leader-name">Mike Johnson</div>
+                            <div class="leader-team">Legends</div>
+                        </div>
+                        <div class="leader-stat">.485</div>
+                    </div>
+                    <div class="leader-item">
+                        <div>
+                            <div class="leader-name">Tom Williams</div>
+                            <div class="leader-team">Renegades</div>
+                        </div>
+                        <div class="leader-stat">.462</div>
+                    </div>
+                </div>
+
+                <div class="leader-category">
+                    <div class="leader-category-title">Home Runs</div>
+                    <div class="leader-item">
+                        <div>
+                            <div class="leader-name">Bob Martinez</div>
+                            <div class="leader-team">Thunder</div>
+                        </div>
+                        <div class="leader-stat">8</div>
+                    </div>
+                    <div class="leader-item">
+                        <div>
+                            <div class="leader-name">Dave Wilson</div>
+                            <div class="leader-team">Classics</div>
+                        </div>
+                        <div class="leader-stat">7</div>
+                    </div>
+                </div>
+
+                <div class="leader-category">
+                    <div class="leader-category-title">RBIs</div>
+                    <div class="leader-item">
+                        <div>
+                            <div class="leader-name">Jim Anderson</div>
+                            <div class="leader-team">Legends</div>
+                        </div>
+                        <div class="leader-stat">24</div>
+                    </div>
+                    <div class="leader-item">
+                        <div>
+                            <div class="leader-name">Bob Martinez</div>
+                            <div class="leader-team">Thunder</div>
+                        </div>
+                        <div class="leader-stat">22</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Photo Gallery Preview -->
+    <section class="gallery-section">
+        <div class="section-header">
+            <h2 class="section-title">Photo Gallery</h2>
+            <a href="#" class="section-link">View All Photos →</a>
+        </div>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <div class="gallery-placeholder">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                </div>
+                <div class="gallery-caption">Opening Day 2025 - Knudson Field</div>
+            </div>
+            <div class="gallery-item">
+                <div class="gallery-placeholder">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <div class="gallery-placeholder">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <div class="gallery-placeholder">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <div class="gallery-placeholder">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DEMO SECTIONS - Shows what the protected areas would look like -->
+    
+    <div class="section-divider">
+        <span class="divider-label">Manager Portal Preview (Password Protected)</span>
+    </div>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 24px;">
+        <div class="page-demo">
+            <div class="page-demo-header">
+                <span class="page-demo-dot red"></span>
+                <span class="page-demo-dot yellow"></span>
+                <span class="page-demo-dot green"></span>
+                <span class="page-demo-title">Manager Portal - Sub Management</span>
+            </div>
+            <div class="page-demo-content">
+                <div class="portal-grid">
+                    <div class="portal-sidebar">
+                        <div class="portal-nav-item active">Sub Requests</div>
+                        <div class="portal-nav-item">Available Subs</div>
+                        <div class="portal-nav-item">My Roster</div>
+                        <div class="portal-nav-item">Contact Info</div>
+                        <div class="portal-nav-item">Team Schedule</div>
+                    </div>
+                    <div class="portal-main">
+                        <h3>Active Sub Requests</h3>
+                        <div class="sub-request-card">
+                            <div class="sub-request-info">
+                                <h4>Thunder needs 1 player</h4>
+                                <p>Tuesday, Feb 4 • 8:00 AM • Saddlebrook Field</p>
+                            </div>
+                            <div class="sub-request-actions">
+                                <button class="btn-small btn-accept">I'll Sub</button>
+                                <button class="btn-small btn-decline">Can't Make It</button>
+                            </div>
+                        </div>
+                        <div class="sub-request-card">
+                            <div class="sub-request-info">
+                                <h4>Classics needs 2 players</h4>
+                                <p>Thursday, Feb 6 • 10:00 AM • Buffalo Glen</p>
+                            </div>
+                            <div class="sub-request-actions">
+                                <button class="btn-small btn-accept">I'll Sub</button>
+                                <button class="btn-small btn-decline">Can't Make It</button>
+                            </div>
+                        </div>
+                        <div class="sub-request-card">
+                            <div class="sub-request-info">
+                                <h4>Renegades needs 1 player</h4>
+                                <p>Friday, Feb 7 • 8:00 AM • Knudson Field</p>
+                            </div>
+                            <div class="sub-request-actions">
+                                <button class="btn-small btn-accept">I'll Sub</button>
+                                <button class="btn-small btn-decline">Can't Make It</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-divider">
+        <span class="divider-label">Umpire Coordinator Preview</span>
+    </div>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 24px;">
+        <div class="page-demo">
+            <div class="page-demo-header">
+                <span class="page-demo-dot red"></span>
+                <span class="page-demo-dot yellow"></span>
+                <span class="page-demo-dot green"></span>
+                <span class="page-demo-title">Umpire Coordinator - Walker's View</span>
+            </div>
+            <div class="page-demo-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3 style="font-family: 'Oswald', sans-serif; font-size: 24px;">This Week's Assignments</h3>
+                    <button class="btn btn-primary" style="padding: 10px 20px;">Send Weekly Email</button>
+                </div>
+                <table class="coordinator-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Field</th>
+                            <th>Game</th>
+                            <th>Plate</th>
+                            <th>Bases</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mon, Feb 3</td>
+                            <td>8:00 AM</td>
+                            <td>Knudson</td>
+                            <td>Legends vs Classics</td>
+                            <td><span class="assignment-badge assigned">R. Smith</span></td>
+                            <td><span class="assignment-badge assigned">J. Davis</span></td>
+                            <td><button class="btn-assign">Edit</button></td>
+                        </tr>
+                        <tr>
+                            <td>Mon, Feb 3</td>
+                            <td>10:00 AM</td>
+                            <td>Buffalo Glen</td>
+                            <td>Renegades vs Storm</td>
+                            <td><span class="assignment-badge assigned">T. Brown</span></td>
+                            <td><span class="assignment-badge needed">Needed</span></td>
+                            <td><button class="btn-assign">Assign</button></td>
+                        </tr>
+                        <tr>
+                            <td>Tue, Feb 4</td>
+                            <td>8:00 AM</td>
+                            <td>Saddlebrook</td>
+                            <td>Thunder vs Heat</td>
+                            <td><span class="assignment-badge needed">Needed</span></td>
+                            <td><span class="assignment-badge needed">Needed</span></td>
+                            <td><button class="btn-assign">Assign</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-divider">
+        <span class="divider-label">Scorer Coordinator Preview</span>
+    </div>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 24px;">
+        <div class="page-demo">
+            <div class="page-demo-header">
+                <span class="page-demo-dot red"></span>
+                <span class="page-demo-dot yellow"></span>
+                <span class="page-demo-dot green"></span>
+                <span class="page-demo-title">Scorer Coordinator - Pete's View</span>
+            </div>
+            <div class="page-demo-content">
+                <div style="display: flex; gap: 24px; margin-bottom: 32px;">
+                    <button class="btn btn-primary">Schedule Scorers</button>
+                    <button class="btn btn-secondary" style="color: var(--gray-800);">Enter Game Data</button>
+                    <button class="btn btn-secondary" style="color: var(--gray-800);">Send to Newspaper</button>
+                </div>
+
+                <h3 style="font-family: 'Oswald', sans-serif; font-size: 24px; margin-bottom: 24px;">Enter Box Score</h3>
+                
+                <div class="data-entry-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" value="2025-02-03">
+                        </div>
+                        <div class="form-group">
+                            <label>Field</label>
+                            <select>
+                                <option>Knudson Field</option>
+                                <option>Buffalo Glen</option>
+                                <option>Saddlebrook</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Home Team</label>
+                            <select>
+                                <option>Legends</option>
+                                <option>Renegades</option>
+                                <option>Thunder</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Away Team</label>
+                            <select>
+                                <option>Classics</option>
+                                <option>Storm</option>
+                                <option>Heat</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h4 style="font-family: 'Oswald', sans-serif; margin: 32px 0 16px;">Home Team Batting</h4>
+                    
+                    <div class="batting-line">
+                        <span class="batting-header">Player</span>
+                        <span class="batting-header">AB</span>
+                        <span class="batting-header">R</span>
+                        <span class="batting-header">H</span>
+                        <span class="batting-header">2B</span>
+                        <span class="batting-header">3B</span>
+                        <span class="batting-header">HR</span>
+                    </div>
+                    <div class="batting-line">
+                        <select><option>Mike Johnson</option><option>Tom Williams</option></select>
+                        <input type="number" value="4">
+                        <input type="number" value="2">
+                        <input type="number" value="3">
+                        <input type="number" value="1">
+                        <input type="number" value="0">
+                        <input type="number" value="1">
+                    </div>
+                    <div class="batting-line">
+                        <select><option>Jim Anderson</option><option>Bob Smith</option></select>
+                        <input type="number" value="4">
+                        <input type="number" value="1">
+                        <input type="number" value="2">
+                        <input type="number" value="0">
+                        <input type="number" value="0">
+                        <input type="number" value="0">
+                    </div>
+                    <div class="batting-line">
+                        <select><option>Dave Wilson</option><option>Steve Brown</option></select>
+                        <input type="number" value="3">
+                        <input type="number" value="1">
+                        <input type="number" value="1">
+                        <input type="number" value="0">
+                        <input type="number" value="0">
+                        <input type="number" value="0">
+                    </div>
+
+                    <div style="margin-top: 32px; display: flex; gap: 16px;">
+                        <button class="btn btn-primary">Save & Continue</button>
+                        <button class="btn btn-secondary" style="color: var(--gray-800);">Save Draft</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-divider">
+        <span class="divider-label">Photo Moderation Preview (Admin Only)</span>
+    </div>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 24px 64px;">
+        <div class="page-demo">
+            <div class="page-demo-header">
+                <span class="page-demo-dot red"></span>
+                <span class="page-demo-dot yellow"></span>
+                <span class="page-demo-dot green"></span>
+                <span class="page-demo-title">Photo Moderation Queue - Admin View</span>
+            </div>
+            <div class="page-demo-content">
+                <h3 style="font-family: 'Oswald', sans-serif; font-size: 24px; margin-bottom: 24px;">3 Photos Pending Approval</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
+                    <div style="background: var(--gray-50); border-radius: 8px; overflow: hidden;">
+                        <div style="aspect-ratio: 4/3; background: var(--gray-200); display: flex; align-items: center; justify-content: center;">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                        </div>
+                        <div style="padding: 16px;">
+                            <div style="font-weight: 600; margin-bottom: 4px;">Great catch by Dave!</div>
+                            <div style="font-size: 13px; color: var(--gray-600); margin-bottom: 12px;">Submitted by: Tom W. • Feb 2, 2025</div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn-small btn-accept">Approve</button>
+                                <button class="btn-small btn-decline">Reject</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background: var(--gray-50); border-radius: 8px; overflow: hidden;">
+                        <div style="aspect-ratio: 4/3; background: var(--gray-200); display: flex; align-items: center; justify-content: center;">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                        </div>
+                        <div style="padding: 16px;">
+                            <div style="font-weight: 600; margin-bottom: 4px;">Team celebration after win</div>
+                            <div style="font-size: 13px; color: var(--gray-600); margin-bottom: 12px;">Submitted by: Jim A. • Feb 2, 2025</div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn-small btn-accept">Approve</button>
+                                <button class="btn-small btn-decline">Reject</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background: var(--gray-50); border-radius: 8px; overflow: hidden;">
+                        <div style="aspect-ratio: 4/3; background: var(--gray-200); display: flex; align-items: center; justify-content: center;">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                        </div>
+                        <div style="padding: 16px;">
+                            <div style="font-weight: 600; margin-bottom: 4px;">Opening day lineup</div>
+                            <div style="font-size: 13px; color: var(--gray-600); margin-bottom: 12px;">Submitted by: Bob M. • Feb 1, 2025</div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn-small btn-accept">Approve</button>
+                                <button class="btn-small btn-decline">Reject</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <div class="footer-logo-icon">D1</div>
+                    <span class="footer-logo-text">Division 1 Softball</span>
+                </div>
+                <p class="footer-tagline">The Villages' premier competitive softball league for active adults. Playing hard, having fun, building community since 2005.</p>
+            </div>
+            <div class="footer-section">
+                <h4>League</h4>
+                <ul>
+                    <li><a href="#">Schedule</a></li>
+                    <li><a href="#">Standings</a></li>
+                    <li><a href="#">Statistics</a></li>
+                    <li><a href="#">Teams</a></li>
+                    <li><a href="#">Photo Gallery</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Information</h4>
+                <ul>
+                    <li><a href="#">Rules</a></li>
+                    <li><a href="#">Fields</a></li>
+                    <li><a href="#">Governance</a></li>
+                    <li><a href="#">Field of Honor</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Get Involved</h4>
+                <ul>
+                    <li><a href="#">New Player Info</a></li>
+                    <li><a href="#">Umpire Info</a></li>
+                    <li><a href="#">Scorer Info</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2025 Division 1 Softball, The Villages, Florida</span>
+            <span>A volunteer-run organization</span>
+        </div>
+    </footer>
+</body>
+</html>

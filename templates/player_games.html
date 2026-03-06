@@ -395,7 +395,8 @@
 // Get games data from the JSON script tag
 const gamesData = JSON.parse(document.getElementById('games-data').textContent);
 
-// Easter egg: Show record when "record" is typed, BVP when "bvp" is typed, streaks when "hs" is typed
+// Easter egg: Show record when "record" is typed, BVP when "bvp" is typed,
+// hitting streaks when "hs" is typed, and on-base streaks when "ob" is typed
 let gameLogKeySequence = '';
 document.addEventListener('keydown', function(e) {
     gameLogKeySequence += e.key.toLowerCase();
@@ -408,6 +409,9 @@ document.addEventListener('keydown', function(e) {
         gameLogKeySequence = '';
     } else if (gameLogKeySequence.includes('hs')) {
         showHittingStreak();
+        gameLogKeySequence = '';
+    } else if (gameLogKeySequence.includes('ob')) {
+        showOnBaseStreak();
         gameLogKeySequence = '';
     }
     
@@ -605,6 +609,74 @@ function showHittingStreak() {
     
     streakSection.style.display = 'block';
     
+    // Flash effect
+    streakSection.style.animation = 'flash 0.5s ease-in-out';
+    setTimeout(() => {
+        streakSection.style.animation = '';
+    }, 500);
+}
+
+function showOnBaseStreak() {
+    // Calculate current and longest on-base streaks (hit OR walk)
+    let currentStreak = 0;
+    let longestStreak = 0;
+    let tempStreak = 0;
+
+    // Current streak: count FORWARD from most recent game (index 0)
+    for (let i = 0; i < gamesData.length; i++) {
+        const hasHit = (gamesData[i].H || 0) > 0;
+        const hasWalk = (gamesData[i].BB || 0) > 0;
+        if (hasHit || hasWalk) {
+            currentStreak++;
+        } else {
+            break;  // Stop at first game without a hit or walk
+        }
+    }
+
+    // Longest streak: iterate through games from oldest to newest
+    const gamesChronological = [...gamesData].reverse();
+    for (let i = 0; i < gamesChronological.length; i++) {
+        const hasHit = (gamesChronological[i].H || 0) > 0;
+        const hasWalk = (gamesChronological[i].BB || 0) > 0;
+        if (hasHit || hasWalk) {
+            tempStreak++;
+            longestStreak = Math.max(longestStreak, tempStreak);
+        } else {
+            tempStreak = 0;
+        }
+    }
+
+    // Remove existing streak section
+    const existingStreak = document.querySelector('.streak-section');
+    if (existingStreak) {
+        existingStreak.remove();
+    }
+
+    // Create streak section
+    const streakSection = document.createElement('div');
+    streakSection.className = 'streak-section';
+    streakSection.innerHTML = `
+        <h3>💥 On-Base Streaks</h3>
+        <div class="streak-stats">
+            <div class="streak-stat">
+                <div class="label">Current</div>
+                <div class="value">${currentStreak}</div>
+            </div>
+            <div class="streak-stat">
+                <div class="label">Longest</div>
+                <div class="value">${longestStreak}</div>
+            </div>
+        </div>
+    `;
+
+    // Insert in the easter egg zone
+    const easterEggZone = document.querySelector('.easter-egg-zone');
+    if (easterEggZone) {
+        easterEggZone.appendChild(streakSection);
+    }
+
+    streakSection.style.display = 'block';
+
     // Flash effect
     streakSection.style.animation = 'flash 0.5s ease-in-out';
     setTimeout(() => {

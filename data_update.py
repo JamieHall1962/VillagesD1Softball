@@ -41,10 +41,13 @@ PID_REMAP = {
 }
 
 # PID 630 special case: In our DB, 630 = "Big Dawgs Subs".
-# When the CSV has PID 630 on a non-Big Dawgs team, it's actually
-# Mike Riley (DB PID 620) subbing. On Big Dawgs (544), leave as 630.
-PID_630_REAL_PLAYER = 620   # Mike Riley
-PID_630_HOME_TEAM = 544     # Big Dawgs
+# CSV uses 630 for Mike Riley when he subs. Three-way logic:
+#   Team 544 (Big Dawgs)   → stay 630 (Big Dawgs Subs)
+#   Team 540 (Wolverines)  → remap to 620 (Mike Riley, his home team)
+#   Any other team         → remap to that team's Subs PID
+PID_630_REAL_PLAYER = 620       # Mike Riley
+PID_630_HOME_TEAM = 544         # Big Dawgs
+PID_630_REAL_PLAYER_TEAM = 540  # Wolverines
 
 # HARDCODED SUB MAPPINGS - Team Number → Team's Subs PID
 SUBS_MAPPING_W26 = {
@@ -64,7 +67,14 @@ SUBS_MAPPING_W26 = {
     551: 415,   # Tigers Subs
 }
 
-# Opponent team name → TeamNumber mapping for game_stats
+# FORCE ROSTER: (pid, team) pairs where the CSV flag is wrong and we
+# must override Sub→Roster. Used for mid-season replacements whose
+# appearances were entered as Sub before RosterHistory tracking exists.
+# Format: {(pid, team): reason_string}
+FORCE_ROSTER = {
+    (634, 540): "Alan Humes (DB 634) is a rostered Wolverine — CSV flags him Sub",
+}
+
 TEAM_MAPPING_W26 = {
     'Bad News Bears': 542,
     'Bearcats': 543,
@@ -129,14 +139,28 @@ def remap_pids(df, report_lines):
         pid = df.iloc[i]['PersonNumber']
         team = df.iloc[i]['TeamNumber']
 
-        # Special case: PID 630
-        if pid == 630 and team != PID_630_HOME_TEAM:
-            df.iloc[i, df.columns.get_loc('PersonNumber')] = PID_630_REAL_PLAYER
-            report_lines.append(
-                f"  PID REMAP: 630 → {PID_630_REAL_PLAYER} (Mike Riley sub) "
-                f"Team {team} Game {df.iloc[i]['GameNumber']}"
-            )
-            remap_count += 1
+        # Special case: PID 630 — three-way logic
+        if pid == 630:
+            if team == PID_630_HOME_TEAM:
+                # Big Dawgs (544) → leave as 630 (Big Dawgs Subs)
+                pass
+            elif team == PID_630_REAL_PLAYER_TEAM:
+                # Wolverines (540) → Mike Riley (his home team)
+                df.iloc[i, df.columns.get_loc('PersonNumber')] = PID_630_REAL_PLAYER
+                report_lines.append(
+                    f"  PID REMAP: 630 → {PID_630_REAL_PLAYER} (Mike Riley, Wolverines) "
+                    f"Team {team} Game {df.iloc[i]['GameNumber']}"
+                )
+                remap_count += 1
+            else:
+                # Any other team → that team's Subs PID
+                subs_pid = SUBS_MAPPING_W26[team]
+                df.iloc[i, df.columns.get_loc('PersonNumber')] = subs_pid
+                report_lines.append(
+                    f"  PID REMAP: 630 → {subs_pid} (Team {team} Subs) "
+                    f"Team {team} Game {df.iloc[i]['GameNumber']}"
+                )
+                remap_count += 1
             continue
 
         # Standard remaps
@@ -186,6 +210,55 @@ def fix_pitching_subs(df, roster, report_lines):
 
     if fix_count > 0:
         report_lines.insert(0, f"Pitching Sub fixes applied: {fix_count}")
+    return df
+
+
+def fix_roster_flags(df, roster, report_lines):
+    """For batting stats, correct players flagged Roster on a team they are NOT on.
+    Safe direction only: Roster→Sub. Never flips Sub→Roster (would corrupt
+    legitimate pre-roster sub appearances for mid-season replacements).
+    Runs after remap_pids so PIDs are already corrected."""
+    fix_count = 0
+
+    if 'Roster' not in df.columns:
+        return df
+
+    for i in range(len(df)):
+        if df.iloc[i]['Roster'] != 'Roster':
+            continue
+
+        pid = int(df.iloc[i]['PersonNumber'])
+        team = int(df.iloc[i]['TeamNumber'])
+        team_roster = roster.get(team, set())
+
+        if pid not in team_roster:
+            df.iloc[i, df.columns.get_loc('Roster')] = 'Sub'
+            report_lines.append(
+                f"  ROSTER FLAG FIX: PID {pid} marked Roster→Sub "
+                f"for Team {team} Game {df.iloc[i]['GameNumber']} "
+                f"(not on roster)"
+            )
+            fix_count += 1
+
+    # Force Sub→Roster for known exceptions (mid-season replacements
+    # the CSV incorrectly flags as Sub)
+    force_count = 0
+    for i in range(len(df)):
+        pid = int(df.iloc[i]['PersonNumber'])
+        team = int(df.iloc[i]['TeamNumber'])
+        key = (pid, team)
+        if key in FORCE_ROSTER and df.iloc[i]['Roster'] == 'Sub':
+            df.iloc[i, df.columns.get_loc('Roster')] = 'Roster'
+            report_lines.append(
+                f"  FORCE ROSTER: PID {pid} Sub→Roster "
+                f"Team {team} Game {df.iloc[i]['GameNumber']} "
+                f"— {FORCE_ROSTER[key]}"
+            )
+            force_count += 1
+
+    total = fix_count + force_count
+    if total > 0:
+        report_lines.insert(0, f"Roster flag fixes applied: {fix_count} corrected, {force_count} forced")
     return df
 
 
@@ -323,6 +396,9 @@ def sync_batting_stats(conn, roster, team_names, player_names):
         report = []
         df = remap_pids(df, report)
 
+        # PREPROCESSING: Fix Roster flags (Roster→Sub for players not on team)
+        df = fix_roster_flags(df, roster, report)
+
         # PREPROCESSING: Validate
         validate_data(df, 'BattingStats', roster, team_names, player_names, report)
 
@@ -372,8 +448,15 @@ def sync_batting_stats(conn, roster, team_names, player_names):
         """)
         new_count = cursor.fetchone()[0]
 
+        # Subs PIDs — only update if incoming PA >= existing (DB aggregate may be more complete)
+        subs_pids = set(SUBS_MAPPING_W26.values())
+
+        # Fetch all changed rows with detail for the summary log
         cursor.execute("""
-        SELECT COUNT(*) FROM temp_staging_batting s
+        SELECT s.TeamNumber, s.GameNumber, s.PlayerNumber,
+               b.PA, b.R, b.H, b.[2B], b.[3B], b.HR, b.OE, b.BB, b.RBI, b.SF,
+               s.PA, s.R, s.H, s.[2B], s.[3B], s.HR, s.OE, s.BB, s.RBI, s.SF
+        FROM temp_staging_batting s
         JOIN batting_stats b ON s.TeamNumber = b.TeamNumber
                             AND s.GameNumber = b.GameNumber
                             AND s.PlayerNumber = b.PlayerNumber
@@ -381,7 +464,21 @@ def sync_batting_stats(conn, roster, team_names, player_names):
            OR s.[2B] != b.[2B] OR s.[3B] != b.[3B] OR s.HR != b.HR OR s.OE != b.OE
            OR s.BB != b.BB OR s.RBI != b.RBI OR s.SF != b.SF OR s.G != b.G
         """)
-        changed_count = cursor.fetchone()[0]
+        changed_rows = cursor.fetchall()
+
+        # Split into allowed updates vs skipped (Subs PID with lower incoming PA)
+        allowed_changes = []
+        skipped_changes = []
+        for row in changed_rows:
+            team, game, pid = row[0], row[1], row[2]
+            db_pa, s_pa = row[3], row[13]
+            if pid in subs_pids and s_pa < db_pa:
+                skipped_changes.append(row)
+            else:
+                allowed_changes.append(row)
+
+        changed_count = len(allowed_changes)
+        skipped_count = len(skipped_changes)
 
         if new_count > 0:
             cursor.execute("""
@@ -399,20 +496,49 @@ def sync_batting_stats(conn, roster, team_names, player_names):
             """)
 
         if changed_count > 0:
-            cursor.execute("""
-            UPDATE batting_stats
-            SET HomeTeam = s.HomeTeam, PA = s.PA, R = s.R, H = s.H, [2B] = s.[2B], [3B] = s.[3B],
-                HR = s.HR, OE = s.OE, BB = s.BB, RBI = s.RBI, SF = s.SF, G = s.G
-            FROM temp_staging_batting s
-            WHERE batting_stats.TeamNumber = s.TeamNumber
-            AND batting_stats.GameNumber = s.GameNumber
-            AND batting_stats.PlayerNumber = s.PlayerNumber
-            """)
+            # Only update rows that passed the guard
+            allowed_keys = [(r[0], r[1], r[2]) for r in allowed_changes]
+            for team, game, pid in allowed_keys:
+                cursor.execute("""
+                UPDATE batting_stats
+                SET HomeTeam = s.HomeTeam, PA = s.PA, R = s.R, H = s.H, [2B] = s.[2B],
+                    [3B] = s.[3B], HR = s.HR, OE = s.OE, BB = s.BB, RBI = s.RBI, SF = s.SF, G = s.G
+                FROM temp_staging_batting s
+                WHERE batting_stats.TeamNumber = s.TeamNumber
+                AND batting_stats.GameNumber = s.GameNumber
+                AND batting_stats.PlayerNumber = s.PlayerNumber
+                AND batting_stats.TeamNumber = ? AND batting_stats.GameNumber = ?
+                AND batting_stats.PlayerNumber = ?
+                """, (team, game, pid))
 
         cursor.execute("DROP TABLE temp_staging_batting")
-        unchanged_count = len(df_aggregated) - new_count - changed_count
+        unchanged_count = len(df_aggregated) - new_count - changed_count - skipped_count
 
-        print(f"  Batting: {new_count} new, {changed_count} changed, {unchanged_count} unchanged")
+        # Detailed change summary
+        stat_cols = ['PA','R','H','2B','3B','HR','OE','BB','RBI','SF']
+        if allowed_changes:
+            print(f"\n  --- BATTING CHANGES APPLIED ---")
+            for row in allowed_changes:
+                team, game, pid = row[0], row[1], row[2]
+                db_vals = dict(zip(stat_cols, row[3:13]))
+                sv_vals = dict(zip(stat_cols, row[13:23]))
+                diffs = {k: (db_vals[k], sv_vals[k]) for k in stat_cols if db_vals[k] != sv_vals[k]}
+                pname = player_names.get(int(pid), f'PID {pid}')
+                tname = team_names.get(int(team), f'Team {team}')
+                print(f"    {pname} | {tname} Game {game}")
+                for stat, (old, new) in diffs.items():
+                    print(f"      {stat}: {old} → {new}")
+
+        if skipped_changes:
+            print(f"\n  --- BATTING UPDATES SKIPPED (Subs PID, DB has more complete data) ---")
+            for row in skipped_changes:
+                team, game, pid = row[0], row[1], row[2]
+                tname = team_names.get(int(team), f'Team {team}')
+                print(f"    Team {tname} Game {game} Subs PID {pid}: "
+                      f"DB PA={row[3]} kept over CSV PA={row[13]}")
+
+        print(f"\n  Batting: {new_count} new, {changed_count} changed, "
+              f"{skipped_count} skipped (Subs guard), {unchanged_count} unchanged")
         return new_count, changed_count, unchanged_count
 
     finally:
@@ -494,14 +620,19 @@ def sync_pitching_stats(conn, roster, team_names, player_names):
         """)
         new_count = cursor.fetchone()[0]
 
+        # Fetch all changed rows with detail for the summary log
         cursor.execute("""
-        SELECT COUNT(*) FROM temp_staging_pitching s
+        SELECT s.TeamNumber, s.GameNumber, s.PlayerNumber,
+               p.IP, p.BB, p.W, p.L, p.IBB,
+               s.IP, s.BB, s.W, s.L, s.IBB
+        FROM temp_staging_pitching s
         JOIN pitching_stats p ON s.TeamNumber = p.TeamNumber
                              AND s.GameNumber = p.GameNumber
                              AND s.PlayerNumber = p.PlayerNumber
         WHERE s.IP != p.IP OR s.BB != p.BB OR s.W != p.W OR s.L != p.L
         """)
-        changed_count = cursor.fetchone()[0]
+        changed_rows = cursor.fetchall()
+        changed_count = len(changed_rows)
 
         if new_count > 0:
             cursor.execute("""
@@ -529,7 +660,22 @@ def sync_pitching_stats(conn, roster, team_names, player_names):
         cursor.execute("DROP TABLE temp_staging_pitching")
         unchanged_count = len(df_aggregated) - new_count - changed_count
 
-        print(f"  Pitching: {new_count} new, {changed_count} changed, {unchanged_count} unchanged")
+        # Detailed change summary
+        if changed_rows:
+            stat_cols = ['IP','BB','W','L','IBB']
+            print(f"\n  --- PITCHING CHANGES APPLIED ---")
+            for row in changed_rows:
+                team, game, pid = row[0], row[1], row[2]
+                db_vals = dict(zip(stat_cols, row[3:8]))
+                sv_vals = dict(zip(stat_cols, row[8:13]))
+                diffs = {k: (db_vals[k], sv_vals[k]) for k in stat_cols if db_vals[k] != sv_vals[k]}
+                pname = player_names.get(int(pid), f'PID {pid}')
+                tname = team_names.get(int(team), f'Team {team}')
+                print(f"    {pname} | {tname} Game {game}")
+                for stat, (old, new) in diffs.items():
+                    print(f"      {stat}: {old} → {new}")
+
+        print(f"\n  Pitching: {new_count} new, {changed_count} changed, {unchanged_count} unchanged")
         return new_count, changed_count, unchanged_count
 
     finally:
@@ -637,13 +783,18 @@ def sync_game_stats(conn):
         """)
         new_count = cursor.fetchone()[0]
 
+        # Fetch changed rows with detail
         cursor.execute("""
-        SELECT COUNT(*) FROM temp_staging_game s
+        SELECT s.TeamNumber, s.GameNumber, s.Opponent,
+               g.Runs, g.OppRuns, g.Innings,
+               s.Runs, s.OppRuns, s.Innings
+        FROM temp_staging_game s
         JOIN game_stats g ON s.TeamNumber = g.TeamNumber
                          AND s.GameNumber = g.GameNumber
         WHERE s.Runs != g.Runs OR s.OppRuns != g.OppRuns OR s.Innings != g.Innings
         """)
-        changed_count = cursor.fetchone()[0]
+        changed_rows = cursor.fetchall()
+        changed_count = len(changed_rows)
 
         if new_count > 0:
             col_list = ', '.join(available_cols)
@@ -670,6 +821,18 @@ def sync_game_stats(conn):
             """)
 
         cursor.execute("DROP TABLE temp_staging_game")
+
+        # Detailed change summary
+        if changed_rows:
+            print(f"\n  --- GAME STATS CHANGES APPLIED ---")
+            for row in changed_rows:
+                team, game, opp = row[0], row[1], row[2]
+                tname = team_names.get(int(team), f'Team {team}')
+                diffs = []
+                if row[3] != row[6]: diffs.append(f"Runs: {row[3]} → {row[6]}")
+                if row[4] != row[7]: diffs.append(f"OppRuns: {row[4]} → {row[7]}")
+                if row[5] != row[8]: diffs.append(f"Innings: {row[5]} → {row[8]}")
+                print(f"    {tname} Game {game} vs {opp}: {', '.join(diffs)}")
 
         # Link opponent data
         print("  Linking opponent data...")

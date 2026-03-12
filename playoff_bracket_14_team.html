@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>14-Team Cross-Division Playoff Bracket</title>
+  <style>
+    @page {
+      size: letter portrait;
+      margin: 0.5in;
+    }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #111;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      margin: 0 0 4px 0;
+      font-size: 24px;
+    }
+    .subtitle {
+      margin: 0 0 16px 0;
+      color: #444;
+      font-size: 14px;
+    }
+    h2 {
+      margin: 18px 0 8px;
+      font-size: 18px;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    th, td {
+      border: 1px solid #d8d8d8;
+      padding: 7px 8px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    th {
+      background: #f4f4f4;
+      font-weight: 700;
+    }
+    .note {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #555;
+    }
+    .fill {
+      display: inline-block;
+      min-width: 140px;
+      border-bottom: 1px solid #999;
+      height: 1em;
+      vertical-align: baseline;
+    }
+    .small {
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>14-Team Playoff Bracket (Cross-Division)</h1>
+  <p class="subtitle">Clippers and Ballers divisions. #1 seed in each division receives a Quarterfinal bye.</p>
+
+  <h2>Round 1 (Play-In Round)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:16%;">Game</th>
+        <th style="width:52%;">Matchup</th>
+        <th style="width:32%;">Winner</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>G1</td><td>C2 vs B7</td><td><span class="fill"></span></td></tr>
+      <tr><td>G2</td><td>B2 vs C7</td><td><span class="fill"></span></td></tr>
+      <tr><td>G3</td><td>C3 vs B6</td><td><span class="fill"></span></td></tr>
+      <tr><td>G4</td><td>B3 vs C6</td><td><span class="fill"></span></td></tr>
+      <tr><td>G5</td><td>C4 vs B5</td><td><span class="fill"></span></td></tr>
+      <tr><td>G6</td><td>B4 vs C5</td><td><span class="fill"></span></td></tr>
+    </tbody>
+  </table>
+
+  <p class="small">Byes to Quarterfinals: <strong>C1</strong> and <strong>B1</strong></p>
+
+  <h2>Quarterfinals</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:16%;">Game</th>
+        <th style="width:52%;">Matchup</th>
+        <th style="width:32%;">Winner</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>QF1</td><td>C1 vs Winner G6</td><td><span class="fill"></span></td></tr>
+      <tr><td>QF2</td><td>Winner G2 vs Winner G3</td><td><span class="fill"></span></td></tr>
+      <tr><td>QF3</td><td>B1 vs Winner G5</td><td><span class="fill"></span></td></tr>
+      <tr><td>QF4</td><td>Winner G1 vs Winner G4</td><td><span class="fill"></span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Semifinals</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:16%;">Game</th>
+        <th style="width:52%;">Matchup</th>
+        <th style="width:32%;">Winner</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>SF1</td><td>Winner QF1 vs Winner QF2</td><td><span class="fill"></span></td></tr>
+      <tr><td>SF2</td><td>Winner QF3 vs Winner QF4</td><td><span class="fill"></span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Championship</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:16%;">Game</th>
+        <th style="width:52%;">Matchup</th>
+        <th style="width:32%;">Winner</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Final</td><td>Winner SF1 vs Winner SF2</td><td><span class="fill"></span></td></tr>
+    </tbody>
+  </table>
+
+  <p class="note">Print tip: use browser print with Scale 100% and headers/footers off.</p>
+</body>
+</html>

@@ -634,6 +634,10 @@ def sync_pitching_stats(conn, roster, team_names, player_names):
         changed_rows = cursor.fetchall()
         changed_count = len(changed_rows)
 
+        # Pitching Subs guard: don't insert a Subs PID row if a rostered
+        # pitcher already exists for that team/game
+        subs_pids_list = ','.join(str(p) for p in SUBS_MAPPING_W26.values())
+
         if new_count > 0:
             cursor.execute("""
             INSERT INTO pitching_stats (TeamNumber, GameNumber, PlayerNumber, HomeTeam, IP, BB, W, L, IBB)
@@ -646,6 +650,38 @@ def sync_pitching_stats(conn, roster, team_names, player_names):
                 AND s.PlayerNumber = p.PlayerNumber
             )
             """)
+            # Remove Subs PID rows just inserted only when the CSV had NO rostered
+            # pitcher for that game — i.e. the Subs row is the only CSV entry.
+            # If the CSV legitimately has both a rostered pitcher AND a sub pitcher,
+            # keep both rows (e.g. two-pitcher games where sub finished).
+            cursor.execute(f"""
+            DELETE FROM pitching_stats
+            WHERE PlayerNumber IN ({subs_pids_list})
+            AND TeamNumber BETWEEN 538 AND 551
+            AND EXISTS (
+                SELECT 1 FROM temp_staging_pitching s
+                WHERE s.TeamNumber = pitching_stats.TeamNumber
+                AND s.GameNumber = pitching_stats.GameNumber
+                AND s.PlayerNumber = pitching_stats.PlayerNumber
+            )
+            AND EXISTS (
+                SELECT 1 FROM pitching_stats p2
+                WHERE p2.TeamNumber = pitching_stats.TeamNumber
+                AND p2.GameNumber = pitching_stats.GameNumber
+                AND p2.PlayerNumber NOT IN ({subs_pids_list})
+            )
+            AND NOT EXISTS (
+                SELECT 1 FROM temp_staging_pitching s2
+                WHERE s2.TeamNumber = pitching_stats.TeamNumber
+                AND s2.GameNumber = pitching_stats.GameNumber
+                AND s2.PlayerNumber NOT IN ({subs_pids_list})
+            )
+            """)
+            suppressed_count = cursor.rowcount
+            if suppressed_count > 0:
+                new_count = max(0, new_count - suppressed_count)
+                print(f"\n  --- PITCHING SUBS INSERTS BLOCKED (rostered pitcher exists) ---")
+                print(f"    {suppressed_count} duplicate Subs row(s) suppressed")
 
         if changed_count > 0:
             cursor.execute("""
@@ -994,6 +1030,10 @@ def main():
         game_new, game_changed, game_unchanged = sync_game_stats(conn)
 
         conn.commit()
+        conn.close()
+
+        # Reopen for validation to ensure clean committed state
+        conn = sqlite3.connect("softball_stats.db")
 
         # Post-sync validation
         issues = post_sync_validation(conn)

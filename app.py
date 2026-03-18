@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 import sqlite3
 import os
 from datetime import datetime
@@ -1226,6 +1226,184 @@ def season_allstar(filter_number):
                            allstar_divisions=allstar_divisions,
                            min_games=min_games,
                            season_filter_number=filter_number)
+
+
+@app.route('/season/<filter_number>/allstar/export')
+def season_allstar_export(filter_number):
+    """Export All-Star teams to Excel for offline editing"""
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+    from io import BytesIO
+
+    conn = get_db_connection()
+
+    season = conn.execute(
+        'SELECT * FROM Seasons WHERE FilterNumber = ?', (filter_number,)
+    ).fetchone()
+
+    if not season:
+        conn.close()
+        return "Season not found", 404
+
+    season_short = season['short_name'].strip() if season['short_name'] else ''
+    min_games = 4
+
+    teams_raw = conn.execute('''
+        SELECT t.TeamNumber, t.LongTeamName
+        FROM Teams t
+        WHERE t.LongTeamName LIKE '%' || ? || '%'
+    ''', (season_short,)).fetchall()
+
+    team_division = {}
+    division_teams_count = {}
+    for team in teams_raw:
+        team_name = team['LongTeamName']
+        team_name_clean = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)
+        division_match = re.search(r'\(([^)]+)\)', team_name_clean)
+        division_name = division_match.group(1) if division_match else 'League'
+        team_division[team['TeamNumber']] = division_name
+        division_teams_count[division_name] = division_teams_count.get(division_name, 0) + 1
+
+    raw_players = conn.execute('''
+        SELECT
+            p.PersonNumber, p.FirstName, p.LastName,
+            t.TeamNumber, t.LongTeamName,
+            SUM(b.G) as Games, SUM(b.PA) as PA,
+            SUM(b.R) as R, SUM(b.H) as H,
+            SUM(b."2B") as Doubles, SUM(b."3B") as Triples,
+            SUM(b.HR) as HR, SUM(b.BB) as BB,
+            SUM(b.RBI) as RBI, SUM(b.SF) as SF, SUM(b.OE) as OE
+        FROM People p
+        JOIN batting_stats b ON p.PersonNumber = b.PlayerNumber
+        JOIN Teams t ON b.TeamNumber = t.TeamNumber
+        WHERE t.LongTeamName LIKE '%' || ? || '%'
+            AND p.LastName != 'Subs'
+        GROUP BY p.PersonNumber, p.FirstName, p.LastName, t.TeamNumber, t.LongTeamName
+        HAVING SUM(b.G) > 0
+    ''', (season_short,)).fetchall()
+
+    conn.close()
+
+    division_players = {}
+    for player in raw_players:
+        ps = calculate_batting_stats(dict(player))
+        h = ps.get('H', 0)
+        bb = ps.get('BB', 0)
+        pa = ps.get('PA', 0)
+        doubles = ps.get('Doubles', 0)
+        triples = ps.get('Triples', 0)
+        hr = ps.get('HR', 0)
+        tb = h + doubles + (2 * triples) + (3 * hr)
+        if pa > 0:
+            ps['convBA'] = round((((4 * (h + bb) + tb) / pa) / 0.305 * 0.25) / 10, 3)
+        else:
+            ps['convBA'] = 0.000
+
+        team_name = ps['LongTeamName']
+        team_name = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)
+        team_name = re.sub(r'\s*\([^)]+\)\s*', '', team_name).strip()
+        ps['team_display_name'] = team_name
+
+        if (ps.get('Games') or 0) < min_games:
+            continue
+
+        div = team_division.get(ps['TeamNumber'], 'League')
+        if div not in division_players:
+            division_players[div] = []
+        division_players[div].append(ps)
+
+    # Build workbook
+    wb = Workbook()
+    wb.remove(wb.active)
+
+    header_font = Font(bold=True, color='FFFFFF', size=11)
+    header_fill_gold = PatternFill(startColor='DAA520', endColor='DAA520', fillType='solid')
+    header_fill_silver = PatternFill(startColor='A0A0A0', endColor='A0A0A0', fillType='solid')
+    header_fill_bronze = PatternFill(startColor='CD7F32', endColor='CD7F32', fillType='solid')
+    team_label_font = Font(bold=True, size=13)
+    thin_border = Border(
+        left=Side(style='thin'), right=Side(style='thin'),
+        top=Side(style='thin'), bottom=Side(style='thin')
+    )
+    stat_cols = ['#', 'Player', 'Team', 'G', 'PA', 'H', 'HR', 'RBI', 'AVG', 'OBP', 'SLG', 'convBA']
+
+    for div_name in sorted(division_players.keys()):
+        players = sorted(division_players[div_name],
+                         key=lambda x: (x.get('convBA', 0), x.get('PA', 0)),
+                         reverse=True)
+
+        roster_size = 12
+        teams = [
+            ('1st Team All-Stars', players[:roster_size], header_fill_gold, 0),
+            ('2nd Team All-Stars', players[roster_size:roster_size * 2], header_fill_silver, roster_size),
+            ('3rd Team All-Stars', players[roster_size * 2:roster_size * 3], header_fill_bronze, roster_size * 2),
+        ]
+
+        ws = wb.create_sheet(title=div_name[:31])
+        row = 1
+
+        for team_name, team_players, fill, rank_offset in teams:
+            if not team_players:
+                continue
+
+            ws.cell(row=row, column=1, value=team_name).font = team_label_font
+            row += 1
+
+            for col_idx, col_name in enumerate(stat_cols, 1):
+                cell = ws.cell(row=row, column=col_idx, value=col_name)
+                cell.font = header_font
+                cell.fill = fill
+                cell.alignment = Alignment(horizontal='center')
+                cell.border = thin_border
+            row += 1
+
+            for i, p in enumerate(team_players):
+                rank = rank_offset + i + 1
+                avg_str = format_percentage(p.get('AVG', 0))
+                obp_str = format_percentage(p.get('OBP', 0))
+                slg_str = format_percentage(p.get('SLG', 0))
+                convba_str = format_percentage(p.get('convBA', 0))
+
+                values = [
+                    rank,
+                    f"{p['FirstName']} {p['LastName']}",
+                    p['team_display_name'],
+                    p.get('Games', 0),
+                    p.get('PA', 0),
+                    p.get('H', 0),
+                    p.get('HR', 0),
+                    p.get('RBI', 0),
+                    avg_str,
+                    obp_str,
+                    slg_str,
+                    convba_str,
+                ]
+                for col_idx, val in enumerate(values, 1):
+                    cell = ws.cell(row=row, column=col_idx, value=val)
+                    cell.border = thin_border
+                    if col_idx >= 4:
+                        cell.alignment = Alignment(horizontal='center')
+                row += 1
+
+            row += 1
+
+        # Auto-size columns
+        for col_idx in range(1, len(stat_cols) + 1):
+            max_len = 0
+            col_letter = ws.cell(row=1, column=col_idx).column_letter
+            for r in range(1, row):
+                val = ws.cell(row=r, column=col_idx).value
+                if val:
+                    max_len = max(max_len, len(str(val)))
+            ws.column_dimensions[col_letter].width = max_len + 3
+
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    filename = f"allstar_{season_short}.xlsx"
+    return send_file(output, download_name=filename, as_attachment=True,
+                     mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
 
 # Season Rosters Route

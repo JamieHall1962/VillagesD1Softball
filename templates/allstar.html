@@ -17,6 +17,13 @@
     </div>
     <h1>{{ season.season_name }} &mdash; All-Star Teams</h1>
     <p>Based on Converted Batting Average (convBA) &bull; Min {{ min_games }} games to qualify</p>
+    <a href="/season/{{ season_filter_number }}/allstar/export"
+       style="display: inline-block; margin-top: 12px; background: rgba(255,255,255,0.2);
+              color: white; padding: 10px 24px; border-radius: 25px; text-decoration: none;
+              font-weight: 600; border: 2px solid rgba(255,255,255,0.3);
+              transition: all 0.3s ease;">
+        Download Excel
+    </a>
 </div>
 
 {% for division in allstar_divisions %}

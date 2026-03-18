@@ -446,24 +446,20 @@
     </div>
 
 <script>
-// Easter egg: Type "jhm" to access advanced metrics page
 let keySequence = '';
-document.addEventListener('keydown', function(e) {
-    keySequence += e.key.toLowerCase();
-    
-    if (keySequence.includes('jhm')) {
-        window.location.href = '/season/{{ season.FilterNumber }}/metrics';
-        keySequence = '';
-    }
-    
-    if (keySequence.includes('star')) {
-        window.location.href = '/season/{{ season.FilterNumber }}/allstar';
-        keySequence = '';
-    }
-    
-    // Keep only last 10 characters to prevent memory issues
-    if (keySequence.length > 10) {
-        keySequence = keySequence.slice(-10);
+document.addEventListener('keyup', function(e) {
+    const k = e.key;
+    if (k.length === 1 && k.match(/[a-z]/i)) {
+        keySequence += k.toLowerCase();
+        if (keySequence.length > 20) keySequence = keySequence.slice(-20);
+        if (keySequence.endsWith('jhm')) {
+            window.location.href = '/season/{{ season.FilterNumber }}/metrics';
+            return;
+        }
+        if (keySequence.endsWith('star')) {
+            window.location.href = '/season/{{ season.FilterNumber }}/allstar';
+            return;
+        }
     }
 });
 </script>

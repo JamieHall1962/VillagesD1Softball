@@ -1317,9 +1317,9 @@ def season_allstar_export(filter_number):
     wb.remove(wb.active)
 
     header_font = Font(bold=True, color='FFFFFF', size=11)
-    header_fill_gold = PatternFill(startColor='DAA520', endColor='DAA520', fillType='solid')
-    header_fill_silver = PatternFill(startColor='A0A0A0', endColor='A0A0A0', fillType='solid')
-    header_fill_bronze = PatternFill(startColor='CD7F32', endColor='CD7F32', fillType='solid')
+    header_fill_gold = PatternFill(start_color='DAA520', end_color='DAA520', fill_type='solid')
+    header_fill_silver = PatternFill(start_color='A0A0A0', end_color='A0A0A0', fill_type='solid')
+    header_fill_bronze = PatternFill(start_color='CD7F32', end_color='CD7F32', fill_type='solid')
     team_label_font = Font(bold=True, size=13)
     thin_border = Border(
         left=Side(style='thin'), right=Side(style='thin'),

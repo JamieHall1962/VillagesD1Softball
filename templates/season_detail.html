@@ -374,7 +374,7 @@
                               font-weight: bold;
                               font-size: 0.9em;
                               transition: all 0.2s ease;">
-                        View All Season Batting →
+                        View All Season Batting &rarr;
                     </a>
                 </div>
                 
@@ -452,9 +452,13 @@ document.addEventListener('keydown', function(e) {
     keySequence += e.key.toLowerCase();
     
     if (keySequence.includes('jhm')) {
-        // Redirect to metrics page
         window.location.href = '/season/{{ season.FilterNumber }}/metrics';
-        keySequence = ''; // Reset
+        keySequence = '';
+    }
+    
+    if (keySequence.includes('allstar')) {
+        window.location.href = '/season/{{ season.FilterNumber }}/allstar';
+        keySequence = '';
     }
     
     // Keep only last 10 characters to prevent memory issues

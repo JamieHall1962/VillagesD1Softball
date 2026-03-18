@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}{{ season.season_name }} - All-Star Teams{% endblock %}
+
+{% block content %}
+<div class="header">
+    <div class="nav-breadcrumb">
+        <a href="#" onclick="history.back(); return false;">&larr; Back</a>
+        <span> &gt; </span>
+        <a href="/">Home</a>
+        <span> &gt; </span>
+        <a href="/seasons">Seasons</a>
+        <span> &gt; </span>
+        <a href="/season/{{ season_filter_number }}">{{ season.season_name }}</a>
+        <span> &gt; </span>
+        <span>All-Star Teams</span>
+    </div>
+    <h1>{{ season.season_name }} &mdash; All-Star Teams</h1>
+    <p>Based on Converted Batting Average (convBA) &bull; Min {{ min_games }} games to qualify</p>
+</div>
+
+{% for division in allstar_divisions %}
+<div class="content allstar-division">
+    <h2 class="division-heading">{{ division.name }} Division</h2>
+
+    <!-- First Team -->
+    <h3 class="team-label first-team-label">1st Team All-Stars</h3>
+    <div class="table-container">
+        <table class="allstar-table">
+            <thead>
+                <tr>
+                    <th class="rank-col">#</th>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>G</th>
+                    <th>PA</th>
+                    <th>H</th>
+                    <th>HR</th>
+                    <th>RBI</th>
+                    <th>AVG</th>
+                    <th>OBP</th>
+                    <th>SLG</th>
+                    <th class="highlight-col">convBA</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in division.first_team %}
+                <tr>
+                    <td class="rank-col">{{ loop.index }}</td>
+                    <td><a href="/player/{{ player.PersonNumber }}" class="player-link">{{ player.FirstName }} {{ player.LastName }}</a></td>
+                    <td>{{ player.team_display_name }}</td>
+                    <td>{{ player.Games or 0 }}</td>
+                    <td>{{ player.PA or 0 }}</td>
+                    <td>{{ player.H or 0 }}</td>
+                    <td>{{ player.HR or 0 }}</td>
+                    <td>{{ player.RBI or 0 }}</td>
+                    <td>{{ format_percentage(player.AVG) }}</td>
+                    <td>{{ format_percentage(player.OBP) }}</td>
+                    <td>{{ format_percentage(player.SLG) }}</td>
+                    <td class="highlight-col">{{ format_percentage(player.convBA) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if division.second_team %}
+    <!-- Second Team -->
+    <h3 class="team-label second-team-label">2nd Team All-Stars</h3>
+    <div class="table-container">
+        <table class="allstar-table">
+            <thead>
+                <tr>
+                    <th class="rank-col">#</th>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>G</th>
+                    <th>PA</th>
+                    <th>H</th>
+                    <th>HR</th>
+                    <th>RBI</th>
+                    <th>AVG</th>
+                    <th>OBP</th>
+                    <th>SLG</th>
+                    <th class="highlight-col">convBA</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in division.second_team %}
+                <tr>
+                    <td class="rank-col">{{ loop.index + division.roster_size }}</td>
+                    <td><a href="/player/{{ player.PersonNumber }}" class="player-link">{{ player.FirstName }} {{ player.LastName }}</a></td>
+                    <td>{{ player.team_display_name }}</td>
+                    <td>{{ player.Games or 0 }}</td>
+                    <td>{{ player.PA or 0 }}</td>
+                    <td>{{ player.H or 0 }}</td>
+                    <td>{{ player.HR or 0 }}</td>
+                    <td>{{ player.RBI or 0 }}</td>
+                    <td>{{ format_percentage(player.AVG) }}</td>
+                    <td>{{ format_percentage(player.OBP) }}</td>
+                    <td>{{ format_percentage(player.SLG) }}</td>
+                    <td class="highlight-col">{{ format_percentage(player.convBA) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endfor %}
+
+<style>
+.allstar-division {
+    margin-bottom: 30px;
+}
+
+.division-heading {
+    color: #667eea;
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #667eea;
+}
+
+.team-label {
+    margin: 25px 0 10px;
+    font-size: 1.3rem;
+    padding: 8px 16px;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+.first-team-label {
+    background: linear-gradient(135deg, #ffd700, #f5c400);
+    color: #5a4800;
+}
+
+.second-team-label {
+    background: linear-gradient(135deg, #c0c0c0, #a8a8a8);
+    color: #3a3a3a;
+}
+
+.table-container {
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    overflow-x: auto;
+    margin-bottom: 10px;
+}
+
+.allstar-table {
+    margin: 0;
+    white-space: nowrap;
+}
+
+.allstar-table thead th {
+    background: #667eea !important;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.rank-col {
+    width: 40px;
+    text-align: center;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.highlight-col {
+    font-weight: 700;
+    color: #5a67d8;
+}
+
+thead .highlight-col {
+    color: #ffd700;
+}
+
+.player-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.player-link:hover {
+    color: #5a67d8;
+    text-decoration: underline;
+}
+
+.allstar-table tbody tr:hover {
+    background-color: rgba(102, 126, 234, 0.15) !important;
+}
+
+@media (max-width: 768px) {
+    .division-heading {
+        font-size: 1.4rem;
+    }
+    .team-label {
+        font-size: 1.1rem;
+    }
+}
+</style>
+{% endblock %}

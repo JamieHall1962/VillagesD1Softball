@@ -1111,6 +1111,119 @@ def season_metrics(filter_number):
                          total_teams=num_teams_in_season)
 
 
+@app.route('/season/<filter_number>/allstar')
+def season_allstar(filter_number):
+    """All-Star teams by division based on convBA"""
+
+    conn = get_db_connection()
+
+    season = conn.execute(
+        'SELECT * FROM Seasons WHERE FilterNumber = ?', (filter_number,)
+    ).fetchone()
+
+    if not season:
+        conn.close()
+        return "Season not found", 404
+
+    season_short = season['short_name'].strip() if season['short_name'] else ''
+
+    min_games = 4
+
+    # Get all teams with division info
+    teams_raw = conn.execute('''
+        SELECT t.TeamNumber, t.LongTeamName
+        FROM Teams t
+        WHERE t.LongTeamName LIKE '%' || ? || '%'
+    ''', (season_short,)).fetchall()
+
+    # Build team → division mapping
+    team_division = {}
+    division_teams_count = {}
+    for team in teams_raw:
+        team_name = team['LongTeamName']
+        team_name_clean = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)
+        division_match = re.search(r'\(([^)]+)\)', team_name_clean)
+        division_name = division_match.group(1) if division_match else 'League'
+        team_division[team['TeamNumber']] = division_name
+        division_teams_count[division_name] = division_teams_count.get(division_name, 0) + 1
+
+    # Get batting stats per player
+    raw_players = conn.execute('''
+        SELECT
+            p.PersonNumber, p.FirstName, p.LastName,
+            t.TeamNumber, t.LongTeamName,
+            SUM(b.G) as Games, SUM(b.PA) as PA,
+            SUM(b.R) as R, SUM(b.H) as H,
+            SUM(b."2B") as Doubles, SUM(b."3B") as Triples,
+            SUM(b.HR) as HR, SUM(b.BB) as BB,
+            SUM(b.RBI) as RBI, SUM(b.SF) as SF, SUM(b.OE) as OE
+        FROM People p
+        JOIN batting_stats b ON p.PersonNumber = b.PlayerNumber
+        JOIN Teams t ON b.TeamNumber = t.TeamNumber
+        WHERE t.LongTeamName LIKE '%' || ? || '%'
+            AND p.LastName != 'Subs'
+        GROUP BY p.PersonNumber, p.FirstName, p.LastName, t.TeamNumber, t.LongTeamName
+        HAVING SUM(b.G) > 0
+    ''', (season_short,)).fetchall()
+
+    conn.close()
+
+    # Calculate convBA and group by division
+    division_players = {}
+    for player in raw_players:
+        ps = calculate_batting_stats(dict(player))
+
+        h = ps.get('H', 0)
+        bb = ps.get('BB', 0)
+        pa = ps.get('PA', 0)
+        doubles = ps.get('Doubles', 0)
+        triples = ps.get('Triples', 0)
+        hr = ps.get('HR', 0)
+        tb = h + doubles + (2 * triples) + (3 * hr)
+
+        if pa > 0:
+            ps['convBA'] = round((((4 * (h + bb) + tb) / pa) / 0.305 * 0.25) / 10, 3)
+        else:
+            ps['convBA'] = 0.000
+
+        # Clean team name
+        team_name = ps['LongTeamName']
+        team_name = re.sub(r'\s+[A-Z]\d{2}$', '', team_name)
+        team_name = re.sub(r'\s*\([^)]+\)\s*', '', team_name).strip()
+        ps['team_display_name'] = team_name
+
+        # Playoff-eligible = rostered for at least 4 games
+        if (ps.get('Games') or 0) < min_games:
+            continue
+
+        div = team_division.get(ps['TeamNumber'], 'League')
+        if div not in division_players:
+            division_players[div] = []
+        division_players[div].append(ps)
+
+    # Build all-star rosters per division
+    allstar_divisions = []
+    for div_name in sorted(division_players.keys()):
+        players = sorted(division_players[div_name],
+                         key=lambda x: (x.get('convBA', 0), x.get('PA', 0)),
+                         reverse=True)
+
+        roster_size = division_teams_count.get(div_name, 7)
+        first_team = players[:roster_size]
+        second_team = players[roster_size:roster_size * 2]
+
+        allstar_divisions.append({
+            'name': div_name,
+            'first_team': first_team,
+            'second_team': second_team,
+            'roster_size': roster_size,
+        })
+
+    return render_template('allstar.html',
+                           season=season,
+                           allstar_divisions=allstar_divisions,
+                           min_games=min_games,
+                           season_filter_number=filter_number)
 
 
 # Season Rosters Route

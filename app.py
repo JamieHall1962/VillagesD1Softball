@@ -1208,14 +1208,16 @@ def season_allstar(filter_number):
                          key=lambda x: (x.get('convBA', 0), x.get('PA', 0)),
                          reverse=True)
 
-        roster_size = division_teams_count.get(div_name, 7)
+        roster_size = 12
         first_team = players[:roster_size]
         second_team = players[roster_size:roster_size * 2]
+        third_team = players[roster_size * 2:roster_size * 3]
 
         allstar_divisions.append({
             'name': div_name,
             'first_team': first_team,
             'second_team': second_team,
+            'third_team': third_team,
             'roster_size': roster_size,
         })
 

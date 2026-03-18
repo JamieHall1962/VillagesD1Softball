@@ -106,6 +106,49 @@
         </table>
     </div>
     {% endif %}
+
+    {% if division.third_team %}
+    <!-- Third Team -->
+    <h3 class="team-label third-team-label">3rd Team All-Stars</h3>
+    <div class="table-container">
+        <table class="allstar-table">
+            <thead>
+                <tr>
+                    <th class="rank-col">#</th>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>G</th>
+                    <th>PA</th>
+                    <th>H</th>
+                    <th>HR</th>
+                    <th>RBI</th>
+                    <th>AVG</th>
+                    <th>OBP</th>
+                    <th>SLG</th>
+                    <th class="highlight-col">convBA</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in division.third_team %}
+                <tr>
+                    <td class="rank-col">{{ loop.index + division.roster_size * 2 }}</td>
+                    <td><a href="/player/{{ player.PersonNumber }}" class="player-link">{{ player.FirstName }} {{ player.LastName }}</a></td>
+                    <td>{{ player.team_display_name }}</td>
+                    <td>{{ player.Games or 0 }}</td>
+                    <td>{{ player.PA or 0 }}</td>
+                    <td>{{ player.H or 0 }}</td>
+                    <td>{{ player.HR or 0 }}</td>
+                    <td>{{ player.RBI or 0 }}</td>
+                    <td>{{ format_percentage(player.AVG) }}</td>
+                    <td>{{ format_percentage(player.OBP) }}</td>
+                    <td>{{ format_percentage(player.SLG) }}</td>
+                    <td class="highlight-col">{{ format_percentage(player.convBA) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
 </div>
 {% endfor %}
 
@@ -138,6 +181,11 @@
 .second-team-label {
     background: linear-gradient(135deg, #c0c0c0, #a8a8a8);
     color: #3a3a3a;
+}
+
+.third-team-label {
+    background: linear-gradient(135deg, #cd7f32, #b5651d);
+    color: #fff;
 }
 
 .table-container {

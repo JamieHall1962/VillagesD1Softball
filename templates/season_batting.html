@@ -381,9 +381,13 @@ document.addEventListener('keydown', function(e) {
     metricsKeySequence += e.key.toLowerCase();
     
     if (metricsKeySequence.includes('jhm')) {
-        // Redirect to metrics page
         window.location.href = '/season/{{ season_filter_number }}/metrics';
-        metricsKeySequence = ''; // Reset
+        metricsKeySequence = '';
+    }
+    
+    if (metricsKeySequence.includes('star')) {
+        window.location.href = '/season/{{ season_filter_number }}/allstar';
+        metricsKeySequence = '';
     }
     
     // Keep only last 10 characters to prevent memory issues

@@ -1,0 +1,6 @@
+CSVFirstName,CSVLastName,PersonNumber,Notes
+Jan Michael,Held,422,Space in first name
+William,Jackson,396,Goes by Scott Jackson
+Chuck,LAUZIERE,589,DB has Charles Lauziere
+Randy Murgittroyd,Randy Murgittroyd,313,Name duplicated in CSV
+Steven,Hagen,466,Fuzzy matcher confuses with Michael Hage (488)

@@ -48,8 +48,8 @@ import re
 from fpdf import FPDF
 
 # ===== CONFIGURATION =====
-ZOHO_CSV_PATH = "zoho.csv"  # Input file
-OUTPUT_EXCEL_PATH = "w26reg.xlsx"  # Output file
+ZOHO_CSV_PATH = "Summer2026.csv"  # Input file
+OUTPUT_EXCEL_PATH = "s26reg.xlsx"  # Output file
 DATABASE_PATH = "softball_stats.db"
 FUZZY_MATCH_THRESHOLD = 75  # Lowered from 85 to catch more variations
 
@@ -614,9 +614,14 @@ def process_registrations(csv_path, db_path):
                 first_name, last_name, db_players, FUZZY_MATCH_THRESHOLD
             )
         else:
-            # For exact matches, set DB names same as CSV names
-            db_first = first_name
-            db_last = last_name
+            # For exact matches, use the properly formatted DB names
+            db_match = db_players[db_players['PersonNumber'] == person_num]
+            if len(db_match) > 0:
+                db_first = db_match.iloc[0]['FirstName']
+                db_last = db_match.iloc[0]['LastName']
+            else:
+                db_first = first_name
+                db_last = last_name
         
         # If still no match, mark as new
         if not person_num:
@@ -635,6 +640,18 @@ def process_registrations(csv_path, db_path):
     match_df = pd.DataFrame(match_results)
     df = pd.concat([df, match_df], axis=1)
     
+    # Clean up names: use DB names for matched players, title-case for new
+    matched_types = ['Exact', 'Confirmed', 'Manual', 'PreviouslySeen']
+    for idx, row in df.iterrows():
+        if row['MatchType'] in matched_types and pd.notna(row.get('DB_FirstName')):
+            df.at[idx, 'FirstName'] = row['DB_FirstName']
+            df.at[idx, 'LastName'] = row['DB_LastName']
+        elif row['MatchType'] == 'New Player':
+            if pd.notna(row['FirstName']):
+                df.at[idx, 'FirstName'] = str(row['FirstName']).title()
+            if pd.notna(row['LastName']):
+                df.at[idx, 'LastName'] = str(row['LastName']).title()
+
     # CRITICAL: Save PersonNumber for fuzzy matches, then clear it
     # We need it for the Fuzzy Matches review sheet, but nowhere else
     # Fuzzy matches need human review before PersonNumber is assigned
@@ -859,136 +876,79 @@ def create_excel_output(df, db_players, excluded_players, output_path):
 def create_registration_pdf(df, excluded_players, output_path="registrations.pdf"):
     """Create a PDF list of all registered players for website"""
     print(f"\nCreating PDF for website: {output_path}")
-    
-    # Get full-time and sub-only players
-    # EXCLUDE non-player volunteers (VolunteerOnly)
+
     is_sub_only = df['SubOnly'].notna() & (df['SubOnly'].astype(str).str.lower() != 'no')
     is_volunteer_only = df['VolunteerOnly'].notna()
     full_time = df[~is_sub_only & ~is_volunteer_only].copy()
     sub_only = df[is_sub_only & ~is_volunteer_only].copy()
-    
-    # Filter out excluded players from full-time
+
     if len(excluded_players) > 0:
         full_time = full_time[~full_time['PersonNumber'].isin(excluded_players.keys())].copy()
-    
-    # Create PDF
+
     pdf = FPDF()
-    pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=15)
-    
-    # Column settings
+    pdf.add_page()
+
     left_margin = 15
     col_width = 90
     line_height = 5
-    
-    # Title
+
     pdf.set_font('Helvetica', 'B', 18)
     pdf.cell(0, 12, 'D1 Softball Registration List', new_x="LMARGIN", new_y="NEXT", align='C')
     pdf.set_font('Helvetica', '', 11)
     pdf.cell(0, 8, f'Generated: {datetime.now().strftime("%B %d, %Y")}', new_x="LMARGIN", new_y="NEXT", align='C')
     pdf.ln(3)
-    
+
     def print_two_column_list(sorted_df, title):
-        """Helper function to print names in two columns (split alphabetically)"""
+        """Print names in two columns, page by page"""
         pdf.set_font('Helvetica', 'B', 14)
         pdf.cell(0, 10, title, new_x="LMARGIN", new_y="NEXT")
         pdf.set_font('Helvetica', '', 10)
-        
-        # Convert to list for easier indexing
-        names = [f"{row['FirstName']} {row['LastName']}" for idx, row in sorted_df.iterrows()]
-        
-        # Calculate how many names fit per column on one page
+
+        names = [f"{row['FirstName']} {row['LastName']}" for _, row in sorted_df.iterrows()]
+        if not names:
+            return
+
         y_start = pdf.get_y()
-        page_height_limit = 270
-        names_per_column = int((page_height_limit - y_start) / line_height)
-        names_per_page = names_per_column * 2
-        
-        # Distribute names to left and right columns to flow naturally across pages
-        # Left column gets: indices 0, 2, 4, 6... (every other "slot")
-        # Right column gets: indices 1, 3, 5, 7... (every other "slot")  
-        # Where each "slot" is names_per_column items
-        left_col = []
-        right_col = []
-        
-        idx = 0
-        page_num = 0
-        while idx < len(names):
-            # Fill left column for this page
-            chunk_size = min(names_per_column, len(names) - idx)
-            left_col.extend(names[idx:idx + chunk_size])
-            idx += chunk_size
-            
-            if idx < len(names):
-                # Fill right column for this page
-                chunk_size = min(names_per_column, len(names) - idx)
-                right_col.extend(names[idx:idx + chunk_size])
-                idx += chunk_size
-        
-        start_page = pdf.page_no()  # Remember which page we started on
-        page_height_limit = 270  # Bottom margin threshold
-        
-        # Print left column
-        current_y_left = y_start
-        left_end_page = start_page
-        names_printed_on_page = 0
-        for i, name in enumerate(left_col):
-            # Check if we need a new page (after names_per_column names)
-            if names_printed_on_page >= names_per_column:
+        page_bottom = 270
+        rows_per_col = max(1, int((page_bottom - y_start) / line_height))
+
+        i = 0
+        while i < len(names):
+            y = y_start if i == 0 else pdf.get_y()
+            rows_this_page = max(1, int((page_bottom - y) / line_height))
+
+            left_chunk = names[i:i + rows_this_page]
+            i += len(left_chunk)
+            right_chunk = names[i:i + rows_this_page]
+            i += len(right_chunk)
+
+            for row_idx in range(max(len(left_chunk), len(right_chunk))):
+                current_y = y + row_idx * line_height
+                if row_idx < len(left_chunk):
+                    pdf.set_xy(left_margin, current_y)
+                    pdf.cell(col_width, line_height, left_chunk[row_idx])
+                if row_idx < len(right_chunk):
+                    pdf.set_xy(left_margin + col_width, current_y)
+                    pdf.cell(col_width, line_height, right_chunk[row_idx])
+
+            final_y = y + max(len(left_chunk), len(right_chunk)) * line_height
+            pdf.set_y(final_y + 3)
+
+            if i < len(names):
                 pdf.add_page()
-                left_end_page = pdf.page_no()
-                current_y_left = pdf.get_y()
-                names_printed_on_page = 0
-            
-            pdf.set_xy(left_margin, current_y_left)
-            pdf.cell(col_width, line_height, name)
-            current_y_left += line_height
-            names_printed_on_page += 1
-        
-        # Print right column - start back at the beginning
-        current_y_right = y_start
-        right_end_page = start_page
-        if right_col:
-            # Go back to the page where we started
-            pdf.page = start_page
-            current_y_right = y_start
-            names_printed_on_page = 0
-            
-            for i, name in enumerate(right_col):
-                # Check if we need a new page (after names_per_column names)
-                if names_printed_on_page >= names_per_column:
-                    pdf.add_page()
-                    right_end_page = pdf.page_no()
-                    current_y_right = pdf.get_y()
-                    names_printed_on_page = 0
-                
-                pdf.set_xy(left_margin + col_width, current_y_right)
-                pdf.cell(col_width, line_height, name)
-                current_y_right += line_height
-                names_printed_on_page += 1
-        
-        # Position cursor after both columns - go to whichever ends further down
-        if left_end_page > right_end_page or (left_end_page == right_end_page and current_y_left > current_y_right):
-            # Left column ends further down
-            pdf.page = left_end_page
-            pdf.set_y(current_y_left + 3)
-        else:
-            # Right column ends further down (or equal)
-            pdf.page = right_end_page
-            pdf.set_y(current_y_right + 3)
-    
-    # Full-Time Players Section
+
     if len(full_time) > 0:
         full_time_sorted = full_time.sort_values('LastName', key=lambda x: x.str.lower())
         print_two_column_list(full_time_sorted, f'Full-Time Players ({len(full_time)})')
-    
-    # Sub-Only Players Section
+
     if len(sub_only) > 0:
+        pdf.add_page()
         sub_only_sorted = sub_only.sort_values('LastName', key=lambda x: x.str.lower())
         print_two_column_list(sub_only_sorted, f'Sub-Only Players ({len(sub_only)})')
-    
-    # Save PDF
+
     pdf.output(output_path)
-    print(f"✓ PDF created: {output_path}")
+    print(f"  PDF created: {output_path}")
     print(f"  Full-time players: {len(full_time)}")
     print(f"  Sub-only players: {len(sub_only)}")
     print(f"  Total registered: {len(full_time) + len(sub_only)}")
